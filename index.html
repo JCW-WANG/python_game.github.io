@@ -18,7 +18,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow-x: hidden;
+            overflow: hidden;
         }
 
         .container {
@@ -224,7 +224,7 @@
             bottom: 100px;
             left: 50%;
             transform: translateX(-50%);
-            transition: transform 0.1s;
+            transition: left 0.3s ease, transform 0.1s;
             z-index: 10;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
         }
@@ -312,6 +312,7 @@
             background: #3498db;
             border-radius: 10px 10px 15px 15px;
             z-index: 5;
+            transition: top 0.1s linear;
         }
 
         .scenario-elements {
@@ -616,8 +617,8 @@
             <div class="game-screen">
                 <div class="game-area">
                     <div class="road">
-                        <div class="lane" style="left: calc(50% - 150px);"></div>
-                        <div class="lane" style="left: calc(50% + 50px);"></div>
+                        <div class="lane" style="left: calc(33.33% - 50px);"></div>
+                        <div class="lane" style="left: calc(66.66% - 50px);"></div>
                     </div>
                     
                     <div class="scenario-elements">
@@ -690,14 +691,14 @@
             constructor() {
                 // 車輛選擇
                 this.vehicles = {
-                    "city_car": {"name": "城市小車", "cc": 1200, "stability": 0.8, "color": "#ff4d4d"},
-                    "sedan": {"name": "家庭轎車", "cc": 1800, "stability": 0.9, "color": "#3498db"},
-                    "sports_car": {"name": "運動跑車", "cc": 2500, "stability": 0.7, "color": "#9b59b6"}
+                    "city_car": {"name": "城市小車", "cc": 1200, "stability": 0.8, "color": "#ff4d4d", "acceleration": 0.08, "maxSpeed": 80},
+                    "sedan": {"name": "家庭轎車", "cc": 1800, "stability": 0.9, "color": "#3498db", "acceleration": 0.1, "maxSpeed": 120},
+                    "sports_car": {"name": "運動跑車", "cc": 2500, "stability": 0.7, "color": "#9b59b6", "acceleration": 0.15, "maxSpeed": 180}
                 };
 
                 // 遊戲狀態
                 this.speed = 0;
-                this.maxSpeed = 200;
+                this.maxSpeed = 120;
                 this.gear = "D";  // D:前進, S:運動, R:倒車
                 this.turnSignal = "none";  // left, right, none
                 this.sportMode = false;
@@ -705,6 +706,8 @@
                 this.gameActive = false;
                 this.currentScenario = null;
                 this.currentVehicle = null;
+                this.currentLane = 1; // 0: 左, 1: 中, 2: 右
+                this.lanePositions = [20, 50, 80]; // 車道位置百分比
 
                 // 評分數據
                 this.collisions = 0;
@@ -717,6 +720,15 @@
                 this.obstacles = [];
                 this.trafficLights = [];
                 this.pedestrians = [];
+
+                // 鍵盤狀態
+                this.keys = {
+                    'ArrowUp': false,
+                    'ArrowDown': false,
+                    'ArrowLeft': false,
+                    'ArrowRight': false,
+                    ' ': false
+                };
 
                 // 初始化
                 this.init();
@@ -781,6 +793,7 @@
             selectVehicle(vehicleType) {
                 if (vehicleType in this.vehicles) {
                     this.currentVehicle = this.vehicles[vehicleType];
+                    this.maxSpeed = this.currentVehicle.maxSpeed;
                     console.log(`已選擇: ${this.currentVehicle['name']}`);
                     
                     // 更新車輛顏色
@@ -831,8 +844,10 @@
                     this.trafficLights.push(trafficLight);
                     
                     // 生成其他車輛
-                    for (let i = 0; i < 3; i++) {
-                        this.addOtherVehicle(100 + i * 200, 300 + i * 150);
+                    for (let i = 0; i < 5; i++) {
+                        const lane = Math.floor(Math.random() * 3);
+                        const y = -200 - i * 200;
+                        this.addOtherVehicle(lane, y);
                     }
                     
                     // 生成行人
@@ -842,47 +857,61 @@
                 } else if (this.currentScenario === "mountain_road") {
                     // 生成障礙物
                     for (let i = 0; i < 4; i++) {
-                        this.addObstacle(200 + i * 200, 300 + i * 100);
+                        const lane = Math.floor(Math.random() * 3);
+                        const y = 300 + i * 200;
+                        this.addObstacle(lane, y);
                     }
                     
                     // 生成其他車輛
-                    for (let i = 0; i < 2; i++) {
-                        this.addOtherVehicle(150 + i * 300, 400 + i * 200);
+                    for (let i = 0; i < 3; i++) {
+                        const lane = Math.floor(Math.random() * 3);
+                        const y = -200 - i * 250;
+                        this.addOtherVehicle(lane, y);
                     }
                 } else if (this.currentScenario === "highway") {
                     // 生成其他車輛
-                    for (let i = 0; i < 5; i++) {
-                        this.addOtherVehicle(100 + i * 150, 200 + i * 100);
+                    for (let i = 0; i < 8; i++) {
+                        const lane = Math.floor(Math.random() * 3);
+                        const y = -200 - i * 150;
+                        this.addOtherVehicle(lane, y);
                     }
                 }
             }
 
-            addOtherVehicle(x, y) {
+            addOtherVehicle(lane, y) {
                 const vehicle = document.createElement('div');
                 vehicle.className = 'other-vehicle';
-                vehicle.style.left = `${x}px`;
+                
+                // 設定車輛位置
+                const leftPos = this.lanePositions[lane] + '%';
+                vehicle.style.left = leftPos;
                 vehicle.style.top = `${y}px`;
-                vehicle.style.background = `#${Math.floor(Math.random()*16777215).toString(16)}`;
+                
+                // 隨機車輛顏色
+                const colors = ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6'];
+                vehicle.style.background = colors[Math.floor(Math.random() * colors.length)];
                 
                 document.querySelector('.scenario-elements').appendChild(vehicle);
                 this.otherVehicles.push({
                     element: vehicle,
-                    x: x,
+                    lane: lane,
                     y: y,
                     speed: Math.random() * 2 + 1
                 });
             }
 
-            addObstacle(x, y) {
+            addObstacle(lane, y) {
                 const obstacle = document.createElement('div');
                 obstacle.className = 'obstacle';
-                obstacle.style.left = `${x}px`;
+                
+                const leftPos = this.lanePositions[lane] + '%';
+                obstacle.style.left = leftPos;
                 obstacle.style.top = `${y}px`;
                 
                 document.querySelector('.scenario-elements').appendChild(obstacle);
                 this.obstacles.push({
                     element: obstacle,
-                    x: x,
+                    lane: lane,
                     y: y
                 });
             }
@@ -918,21 +947,26 @@
                 
                 // 重置車輛位置
                 this.position = 0;
+                this.currentLane = 1;
+                this.updatePlayerPosition();
                 
                 // 更新評分顯示
                 this.updateScores();
                 
                 // 設定遊戲計時器
-                setTimeout(() => {
-                    if (this.gameActive) {
+                this.gameTime = 0;
+                this.gameTimer = setInterval(() => {
+                    this.gameTime++;
+                    if (this.gameTime >= 60) { // 60秒後自動結束遊戲
                         this.endGame();
                     }
-                }, 60000); // 60秒後自動結束遊戲
+                }, 1000);
             }
 
             endGame() {
                 this.gameActive = false;
                 this.speed = 0;
+                clearInterval(this.gameTimer);
                 
                 document.getElementById('start-game').textContent = '開始遊戲';
                 document.getElementById('start-game').classList.remove('active');
@@ -983,7 +1017,7 @@
                 return `${rageText}<br>${skillText}`;
             }
 
-            accelerate(intensity = 1.0) {
+            accelerate() {
                 if (!this.gameActive) return;
                 
                 if (this.gear !== "D" && this.gear !== "S") {
@@ -992,18 +1026,16 @@
                 }
 
                 // 基礎加速計算
-                let baseAccel = 0.1;
+                let acceleration = this.currentVehicle.acceleration;
                 if (this.sportMode) {
-                    baseAccel *= 1.3;
+                    acceleration *= 1.5;
                 }
 
-                const speedIncrease = baseAccel * intensity * 10;
-                this.speed = Math.min(this.maxSpeed, this.speed + speedIncrease);
+                this.speed = Math.min(this.maxSpeed, this.speed + acceleration);
 
                 // 記錄操作類型
-                if (intensity > 0.7) {
+                if (acceleration > 0.1) {
                     this.aggressiveActions++;
-                    console.log("激烈加速");
                 } else {
                     this.smoothActions++;
                 }
@@ -1012,48 +1044,61 @@
                 this.checkScenarioSpeed();
             }
 
-            brake(intensity = 1.0) {
+            brake() {
                 if (!this.gameActive) return;
                 
-                const speedDecrease = 15 * intensity;
-                this.speed = Math.max(0, this.speed - speedDecrease);
+                const deceleration = 0.2;
+                this.speed = Math.max(0, this.speed - deceleration);
 
                 // 急煞車檢測
-                if (intensity > 0.8 && this.speed > 30) {
+                if (deceleration > 0.15 && this.speed > 30) {
                     this.dangerousActions++;
-                    console.log("注意！急煞車警告");
                 }
             }
 
-            turn(direction, angle) {
+            changeLane(direction) {
                 if (!this.gameActive) return;
                 
-                // 計算安全轉向角度
-                const safeAngle = this.calculateSafeTurnAngle();
-
-                if (angle > safeAngle * 0.8) {
-                    this.dangerousActions++;
-                    console.log("危險轉向");
-                }
-
+                const newLane = this.currentLane + direction;
+                
+                // 檢查是否超出車道範圍
+                if (newLane < 0 || newLane > 2) return;
+                
                 // 檢查方向燈使用
-                if ((direction === "left" && this.turnSignal !== "left") || 
-                    (direction === "right" && this.turnSignal !== "right")) {
+                if ((direction === -1 && this.turnSignal !== "left") || 
+                    (direction === 1 && this.turnSignal !== "right")) {
                     this.dangerousActions++;
-                    console.log("轉向未打方向燈");
+                    console.log("變道未打方向燈");
                 }
                 
-                // 實際轉向效果
-                const playerCar = document.querySelector('.player-car');
-                const rotation = direction === 'left' ? -angle/5 : angle/5;
-                playerCar.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
+                this.currentLane = newLane;
+                this.updatePlayerPosition();
+                
+                // 檢查變道是否安全
+                if (!this.checkLaneChangeSafety()) {
+                    this.dangerousActions++;
+                    console.log("危險變道");
+                }
             }
 
-            calculateSafeTurnAngle() {
-                const baseAngle = 45;
-                const speedFactor = 1 - (this.speed / 100) * 0.5;
-                const vehicleFactor = this.currentVehicle ? this.currentVehicle.stability : 0.8;
-                return baseAngle * speedFactor * vehicleFactor;
+            updatePlayerPosition() {
+                const playerCar = document.querySelector('.player-car');
+                playerCar.style.left = this.lanePositions[this.currentLane] + '%';
+            }
+
+            checkLaneChangeSafety() {
+                const playerRect = document.querySelector('.player-car').getBoundingClientRect();
+                
+                for (const vehicle of this.otherVehicles) {
+                    const vehicleRect = vehicle.element.getBoundingClientRect();
+                    
+                    // 檢查是否有車輛在目標車道附近
+                    if (Math.abs(vehicleRect.top - playerRect.top) < 200) {
+                        return false;
+                    }
+                }
+                
+                return true;
             }
 
             shiftGear(newGear) {
@@ -1102,20 +1147,16 @@
 
                 if (this.currentScenario === "city_traffic" && this.speed > 60) {
                     this.dangerousActions++;
-                    console.log("注意！市區超速");
                 } else if (this.currentScenario === "mountain_road" && this.speed > 80) {
                     this.dangerousActions++;
-                    console.log("注意！山區道路超速");
                 } else if (this.currentScenario === "highway" && this.speed > 110) {
                     this.dangerousActions++;
-                    console.log("注意！高速公路超速");
                 }
             }
 
             checkCollision() {
                 if (!this.gameActive) return false;
                 
-                // 簡化碰撞檢測
                 const playerCar = document.querySelector('.player-car');
                 const playerRect = playerCar.getBoundingClientRect();
                 
@@ -1206,22 +1247,11 @@
             handleKeyDown(e) {
                 if (!this.gameActive) return;
                 
+                if (e.key in this.keys) {
+                    this.keys[e.key] = true;
+                }
+                
                 switch(e.key) {
-                    case 'ArrowUp':
-                        this.accelerate(0.5);
-                        break;
-                    case 'ArrowDown':
-                        this.brake(0.5);
-                        break;
-                    case 'ArrowLeft':
-                        this.turn('left', 30);
-                        break;
-                    case 'ArrowRight':
-                        this.turn('right', 30);
-                        break;
-                    case ' ':
-                        this.brake(1.0); // 空格鍵緊急煞車
-                        break;
                     case 'a':
                     case 'A':
                         this.toggleTurnSignal('left');
@@ -1238,9 +1268,8 @@
             }
 
             handleKeyUp(e) {
-                // 釋放按鍵時停止轉向效果
-                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-                    document.querySelector('.player-car').style.transform = 'translateX(-50%) rotate(0deg)';
+                if (e.key in this.keys) {
+                    this.keys[e.key] = false;
                 }
             }
 
@@ -1249,14 +1278,14 @@
                 
                 // 更新其他車輛位置
                 for (const vehicle of this.otherVehicles) {
-                    vehicle.y += vehicle.speed;
+                    vehicle.y += vehicle.speed + (this.speed / 50);
                     vehicle.element.style.top = `${vehicle.y}px`;
                     
                     // 如果車輛離開螢幕，重新放置到頂部
-                    if (vehicle.y > window.innerHeight) {
+                    if (vehicle.y > window.innerHeight + 200) {
                         vehicle.y = -200;
-                        vehicle.x = Math.random() * (window.innerWidth - 100);
-                        vehicle.element.style.left = `${vehicle.x}px`;
+                        vehicle.lane = Math.floor(Math.random() * 3);
+                        vehicle.element.style.left = this.lanePositions[vehicle.lane] + '%';
                     }
                 }
                 
@@ -1272,12 +1301,40 @@
                 }
             }
 
+            processInput() {
+                if (!this.gameActive) return;
+                
+                // 處理持續按鍵
+                if (this.keys['ArrowUp']) {
+                    this.accelerate();
+                }
+                
+                if (this.keys['ArrowDown']) {
+                    this.brake();
+                }
+                
+                if (this.keys['ArrowLeft']) {
+                    this.changeLane(-1);
+                }
+                
+                if (this.keys['ArrowRight']) {
+                    this.changeLane(1);
+                }
+                
+                if (this.keys[' ']) {
+                    this.brake(); // 空格鍵緊急煞車
+                }
+            }
+
             gameLoop() {
+                // 處理輸入
+                this.processInput();
+                
                 // 更新遊戲狀態
                 if (this.gameActive) {
-                    // 減速（模擬阻力）
-                    if (this.speed > 0) {
-                        this.speed = Math.max(0, this.speed - 0.1);
+                    // 自然減速（模擬阻力）
+                    if (this.speed > 0 && !this.keys['ArrowUp']) {
+                        this.speed = Math.max(0, this.speed - 0.05);
                     }
                     
                     // 更新其他車輛和行人
@@ -1325,7 +1382,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const game = new DrivingGame();
             
-            // 模擬遊戲結束（在實際遊戲中，這將在特定條件下觸發）
+            // 顯示歡迎訊息
             setTimeout(() => {
                 if (!game.gameActive) {
                     game.showMessage(
