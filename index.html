@@ -54,6 +54,7 @@
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            position: relative;
         }
 
         #gameCanvas {
@@ -443,6 +444,7 @@
                 this.sport_mode = false;
                 this.position = { x: 0, y: 0 };
                 this.direction = 0; // 角度
+                this.roadOffset = 0; // 道路偏移量，用於動畫
 
                 // 評分數據
                 this.collisions = 0;
@@ -453,6 +455,8 @@
                 // 情境參數
                 this.current_scenario = "city_traffic";
                 this.gameActive = false;
+                this.gameTime = 0;
+                this.maxGameTime = 60; // 60秒遊戲時間
 
                 // Canvas 相關
                 this.canvas = document.getElementById('gameCanvas');
@@ -464,7 +468,8 @@
                 this.initEventListeners();
                 
                 // 遊戲循環
-                this.gameLoop();
+                this.lastTime = 0;
+                this.gameLoop(0);
             }
 
             resizeCanvas() {
@@ -559,6 +564,7 @@
 
             startScenario() {
                 this.gameActive = true;
+                this.gameTime = 0;
                 this.resetGameState();
                 document.getElementById('start-btn').textContent = "駕駛中...";
                 document.getElementById('start-btn').disabled = true;
@@ -587,12 +593,13 @@
                 this.aggressive_actions = 0;
                 this.position = { x: 0, y: 0 };
                 this.direction = 0;
+                this.roadOffset = 0;
             }
 
             accelerate(intensity=1.0) {
                 if (!this.gameActive) return;
                 
-                if (this.gear not in ["D", "S"]) {
+                if (this.gear !== "D" && this.gear !== "S") {
                     console.log("當前檔位無法加速");
                     return;
                 }
@@ -837,12 +844,19 @@
                 
                 // 繪製車輛
                 this.drawVehicle();
+                
+                // 繪製遊戲狀態信息
+                this.drawGameInfo();
             }
 
             drawCityScene() {
                 const ctx = this.ctx;
                 const width = this.canvas.width;
                 const height = this.canvas.height;
+                
+                // 繪製天空
+                ctx.fillStyle = '#87CEEB';
+                ctx.fillRect(0, 0, width, height/2);
                 
                 // 繪製道路
                 ctx.fillStyle = '#333';
@@ -921,6 +935,10 @@
                 const width = this.canvas.width;
                 const height = this.canvas.height;
                 
+                // 繪製天空
+                ctx.fillStyle = '#87CEEB';
+                ctx.fillRect(0, 0, width, height/2);
+                
                 // 繪製高速公路
                 ctx.fillStyle = '#444';
                 ctx.fillRect(0, height/2 - 80, width, 160);
@@ -991,21 +1009,63 @@
                 }
             }
 
-            gameLoop() {
+            drawGameInfo() {
+                const ctx = this.ctx;
+                const width = this.canvas.width;
+                
+                // 繪製情境名稱
+                ctx.fillStyle = '#e9c46a';
+                ctx.font = 'bold 20px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(`情境: ${this.getScenarioName()}`, 20, 30);
+                
+                // 繪製車輛名稱
+                ctx.fillStyle = '#fff';
+                ctx.font = '16px Arial';
+                ctx.fillText(`車輛: ${this.currentVehicle.name}`, 20, 60);
+                
+                // 如果遊戲進行中，繪製剩餘時間
                 if (this.gameActive) {
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '16px Arial';
+                    ctx.textAlign = 'right';
+                    ctx.fillText(`剩餘時間: ${Math.max(0, Math.ceil(this.maxGameTime - this.gameTime))}秒`, width - 20, 30);
+                }
+            }
+
+            getScenarioName() {
+                switch(this.current_scenario) {
+                    case "city_traffic": return "市區交通";
+                    case "mountain_road": return "山區道路";
+                    case "highway": return "高速公路";
+                    default: return "未知情境";
+                }
+            }
+
+            gameLoop(timestamp) {
+                const deltaTime = timestamp - this.lastTime;
+                this.lastTime = timestamp;
+                
+                if (this.gameActive) {
+                    // 更新遊戲時間
+                    this.gameTime += deltaTime / 1000;
+                    
+                    // 檢查遊戲是否結束
+                    if (this.gameTime >= this.maxGameTime) {
+                        this.finishScenario();
+                    }
+                    
                     // 隨機碰撞檢測
                     if (Math.random() < 0.01) {
                         this.checkCollision();
                     }
                     
-                    // 自動結束條件（簡化）
-                    if (this.smooth_actions + this.aggressive_actions > 20) {
-                        this.finishScenario();
-                    }
+                    // 更新道路偏移（模擬移動）
+                    this.roadOffset = (this.roadOffset + this.speed * 0.01) % 100;
                 }
                 
                 this.drawScene();
-                requestAnimationFrame(() => this.gameLoop());
+                requestAnimationFrame((ts) => this.gameLoop(ts));
             }
         }
 
