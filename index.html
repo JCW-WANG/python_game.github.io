@@ -345,6 +345,7 @@
                 this.name = name;
                 this.facingRight = name === "Player 1";
                 this.attackAnimation = 0;
+                this.onGround = false;
             }
             
             draw() {
@@ -392,13 +393,14 @@
                 this.y += this.velY;
                 
                 // 跳躍
-                if (keys[this.controls.up] && !this.isJumping) {
+                if (keys[this.controls.up] && !this.isJumping && this.onGround) {
                     this.velY = -this.jumpPower;
                     this.isJumping = true;
+                    this.onGround = false;
                 }
                 
                 // 檢查是否站在平台上
-                let onGround = false;
+                this.onGround = false;
                 for (const platform of platforms) {
                     if (this.y + this.height >= platform.y && 
                         this.y + this.height <= platform.y + 10 &&
@@ -407,7 +409,7 @@
                         this.y = platform.y - this.height;
                         this.velY = 0;
                         this.isJumping = false;
-                        onGround = true;
+                        this.onGround = true;
                     }
                 }
                 
@@ -416,12 +418,7 @@
                     this.y = canvas.height - this.height;
                     this.velY = 0;
                     this.isJumping = false;
-                    onGround = true;
-                }
-                
-                // 如果不在任何平台上且沒有站在地面上，則標記為跳躍狀態
-                if (!onGround && this.velY > 0) {
-                    this.isJumping = true;
+                    this.onGround = true;
                 }
             }
             
@@ -429,8 +426,10 @@
                 if (this.attackCooldown === 0) {
                     // 簡單的攻擊邏輯
                     const attackRange = 70;
-                    if (Math.abs(this.x - otherPlayer.x) < attackRange && 
-                        Math.abs(this.y - otherPlayer.y) < this.height) {
+                    const horizontalDistance = Math.abs(this.x - otherPlayer.x);
+                    const verticalDistance = Math.abs(this.y - otherPlayer.y);
+                    
+                    if (horizontalDistance < attackRange && verticalDistance < this.height) {
                         const damage = Math.floor(Math.random() * 11) + 5; // 5-15傷害
                         otherPlayer.health -= damage;
                         this.attackCooldown = 30; // 攻擊冷卻時間
@@ -483,12 +482,16 @@
         }, "Player 2");
         
         // 創建平台
-        const platforms = [
-            new Platform(0, canvas.height - 50, canvas.width, 50),  // 地面
-            new Platform(200, 400, 200, 20),  // 平台1
-            new Platform(400, 300, 200, 20),  // 平台2
-            new Platform(200, 200, 200, 20),  // 平台3
-        ];
+        let platforms = [];
+        
+        function createPlatforms() {
+            platforms = [
+                new Platform(0, canvas.height - 50, canvas.width, 50),  // 地面
+                new Platform(200, 400, 200, 20),  // 平台1
+                new Platform(400, 300, 200, 20),  // 平台2
+                new Platform(200, 200, 200, 20),  // 平台3
+            ];
+        }
         
         // 鍵盤狀態
         const keys = {};
@@ -509,6 +512,11 @@
                     player2.attack(player1);
                 }
             }
+            
+            // 防止按鍵默認行為（例如方向鍵滾動頁面）
+            if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyF', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown', 'ControlRight'].includes(e.code)) {
+                e.preventDefault();
+            }
         });
         
         window.addEventListener('keyup', (e) => {
@@ -525,6 +533,8 @@
             player2.y = 300;
             player1.velY = 0;
             player2.velY = 0;
+            player1.isJumping = false;
+            player2.isJumping = false;
             gameRunning = true;
             gameOverScreen.style.display = 'none';
         });
@@ -548,10 +558,10 @@
                 player2.update();
                 
                 // 更新UI
-                p1Health.style.width = `${player1.health}%`;
-                p2Health.style.width = `${player2.health}%`;
-                p1HealthText.textContent = player1.health;
-                p2HealthText.textContent = player2.health;
+                p1Health.style.width = `${Math.max(0, player1.health)}%`;
+                p2Health.style.width = `${Math.max(0, player2.health)}%`;
+                p1HealthText.textContent = Math.max(0, player1.health);
+                p2HealthText.textContent = Math.max(0, player2.health);
                 
                 // 檢查遊戲結束條件
                 if (player1.health <= 0 || player2.health <= 0) {
@@ -573,6 +583,9 @@
             
             requestAnimationFrame(gameLoop);
         }
+        
+        // 初始化平台
+        createPlatforms();
         
         // 啟動遊戲循環
         gameLoop();
