@@ -3,538 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>駕駛模擬遊戲</title>
+    <title>雙人對打遊戲 | Fighting Game</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Microsoft JhengHei', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
+        
         body {
-            background: linear-gradient(135deg, #1a2a6c, #2a3c7c, #4a5ca8);
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
             color: #fff;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            max-width: 1400px;
-            margin: 0 auto;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-        }
-
-        h1 {
-            font-size: 2.8rem;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px rgba(0, 150, 255, 0.5);
-        }
-
-        .subtitle {
-            font-size: 1.2rem;
-            color: #a0c8ff;
-        }
-
-        .game-container {
-            display: flex;
-            flex: 1;
-            gap: 20px;
-            overflow: hidden;
-            flex-wrap: wrap;
-        }
-
-        .left-panel {
-            flex: 1;
-            min-width: 320px;
-            background: rgba(0, 20, 40, 0.7);
-            border-radius: 15px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        .game-screen {
-            flex: 2;
-            min-width: 600px;
-            background: rgba(0, 10, 25, 0.8);
-            border-radius: 15px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
-            min-height: 500px;
-        }
-
-        .panel-section {
-            background: rgba(0, 30, 60, 0.6);
-            padding: 15px;
-            border-radius: 10px;
-        }
-
-        h2 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: #6ab1ff;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 8px;
-        }
-
-        .selection-options {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
-        }
-
-        .option {
-            padding: 15px;
-            background: rgba(0, 40, 80, 0.5);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-            text-align: center;
-        }
-
-        .option:hover {
-            background: rgba(0, 60, 120, 0.7);
-            transform: translateY(-2px);
-        }
-
-        .option.selected {
-            background: rgba(0, 80, 160, 0.8);
-            border-color: #4da6ff;
-            box-shadow: 0 0 10px rgba(77, 166, 255, 0.5);
-        }
-
-        .option-name {
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-        }
-
-        .option-details {
-            font-size: 0.9rem;
-            color: #a0c8ff;
-        }
-
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        .dashboard-item {
-            display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 40, 80, 0.5);
-            padding: 15px;
-            border-radius: 8px;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
             text-align: center;
         }
-
-        .dashboard-label {
-            font-size: 1rem;
-            color: #a0c8ff;
-            margin-bottom: 8px;
+        
+        header {
+            margin-bottom: 30px;
+            text-align: center;
         }
-
-        .dashboard-value {
-            font-size: 1.5rem;
-            font-weight: bold;
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff4d4d, #4d79ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
-
-        .controls {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0a0c0;
+            margin-bottom: 30px;
         }
-
-        .control-btn {
-            padding: 12px 8px;
-            background: rgba(0, 60, 120, 0.7);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .control-btn:hover {
-            background: rgba(0, 80, 160, 0.9);
-            transform: translateY(-2px);
-        }
-
-        .control-btn:active {
-            transform: translateY(0);
-        }
-
-        .control-btn.active {
-            background: rgba(0, 100, 200, 0.9);
-            box-shadow: 0 0 10px rgba(77, 166, 255, 0.7);
-        }
-
+        
         .game-area {
             position: relative;
             width: 100%;
-            height: 100%;
+            background: rgba(10, 15, 30, 0.7);
+            border-radius: 15px;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
         }
-
-        .road {
-            position: absolute;
+        
+        #gameCanvas {
+            display: block;
             width: 100%;
-            height: 100%;
-            background: #2c3e50;
-            transition: all 0.5s;
+            background: #0a0f1e;
         }
-
-        .lane {
-            position: absolute;
-            height: 100%;
-            width: 100px;
-            border-left: 2px dashed rgba(255, 255, 255, 0.5);
-            border-right: 2px dashed rgba(255, 255, 255, 0.5);
-        }
-
-        .player-car {
-            position: absolute;
-            width: 60px;
-            height: 120px;
-            background: linear-gradient(135deg, #ff4d4d, #cc0000);
-            border-radius: 10px 10px 15px 15px;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%);
-            transition: left 0.3s ease, transform 0.1s;
-            z-index: 10;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
-        }
-
-        .car-front {
+        
+        .ui-overlay {
             position: absolute;
             top: 0;
+            left: 0;
             width: 100%;
-            height: 40%;
-            background: linear-gradient(to bottom, #e60000, #b30000);
-            border-radius: 10px 10px 5px 5px;
-        }
-
-        .car-windows {
-            position: absolute;
-            top: 15%;
-            left: 10%;
-            width: 80%;
-            height: 25%;
-            background: rgba(0, 50, 100, 0.7);
-            border-radius: 5px;
-        }
-
-        .car-rear {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 30%;
-            background: linear-gradient(to top, #e60000, #b30000);
-            border-radius: 5px 5px 15px 15px;
-        }
-
-        .car-lights {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #ff9900;
-        }
-
-        .left-light {
-            left: 5px;
-            bottom: 10px;
-        }
-
-        .right-light {
-            right: 5px;
-            bottom: 10px;
-        }
-
-        .turn-signal {
-            position: absolute;
-            width: 10px;
-            height: 15px;
-            background: #ffff00;
-            border-radius: 3px;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
-
-        .turn-signal.left {
-            left: -12px;
-            top: 45%;
-        }
-
-        .turn-signal.right {
-            right: -12px;
-            top: 45%;
-        }
-
-        .turn-signal.active {
-            opacity: 1;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .other-vehicle {
-            position: absolute;
-            width: 60px;
-            height: 120px;
-            background: #3498db;
-            border-radius: 10px 10px 15px 15px;
-            z-index: 5;
-            transition: top 0.1s linear;
-        }
-
-        .scenario-elements {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-        }
-
-        .traffic-light {
-            position: absolute;
-            width: 30px;
-            height: 80px;
-            background: #2c3e50;
-            border-radius: 5px;
-            top: 50px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .light {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            margin: 5px auto;
-            background: #444;
-        }
-
-        .light.active.red {
-            background: #ff3333;
-            box-shadow: 0 0 10px #ff3333;
-        }
-
-        .light.active.yellow {
-            background: #ffff33;
-            box-shadow: 0 0 10px #ffff33;
-        }
-
-        .light.active.green {
-            background: #33ff33;
-            box-shadow: 0 0 10px #33ff33;
-        }
-
-        .pedestrian {
-            position: absolute;
-            width: 20px;
-            height: 40px;
-            background: #9b59b6;
-            border-radius: 5px;
-        }
-
-        .obstacle {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background: #e67e22;
-            border-radius: 5px;
-        }
-
-        .score-panel {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 20, 40, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            min-width: 220px;
-            z-index: 20;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-        }
-
-        .score-title {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            color: #6ab1ff;
-            text-align: center;
-        }
-
-        .score-item {
+            padding: 20px;
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
+            pointer-events: none;
         }
-
-        .score-label {
-            color: #a0c8ff;
+        
+        .player-ui {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 180px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .score-value {
+        
+        .player-name {
+            font-size: 1.2rem;
             font-weight: bold;
+            margin-bottom: 10px;
         }
-
-        .progress-bar {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            margin-top: 5px;
+        
+        .health-bar {
+            height: 20px;
+            background: rgba(255, 0, 0, 0.3);
+            border-radius: 10px;
             overflow: hidden;
+            margin-bottom: 10px;
         }
-
-        .progress-fill {
+        
+        .health-fill {
             height: 100%;
-            border-radius: 4px;
+            border-radius: 10px;
             transition: width 0.3s;
         }
-
-        .rage-progress {
-            background: linear-gradient(to right, #4CAF50, #FFC107, #F44336);
+        
+        .player1-ui .health-fill {
+            background: linear-gradient(90deg, #ff4d4d, #ff9999);
         }
-
-        .skill-progress {
-            background: linear-gradient(to right, #F44336, #FFC107, #4CAF50);
+        
+        .player2-ui .health-fill {
+            background: linear-gradient(90deg, #4d79ff, #99bbff);
         }
-
-        .game-message {
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .control-card {
+            background: rgba(20, 25, 45, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            min-width: 250px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .control-card h3 {
+            margin-bottom: 15px;
+            color: #ffcc00;
+        }
+        
+        .key {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-family: monospace;
+        }
+        
+        .game-over {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(0, 20, 40, 0.9);
-            padding: 20px 30px;
-            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 30px;
+            border-radius: 15px;
             text-align: center;
-            z-index: 30;
-            box-shadow: 0 0 30px rgba(0, 150, 255, 0.5);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
             display: none;
-            max-width: 90%;
         }
-
-        .message-title {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            color: #6ab1ff;
-        }
-
-        .message-text {
-            font-size: 1.2rem;
+        
+        .game-over h2 {
+            font-size: 2.5rem;
             margin-bottom: 20px;
-            line-height: 1.5;
+            color: #ffcc00;
         }
-
-        .message-btn {
-            padding: 10px 20px;
-            background: #4da6ff;
+        
+        .restart-btn {
+            background: linear-gradient(90deg, #ff9900, #ffcc00);
+            color: #000;
             border: none;
-            border-radius: 5px;
-            color: white;
-            font-weight: bold;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 50px;
             cursor: pointer;
+            font-weight: bold;
             transition: all 0.3s;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.4);
         }
-
-        .message-btn:hover {
-            background: #2d8ce0;
-            transform: translateY(-2px);
+        
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 204, 0, 0.6);
         }
-
-        .instructions {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0, 20, 40, 0.7);
-            padding: 15px;
-            border-radius: 10px;
-            max-width: 300px;
-            font-size: 0.9rem;
-            line-height: 1.5;
-        }
-
-        .instructions h3 {
-            margin-bottom: 10px;
-            color: #6ab1ff;
-        }
-
-        .key {
-            display: inline-block;
-            padding: 2px 8px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-            margin: 0 2px;
-            font-family: monospace;
-        }
-
+        
         footer {
-            text-align: center;
-            padding: 15px;
             margin-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #a0a0c0;
             font-size: 0.9rem;
-            color: #a0c8ff;
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 1200px) {
-            .game-container {
-                flex-direction: column;
-            }
-            
-            .left-panel {
-                max-height: 40vh;
-                overflow-y: auto;
-            }
+            text-align: center;
         }
         
         @media (max-width: 768px) {
-            .game-screen {
-                min-width: 100%;
-            }
-            
-            .selection-options {
-                grid-template-columns: 1fr;
+            h1 {
+                font-size: 2.2rem;
             }
             
             .controls {
-                grid-template-columns: repeat(2, 1fr);
+                flex-direction: column;
+                align-items: center;
             }
             
-            .instructions {
-                position: relative;
-                bottom: auto;
-                left: auto;
-                max-width: 100%;
-                margin-top: 20px;
+            .control-card {
+                width: 100%;
+                max-width: 350px;
+            }
+            
+            .player-ui {
+                min-width: 140px;
+                padding: 10px;
+            }
+            
+            .player-name {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .ui-overlay {
+                padding: 10px;
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+            
+            .player-ui {
+                width: 100%;
+                max-width: 200px;
             }
         }
     </style>
@@ -542,856 +241,341 @@
 <body>
     <div class="container">
         <header>
-            <h1>駕駛模擬遊戲</h1>
-            <p class="subtitle">測試您的駕駛技術與情緒控制能力</p>
+            <h1>雙人對打遊戲</h1>
+            <p class="subtitle">與朋友一決高下！使用鍵盤控制你的角色</p>
         </header>
         
-        <div class="game-container">
-            <div class="left-panel">
-                <div class="panel-section">
-                    <h2>選擇車輛</h2>
-                    <div class="selection-options">
-                        <div class="option selected" data-vehicle="city_car">
-                            <div class="option-name">城市小車</div>
-                            <div class="option-details">1200cc · 穩定性高</div>
-                        </div>
-                        <div class="option" data-vehicle="sedan">
-                            <div class="option-name">家庭轎車</div>
-                            <div class="option-details">1800cc · 平衡性好</div>
-                        </div>
-                        <div class="option" data-vehicle="sports_car">
-                            <div class="option-name">運動跑車</div>
-                            <div class="option-details">2500cc · 加速性能強</div>
-                        </div>
+        <div class="game-area">
+            <canvas id="gameCanvas"></canvas>
+            
+            <div class="ui-overlay">
+                <div class="player-ui player1-ui">
+                    <div class="player-name">玩家 1</div>
+                    <div class="health-bar">
+                        <div class="health-fill" id="p1Health" style="width: 100%"></div>
                     </div>
+                    <div>生命值: <span id="p1HealthText">100</span></div>
                 </div>
                 
-                <div class="panel-section">
-                    <h2>選擇情境</h2>
-                    <div class="selection-options">
-                        <div class="option selected" data-scenario="city_traffic">
-                            <div class="option-name">繁忙市區高峰時段</div>
-                        </div>
-                        <div class="option" data-scenario="mountain_road">
-                            <div class="option-name">山區蜿蜒道路</div>
-                        </div>
-                        <div class="option" data-scenario="highway">
-                            <div class="option-name">高速公路複雜變道</div>
-                        </div>
+                <div class="player-ui player2-ui">
+                    <div class="player-name">玩家 2</div>
+                    <div class="health-bar">
+                        <div class="health-fill" id="p2Health" style="width: 100%"></div>
                     </div>
-                </div>
-                
-                <div class="panel-section">
-                    <h2>車輛狀態</h2>
-                    <div class="dashboard">
-                        <div class="dashboard-item">
-                            <div class="dashboard-label">速度</div>
-                            <div class="dashboard-value" id="speed-value">0 km/h</div>
-                        </div>
-                        <div class="dashboard-item">
-                            <div class="dashboard-label">檔位</div>
-                            <div class="dashboard-value" id="gear-value">D</div>
-                        </div>
-                        <div class="dashboard-item">
-                            <div class="dashboard-label">運動模式</div>
-                            <div class="dashboard-value" id="sport-mode">關閉</div>
-                        </div>
-                        <div class="dashboard-item">
-                            <div class="dashboard-label">方向燈</div>
-                            <div class="dashboard-value" id="turn-signal">無</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="panel-section">
-                    <h2>車輛控制</h2>
-                    <div class="controls">
-                        <button class="control-btn" id="left-signal">左轉燈</button>
-                        <button class="control-btn" id="right-signal">右轉燈</button>
-                        <button class="control-btn" id="sport-toggle">運動模式</button>
-                        <button class="control-btn" id="start-game">開始遊戲</button>
-                    </div>
+                    <div>生命值: <span id="p2HealthText">100</span></div>
                 </div>
             </div>
             
-            <div class="game-screen">
-                <div class="game-area">
-                    <div class="road">
-                        <div class="lane" style="left: calc(33.33% - 50px);"></div>
-                        <div class="lane" style="left: calc(66.66% - 50px);"></div>
-                    </div>
-                    
-                    <div class="scenario-elements">
-                        <!-- 情境元素會動態生成 -->
-                    </div>
-                    
-                    <div class="player-car">
-                        <div class="car-front"></div>
-                        <div class="car-windows"></div>
-                        <div class="car-rear">
-                            <div class="car-lights left-light"></div>
-                            <div class="car-lights right-light"></div>
-                        </div>
-                        <div class="turn-signal left"></div>
-                        <div class="turn-signal right"></div>
-                    </div>
-                    
-                    <div class="score-panel">
-                        <div class="score-title">駕駛評估</div>
-                        <div class="score-item">
-                            <span class="score-label">路怒症程度:</span>
-                            <span class="score-value" id="rage-score">0/100</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill rage-progress" style="width: 0%;"></div>
-                        </div>
-                        <div class="score-item">
-                            <span class="score-label">駕駛技術:</span>
-                            <span class="score-value" id="skill-score">0/100</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill skill-progress" style="width: 0%;"></div>
-                        </div>
-                        <div class="score-item">
-                            <span class="score-label">碰撞次數:</span>
-                            <span class="score-value" id="collisions">0</span>
-                        </div>
-                        <div class="score-item">
-                            <span class="score-label">危險操作:</span>
-                            <span class="score-value" id="dangerous-actions">0</span>
-                        </div>
-                    </div>
-                    
-                    <div class="instructions">
-                        <h3>操作說明</h3>
-                        <p>加速: <span class="key">↑</span> 鍵</p>
-                        <p>煞車: <span class="key">↓</span> 鍵</p>
-                        <p>左轉: <span class="key">←</span> 鍵</p>
-                        <p>右轉: <span class="key">→</span> 鍵</p>
-                        <p>手煞: <span class="key">空格</span> 鍵</p>
-                    </div>
-                </div>
-                
-                <div class="game-message" id="game-message">
-                    <div class="message-title" id="message-title">情境完成</div>
-                    <div class="message-text" id="message-text">您已完成目前情境，請查看您的評分。</div>
-                    <button class="message-btn" id="message-btn">確定</button>
-                </div>
+            <div class="game-over" id="gameOver">
+                <h2 id="winnerText">玩家 1 獲勝！</h2>
+                <p>遊戲結束，點擊按鈕重新開始</p>
+                <button class="restart-btn" id="restartBtn">重新開始遊戲</button>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-card">
+                <h3>玩家 1 控制</h3>
+                <p><span class="key">W</span> 跳躍</p>
+                <p><span class="key">A</span> 向左移動</p>
+                <p><span class="key">D</span> 向右移動</p>
+                <p><span class="key">F</span> 攻擊</p>
+            </div>
+            
+            <div class="control-card">
+                <h3>玩家 2 控制</h3>
+                <p><span class="key">↑</span> 跳躍</p>
+                <p><span class="key">←</span> 向左移動</p>
+                <p><span class="key">→</span> 向右移動</p>
+                <p><span class="key">R Ctrl</span> 攻擊</p>
             </div>
         </div>
         
         <footer>
-            <p>駕駛模擬遊戲 &copy; 2023 - 測試您的駕駛技術與情緒控制能力</p>
+            <p>專為 GitHub 設計 | 使用 HTML5 Canvas 和 JavaScript 開發</p>
         </footer>
     </div>
 
     <script>
-        // 遊戲主類
-        class DrivingGame {
-            constructor() {
-                // 車輛選擇
-                this.vehicles = {
-                    "city_car": {"name": "城市小車", "cc": 1200, "stability": 0.8, "color": "#ff4d4d", "acceleration": 0.08, "maxSpeed": 80},
-                    "sedan": {"name": "家庭轎車", "cc": 1800, "stability": 0.9, "color": "#3498db", "acceleration": 0.1, "maxSpeed": 120},
-                    "sports_car": {"name": "運動跑車", "cc": 2500, "stability": 0.7, "color": "#9b59b6", "acceleration": 0.15, "maxSpeed": 180}
-                };
-
-                // 遊戲狀態
-                this.speed = 0;
-                this.maxSpeed = 120;
-                this.gear = "D";  // D:前進, S:運動, R:倒車
-                this.turnSignal = "none";  // left, right, none
-                this.sportMode = false;
-                this.position = 0;  // 簡化位置
-                this.gameActive = false;
-                this.currentScenario = null;
-                this.currentVehicle = null;
-                this.currentLane = 1; // 0: 左, 1: 中, 2: 右
-                this.lanePositions = [20, 50, 80]; // 車道位置百分比
-
-                // 評分數據
-                this.collisions = 0;
-                this.dangerousActions = 0;
-                this.smoothActions = 0;
-                this.aggressiveActions = 0;
-
-                // 其他車輛和障礙物
-                this.otherVehicles = [];
-                this.obstacles = [];
-                this.trafficLights = [];
-                this.pedestrians = [];
-
-                // 鍵盤狀態
-                this.keys = {
-                    'ArrowUp': false,
-                    'ArrowDown': false,
-                    'ArrowLeft': false,
-                    'ArrowRight': false,
-                    ' ': false
-                };
-
-                // 初始化
-                this.init();
+        // 遊戲初始化
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gameOverScreen = document.getElementById('gameOver');
+        const winnerText = document.getElementById('winnerText');
+        const restartBtn = document.getElementById('restartBtn');
+        const p1Health = document.getElementById('p1Health');
+        const p2Health = document.getElementById('p2Health');
+        const p1HealthText = document.getElementById('p1HealthText');
+        const p2HealthText = document.getElementById('p2HealthText');
+        
+        // 設定畫布尺寸
+        function resizeCanvas() {
+            const container = document.querySelector('.game-area');
+            canvas.width = container.clientWidth;
+            canvas.height = Math.min(600, container.clientWidth * 0.75);
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        // 顏色定義
+        const colors = {
+            background: '#0a0f1e',
+            platform: '#4a5f8c',
+            player1: '#ff4d4d',
+            player2: '#4d79ff',
+            text: '#ffffff'
+        };
+        
+        // 玩家類
+        class Player {
+            constructor(x, y, color, controls, name) {
+                this.x = x;
+                this.y = y;
+                this.width = 50;
+                this.height = 80;
+                this.color = color;
+                this.speed = 5;
+                this.jumpPower = 15;
+                this.velY = 0;
+                this.isJumping = false;
+                this.health = 100;
+                this.attackCooldown = 0;
+                this.controls = controls;
+                this.name = name;
+                this.facingRight = name === "Player 1";
+                this.attackAnimation = 0;
             }
-
-            init() {
-                // 設置事件監聽器
-                this.setupEventListeners();
+            
+            draw() {
+                // 繪製玩家
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
                 
-                // 選擇預設車輛
-                this.selectVehicle("city_car");
-                
-                // 選擇預設情境
-                this.selectScenario("city_traffic");
-                
-                // 更新UI
-                this.updateDashboard();
-                
-                // 開始遊戲循環
-                this.gameLoop();
-            }
-
-            setupEventListeners() {
-                // 車輛選擇
-                document.querySelectorAll('.option[data-vehicle]').forEach(option => {
-                    option.addEventListener('click', () => {
-                        document.querySelectorAll('.option[data-vehicle]').forEach(opt => opt.classList.remove('selected'));
-                        option.classList.add('selected');
-                        this.selectVehicle(option.dataset.vehicle);
-                    });
-                });
-
-                // 情境選擇
-                document.querySelectorAll('.option[data-scenario]').forEach(option => {
-                    option.addEventListener('click', () => {
-                        if (this.gameActive) return;
-                        document.querySelectorAll('.option[data-scenario]').forEach(opt => opt.classList.remove('selected'));
-                        option.classList.add('selected');
-                        this.selectScenario(option.dataset.scenario);
-                    });
-                });
-
-                // 控制按鈕
-                document.getElementById('left-signal').addEventListener('click', () => this.toggleTurnSignal('left'));
-                document.getElementById('right-signal').addEventListener('click', () => this.toggleTurnSignal('right'));
-                document.getElementById('sport-toggle').addEventListener('click', () => this.toggleSportMode());
-                document.getElementById('start-game').addEventListener('click', () => this.startGame());
-                document.getElementById('message-btn').addEventListener('click', () => this.hideMessage());
-
-                // 鍵盤控制
-                document.addEventListener('keydown', (e) => this.handleKeyDown(e));
-                document.addEventListener('keyup', (e) => this.handleKeyUp(e));
-
-                // 防止方向鍵滾動頁面
-                window.addEventListener('keydown', function(e) {
-                    if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].indexOf(e.code) > -1) {
-                        e.preventDefault();
-                    }
-                }, false);
-            }
-
-            selectVehicle(vehicleType) {
-                if (vehicleType in this.vehicles) {
-                    this.currentVehicle = this.vehicles[vehicleType];
-                    this.maxSpeed = this.currentVehicle.maxSpeed;
-                    console.log(`已選擇: ${this.currentVehicle['name']}`);
-                    
-                    // 更新車輛顏色
-                    const playerCar = document.querySelector('.player-car');
-                    playerCar.style.background = `linear-gradient(135deg, ${this.currentVehicle.color}, ${this.darkenColor(this.currentVehicle.color, 20)})`;
-                    playerCar.querySelector('.car-front').style.background = `linear-gradient(to bottom, ${this.lightenColor(this.currentVehicle.color, 10)}, ${this.darkenColor(this.currentVehicle.color, 10)})`;
-                    playerCar.querySelector('.car-rear').style.background = `linear-gradient(to top, ${this.lightenColor(this.currentVehicle.color, 10)}, ${this.darkenColor(this.currentVehicle.color, 10)})`;
-                } else {
-                    console.log("無效的車輛選擇");
-                }
-            }
-
-            selectScenario(scenarioName) {
-                this.currentScenario = scenarioName;
-                console.log(`開始 ${scenarioName} 情境`);
-                
-                // 清除現有元素
-                this.clearScenarioElements();
-                
-                // 生成情境特定元素
-                this.generateScenarioElements();
-            }
-
-            clearScenarioElements() {
-                const scenarioElements = document.querySelector('.scenario-elements');
-                scenarioElements.innerHTML = '';
-                this.otherVehicles = [];
-                this.obstacles = [];
-                this.trafficLights = [];
-                this.pedestrians = [];
-            }
-
-            generateScenarioElements() {
-                const scenarioElements = document.querySelector('.scenario-elements');
-                
-                if (this.currentScenario === "city_traffic") {
-                    // 生成交通燈
-                    const trafficLight = document.createElement('div');
-                    trafficLight.className = 'traffic-light';
-                    trafficLight.innerHTML = `
-                        <div class="light red active"></div>
-                        <div class="light yellow"></div>
-                        <div class="light green"></div>
-                    `;
-                    trafficLight.style.left = '50%';
-                    trafficLight.style.top = '100px';
-                    scenarioElements.appendChild(trafficLight);
-                    this.trafficLights.push(trafficLight);
-                    
-                    // 生成其他車輛
-                    for (let i = 0; i < 5; i++) {
-                        const lane = Math.floor(Math.random() * 3);
-                        const y = -200 - i * 200;
-                        this.addOtherVehicle(lane, y);
-                    }
-                    
-                    // 生成行人
-                    for (let i = 0; i < 2; i++) {
-                        this.addPedestrian(200 + i * 300, 500);
-                    }
-                } else if (this.currentScenario === "mountain_road") {
-                    // 生成障礙物
-                    for (let i = 0; i < 4; i++) {
-                        const lane = Math.floor(Math.random() * 3);
-                        const y = 300 + i * 200;
-                        this.addObstacle(lane, y);
-                    }
-                    
-                    // 生成其他車輛
-                    for (let i = 0; i < 3; i++) {
-                        const lane = Math.floor(Math.random() * 3);
-                        const y = -200 - i * 250;
-                        this.addOtherVehicle(lane, y);
-                    }
-                } else if (this.currentScenario === "highway") {
-                    // 生成其他車輛
-                    for (let i = 0; i < 8; i++) {
-                        const lane = Math.floor(Math.random() * 3);
-                        const y = -200 - i * 150;
-                        this.addOtherVehicle(lane, y);
-                    }
-                }
-            }
-
-            addOtherVehicle(lane, y) {
-                const vehicle = document.createElement('div');
-                vehicle.className = 'other-vehicle';
-                
-                // 設定車輛位置
-                const leftPos = this.lanePositions[lane] + '%';
-                vehicle.style.left = leftPos;
-                vehicle.style.top = `${y}px`;
-                
-                // 隨機車輛顏色
-                const colors = ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6'];
-                vehicle.style.background = colors[Math.floor(Math.random() * colors.length)];
-                
-                document.querySelector('.scenario-elements').appendChild(vehicle);
-                this.otherVehicles.push({
-                    element: vehicle,
-                    lane: lane,
-                    y: y,
-                    speed: Math.random() * 2 + 1
-                });
-            }
-
-            addObstacle(lane, y) {
-                const obstacle = document.createElement('div');
-                obstacle.className = 'obstacle';
-                
-                const leftPos = this.lanePositions[lane] + '%';
-                obstacle.style.left = leftPos;
-                obstacle.style.top = `${y}px`;
-                
-                document.querySelector('.scenario-elements').appendChild(obstacle);
-                this.obstacles.push({
-                    element: obstacle,
-                    lane: lane,
-                    y: y
-                });
-            }
-
-            addPedestrian(x, y) {
-                const pedestrian = document.createElement('div');
-                pedestrian.className = 'pedestrian';
-                pedestrian.style.left = `${x}px`;
-                pedestrian.style.top = `${y}px`;
-                
-                document.querySelector('.scenario-elements').appendChild(pedestrian);
-                this.pedestrians.push({
-                    element: pedestrian,
-                    x: x,
-                    y: y,
-                    direction: Math.random() > 0.5 ? 1 : -1
-                });
-            }
-
-            startGame() {
-                if (this.gameActive) return;
-                
-                this.gameActive = true;
-                this.collisions = 0;
-                this.dangerousActions = 0;
-                this.smoothActions = 0;
-                this.aggressiveActions = 0;
-                
-                document.getElementById('start-game').textContent = '遊戲中...';
-                document.getElementById('start-game').classList.add('active');
-                
-                console.log(`開始 ${this.currentScenario} 情境遊戲`);
-                
-                // 重置車輛位置
-                this.position = 0;
-                this.currentLane = 1;
-                this.updatePlayerPosition();
-                
-                // 更新評分顯示
-                this.updateScores();
-                
-                // 設定遊戲計時器
-                this.gameTime = 0;
-                this.gameTimer = setInterval(() => {
-                    this.gameTime++;
-                    if (this.gameTime >= 60) { // 60秒後自動結束遊戲
-                        this.endGame();
-                    }
-                }, 1000);
-            }
-
-            endGame() {
-                this.gameActive = false;
-                this.speed = 0;
-                clearInterval(this.gameTimer);
-                
-                document.getElementById('start-game').textContent = '開始遊戲';
-                document.getElementById('start-game').classList.remove('active');
-                
-                // 計算最終評分
-                const roadRageLevel = this.calculateRageScore();
-                const drivingSkill = this.calculateSkillScore();
-                
-                // 顯示結果訊息
-                this.showMessage(
-                    "情境完成", 
-                    `路怒症程度: ${roadRageLevel.toFixed(1)}/100<br>駕駛技術: ${drivingSkill.toFixed(1)}/100<br><br>${this.getEvaluationText(roadRageLevel, drivingSkill)}`
-                );
-                
-                console.log(`遊戲結束 - 路怒症: ${roadRageLevel.toFixed(1)}, 駕駛技術: ${drivingSkill.toFixed(1)}`);
-            }
-
-            showMessage(title, text) {
-                document.getElementById('message-title').textContent = title;
-                document.getElementById('message-text').innerHTML = text;
-                document.getElementById('game-message').style.display = 'block';
-            }
-
-            hideMessage() {
-                document.getElementById('game-message').style.display = 'none';
-            }
-
-            getEvaluationText(rage, skill) {
-                let rageText = "";
-                let skillText = "";
-                
-                if (rage < 30) {
-                    rageText = "冷靜的安全駕駛者";
-                } else if (rage < 60) {
-                    rageText = "普通駕駛者";
-                } else {
-                    rageText = "需要注意路怒傾向";
+                // 繪製攻擊動畫
+                if (this.attackAnimation > 0) {
+                    ctx.fillStyle = 'rgba(255, 255, 0, 0.5)';
+                    const attackX = this.facingRight ? this.x + this.width : this.x - 30;
+                    ctx.fillRect(attackX, this.y, 30, this.height);
+                    this.attackAnimation--;
                 }
                 
-                if (skill > 80) {
-                    skillText = "優秀駕駛技術";
-                } else if (skill > 60) {
-                    skillText = "良好駕駛技術";
-                } else {
-                    skillText = "需要提升駕駛技術";
-                }
+                // 繪製眼睛（方向指示）
+                ctx.fillStyle = '#ffffff';
+                const eyeX = this.facingRight ? this.x + this.width - 15 : this.x + 15;
+                ctx.beginPath();
+                ctx.arc(eyeX, this.y + 25, 8, 0, Math.PI * 2);
+                ctx.fill();
                 
-                return `${rageText}<br>${skillText}`;
+                ctx.fillStyle = '#000000';
+                ctx.beginPath();
+                ctx.arc(eyeX, this.y + 25, 4, 0, Math.PI * 2);
+                ctx.fill();
             }
-
-            accelerate() {
-                if (!this.gameActive) return;
-                
-                if (this.gear !== "D" && this.gear !== "S") {
-                    console.log("目前檔位無法加速");
-                    return;
+            
+            move(keys, platforms) {
+                // 水平移動
+                if (keys[this.controls.left]) {
+                    this.x -= this.speed;
+                    this.facingRight = false;
                 }
-
-                // 基礎加速計算
-                let acceleration = this.currentVehicle.acceleration;
-                if (this.sportMode) {
-                    acceleration *= 1.5;
-                }
-
-                this.speed = Math.min(this.maxSpeed, this.speed + acceleration);
-
-                // 記錄操作類型
-                if (acceleration > 0.1) {
-                    this.aggressiveActions++;
-                } else {
-                    this.smoothActions++;
-                }
-
-                // 情境特定檢查
-                this.checkScenarioSpeed();
-            }
-
-            brake() {
-                if (!this.gameActive) return;
-                
-                const deceleration = 0.2;
-                this.speed = Math.max(0, this.speed - deceleration);
-
-                // 急煞車檢測
-                if (deceleration > 0.15 && this.speed > 30) {
-                    this.dangerousActions++;
-                }
-            }
-
-            changeLane(direction) {
-                if (!this.gameActive) return;
-                
-                const newLane = this.currentLane + direction;
-                
-                // 檢查是否超出車道範圍
-                if (newLane < 0 || newLane > 2) return;
-                
-                // 檢查方向燈使用
-                if ((direction === -1 && this.turnSignal !== "left") || 
-                    (direction === 1 && this.turnSignal !== "right")) {
-                    this.dangerousActions++;
-                    console.log("變道未打方向燈");
+                if (keys[this.controls.right]) {
+                    this.x += this.speed;
+                    this.facingRight = true;
                 }
                 
-                this.currentLane = newLane;
-                this.updatePlayerPosition();
+                // 確保玩家不會離開螢幕
+                this.x = Math.max(0, Math.min(canvas.width - this.width, this.x));
                 
-                // 檢查變道是否安全
-                if (!this.checkLaneChangeSafety()) {
-                    this.dangerousActions++;
-                    console.log("危險變道");
+                // 重力
+                this.velY += 0.5;
+                this.y += this.velY;
+                
+                // 跳躍
+                if (keys[this.controls.up] && !this.isJumping) {
+                    this.velY = -this.jumpPower;
+                    this.isJumping = true;
                 }
-            }
-
-            updatePlayerPosition() {
-                const playerCar = document.querySelector('.player-car');
-                playerCar.style.left = this.lanePositions[this.currentLane] + '%';
-            }
-
-            checkLaneChangeSafety() {
-                const playerRect = document.querySelector('.player-car').getBoundingClientRect();
                 
-                for (const vehicle of this.otherVehicles) {
-                    const vehicleRect = vehicle.element.getBoundingClientRect();
-                    
-                    // 檢查是否有車輛在目標車道附近
-                    if (Math.abs(vehicleRect.top - playerRect.top) < 200) {
-                        return false;
+                // 檢查是否站在平台上
+                let onGround = false;
+                for (const platform of platforms) {
+                    if (this.y + this.height >= platform.y && 
+                        this.y + this.height <= platform.y + 10 &&
+                        this.x + this.width > platform.x && 
+                        this.x < platform.x + platform.width) {
+                        this.y = platform.y - this.height;
+                        this.velY = 0;
+                        this.isJumping = false;
+                        onGround = true;
                     }
                 }
                 
-                return true;
-            }
-
-            shiftGear(newGear) {
-                if (!this.gameActive) return;
-                
-                // 危險換檔檢測
-                if (this.speed > 20 && newGear === "R") {
-                    this.dangerousActions += 2;
-                    console.log("警告！高速時換倒檔很危險");
-                } else {
-                    this.smoothActions++;
-                }
-
-                this.gear = newGear;
-                this.updateDashboard();
-            }
-
-            toggleTurnSignal(signal) {
-                if (this.turnSignal === signal) {
-                    this.turnSignal = "none";
-                } else {
-                    this.turnSignal = signal;
+                // 檢查是否站在地面
+                if (this.y + this.height >= canvas.height) {
+                    this.y = canvas.height - this.height;
+                    this.velY = 0;
+                    this.isJumping = false;
+                    onGround = true;
                 }
                 
-                // 更新UI
-                document.querySelectorAll('.turn-signal').forEach(light => {
-                    light.classList.remove('active');
-                });
-                
-                if (this.turnSignal !== "none") {
-                    document.querySelector(`.turn-signal.${this.turnSignal}`).classList.add('active');
-                }
-                
-                this.updateDashboard();
-            }
-
-            toggleSportMode() {
-                this.sportMode = !this.sportMode;
-                const status = this.sportMode ? "開啟" : "關閉";
-                console.log(`運動模式 ${status}`);
-                this.updateDashboard();
-            }
-
-            checkScenarioSpeed() {
-                if (!this.currentScenario) return;
-
-                if (this.currentScenario === "city_traffic" && this.speed > 60) {
-                    this.dangerousActions++;
-                } else if (this.currentScenario === "mountain_road" && this.speed > 80) {
-                    this.dangerousActions++;
-                } else if (this.currentScenario === "highway" && this.speed > 110) {
-                    this.dangerousActions++;
+                // 如果不在任何平台上且沒有站在地面上，則標記為跳躍狀態
+                if (!onGround && this.velY > 0) {
+                    this.isJumping = true;
                 }
             }
-
-            checkCollision() {
-                if (!this.gameActive) return false;
-                
-                const playerCar = document.querySelector('.player-car');
-                const playerRect = playerCar.getBoundingClientRect();
-                
-                // 檢查與其他車輛的碰撞
-                for (const vehicle of this.otherVehicles) {
-                    const vehicleRect = vehicle.element.getBoundingClientRect();
-                    
-                    if (this.rectIntersect(playerRect, vehicleRect)) {
-                        this.collisions++;
-                        console.log("發生碰撞！");
+            
+            attack(otherPlayer) {
+                if (this.attackCooldown === 0) {
+                    // 簡單的攻擊邏輯
+                    const attackRange = 70;
+                    if (Math.abs(this.x - otherPlayer.x) < attackRange && 
+                        Math.abs(this.y - otherPlayer.y) < this.height) {
+                        const damage = Math.floor(Math.random() * 11) + 5; // 5-15傷害
+                        otherPlayer.health -= damage;
+                        this.attackCooldown = 30; // 攻擊冷卻時間
+                        this.attackAnimation = 10; // 攻擊動畫幀數
                         return true;
                     }
                 }
-                
-                // 檢查與障礙物的碰撞
-                for (const obstacle of this.obstacles) {
-                    const obstacleRect = obstacle.element.getBoundingClientRect();
-                    
-                    if (this.rectIntersect(playerRect, obstacleRect)) {
-                        this.collisions++;
-                        console.log("撞到障礙物！");
-                        return true;
-                    }
-                }
-                
-                // 檢查與行人的碰撞
-                for (const pedestrian of this.pedestrians) {
-                    const pedestrianRect = pedestrian.element.getBoundingClientRect();
-                    
-                    if (this.rectIntersect(playerRect, pedestrianRect)) {
-                        this.collisions++;
-                        console.log("撞到行人！");
-                        return true;
-                    }
-                }
-                
                 return false;
             }
-
-            rectIntersect(rect1, rect2) {
-                return !(rect1.right < rect2.left || 
-                         rect1.left > rect2.right || 
-                         rect1.bottom < rect2.top || 
-                         rect1.top > rect2.bottom);
-            }
-
-            calculateRageScore() {
-                // 路怒症程度 (0-100，越高越嚴重)
-                const rageScore = (
-                    this.collisions * 25 +
-                    this.dangerousActions * 8 +
-                    this.aggressiveActions * 3
-                );
-                return Math.min(100, rageScore);
-            }
-
-            calculateSkillScore() {
-                // 駕駛技術 (0-100，越高越好)
-                let skillScore = 50;  // 基礎分
-                skillScore += this.smoothActions * 0.5;
-                skillScore -= this.dangerousActions * 3;
-                skillScore -= this.collisions * 15;
-                return Math.max(0, Math.min(100, skillScore));
-            }
-
-            updateDashboard() {
-                document.getElementById('speed-value').textContent = `${Math.round(this.speed)} km/h`;
-                document.getElementById('gear-value').textContent = this.gear;
-                document.getElementById('sport-mode').textContent = this.sportMode ? "開啟" : "關閉";
-                document.getElementById('turn-signal').textContent = 
-                    this.turnSignal === "left" ? "左轉" : 
-                    this.turnSignal === "right" ? "右轉" : "無";
-            }
-
-            updateScores() {
-                const rageScore = this.calculateRageScore();
-                const skillScore = this.calculateSkillScore();
-                
-                document.getElementById('rage-score').textContent = `${rageScore.toFixed(1)}/100`;
-                document.getElementById('skill-score').textContent = `${skillScore.toFixed(1)}/100`;
-                document.getElementById('collisions').textContent = this.collisions;
-                document.getElementById('dangerous-actions').textContent = this.dangerousActions;
-                
-                document.querySelector('.rage-progress').style.width = `${rageScore}%`;
-                document.querySelector('.skill-progress').style.width = `${skillScore}%`;
-            }
-
-            handleKeyDown(e) {
-                if (!this.gameActive) return;
-                
-                if (e.key in this.keys) {
-                    this.keys[e.key] = true;
+            
+            update() {
+                if (this.attackCooldown > 0) {
+                    this.attackCooldown--;
                 }
-                
-                switch(e.key) {
-                    case 'a':
-                    case 'A':
-                        this.toggleTurnSignal('left');
-                        break;
-                    case 'd':
-                    case 'D':
-                        this.toggleTurnSignal('right');
-                        break;
-                    case 's':
-                    case 'S':
-                        this.toggleSportMode();
-                        break;
-                }
-            }
-
-            handleKeyUp(e) {
-                if (e.key in this.keys) {
-                    this.keys[e.key] = false;
-                }
-            }
-
-            updateOtherVehicles() {
-                if (!this.gameActive) return;
-                
-                // 更新其他車輛位置
-                for (const vehicle of this.otherVehicles) {
-                    vehicle.y += vehicle.speed + (this.speed / 50);
-                    vehicle.element.style.top = `${vehicle.y}px`;
-                    
-                    // 如果車輛離開螢幕，重新放置到頂部
-                    if (vehicle.y > window.innerHeight + 200) {
-                        vehicle.y = -200;
-                        vehicle.lane = Math.floor(Math.random() * 3);
-                        vehicle.element.style.left = this.lanePositions[vehicle.lane] + '%';
-                    }
-                }
-                
-                // 更新行人位置
-                for (const pedestrian of this.pedestrians) {
-                    pedestrian.x += pedestrian.direction * 1;
-                    pedestrian.element.style.left = `${pedestrian.x}px`;
-                    
-                    // 如果行人走到邊緣，改變方向
-                    if (pedestrian.x < 50 || pedestrian.x > window.innerWidth - 70) {
-                        pedestrian.direction *= -1;
-                    }
-                }
-            }
-
-            processInput() {
-                if (!this.gameActive) return;
-                
-                // 處理持續按鍵
-                if (this.keys['ArrowUp']) {
-                    this.accelerate();
-                }
-                
-                if (this.keys['ArrowDown']) {
-                    this.brake();
-                }
-                
-                if (this.keys['ArrowLeft']) {
-                    this.changeLane(-1);
-                }
-                
-                if (this.keys['ArrowRight']) {
-                    this.changeLane(1);
-                }
-                
-                if (this.keys[' ']) {
-                    this.brake(); // 空格鍵緊急煞車
-                }
-            }
-
-            gameLoop() {
-                // 處理輸入
-                this.processInput();
-                
-                // 更新遊戲狀態
-                if (this.gameActive) {
-                    // 自然減速（模擬阻力）
-                    if (this.speed > 0 && !this.keys['ArrowUp']) {
-                        this.speed = Math.max(0, this.speed - 0.05);
-                    }
-                    
-                    // 更新其他車輛和行人
-                    this.updateOtherVehicles();
-                    
-                    // 檢查碰撞
-                    this.checkCollision();
-                    
-                    // 更新評分
-                    this.updateScores();
-                    
-                    // 更新儀表板
-                    this.updateDashboard();
-                }
-                
-                // 繼續遊戲循環
-                requestAnimationFrame(() => this.gameLoop());
-            }
-
-            // 工具函數
-            lightenColor(color, percent) {
-                const num = parseInt(color.replace("#", ""), 16);
-                const amt = Math.round(2.55 * percent);
-                const R = (num >> 16) + amt;
-                const G = (num >> 8 & 0x00FF) + amt;
-                const B = (num & 0x0000FF) + amt;
-                return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-                    (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-                    (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
-            }
-
-            darkenColor(color, percent) {
-                const num = parseInt(color.replace("#", ""), 16);
-                const amt = Math.round(2.55 * percent);
-                const R = (num >> 16) - amt;
-                const G = (num >> 8 & 0x00FF) - amt;
-                const B = (num & 0x0000FF) - amt;
-                return "#" + (0x1000000 + (R > 0 ? R : 0) * 0x10000 +
-                    (G > 0 ? G : 0) * 0x100 +
-                    (B > 0 ? B : 0)).toString(16).slice(1);
             }
         }
-
-        // 初始化遊戲
-        document.addEventListener('DOMContentLoaded', () => {
-            const game = new DrivingGame();
+        
+        // 平台類
+        class Platform {
+            constructor(x, y, width, height) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+            }
             
-            // 顯示歡迎訊息
-            setTimeout(() => {
-                if (!game.gameActive) {
-                    game.showMessage(
-                        "歡迎來到駕駛模擬遊戲", 
-                        "請選擇車輛和情境，然後點擊開始遊戲按鈕。<br><br>使用方向鍵控制車輛，A/D鍵控制方向燈，S鍵切換運動模式。"
-                    );
+            draw() {
+                ctx.fillStyle = colors.platform;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                
+                // 平台頂部高光
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                ctx.fillRect(this.x, this.y, this.width, 5);
+            }
+        }
+        
+        // 創建玩家
+        const player1 = new Player(100, 300, colors.player1, {
+            up: 'KeyW',
+            left: 'KeyA',
+            right: 'KeyD',
+            attack: 'KeyF'
+        }, "Player 1");
+        
+        const player2 = new Player(600, 300, colors.player2, {
+            up: 'ArrowUp',
+            left: 'ArrowLeft',
+            right: 'ArrowRight',
+            attack: 'ControlRight'
+        }, "Player 2");
+        
+        // 創建平台
+        const platforms = [
+            new Platform(0, canvas.height - 50, canvas.width, 50),  // 地面
+            new Platform(200, 400, 200, 20),  // 平台1
+            new Platform(400, 300, 200, 20),  // 平台2
+            new Platform(200, 200, 200, 20),  // 平台3
+        ];
+        
+        // 鍵盤狀態
+        const keys = {};
+        
+        // 遊戲狀態
+        let gameRunning = true;
+        
+        // 鍵盤事件監聽
+        window.addEventListener('keydown', (e) => {
+            keys[e.code] = true;
+            
+            // 攻擊按鍵檢測
+            if (gameRunning) {
+                if (e.code === player1.controls.attack) {
+                    player1.attack(player2);
                 }
-            }, 1000);
+                if (e.code === player2.controls.attack) {
+                    player2.attack(player1);
+                }
+            }
         });
+        
+        window.addEventListener('keyup', (e) => {
+            keys[e.code] = false;
+        });
+        
+        // 重新開始遊戲
+        restartBtn.addEventListener('click', () => {
+            player1.health = 100;
+            player2.health = 100;
+            player1.x = 100;
+            player1.y = 300;
+            player2.x = 600;
+            player2.y = 300;
+            player1.velY = 0;
+            player2.velY = 0;
+            gameRunning = true;
+            gameOverScreen.style.display = 'none';
+        });
+        
+        // 遊戲主循環
+        function gameLoop() {
+            // 清空畫布
+            ctx.fillStyle = colors.background;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 繪製平台
+            platforms.forEach(platform => platform.draw());
+            
+            if (gameRunning) {
+                // 更新玩家位置
+                player1.move(keys, platforms);
+                player2.move(keys, platforms);
+                
+                // 更新玩家狀態
+                player1.update();
+                player2.update();
+                
+                // 更新UI
+                p1Health.style.width = `${player1.health}%`;
+                p2Health.style.width = `${player2.health}%`;
+                p1HealthText.textContent = player1.health;
+                p2HealthText.textContent = player2.health;
+                
+                // 檢查遊戲結束條件
+                if (player1.health <= 0 || player2.health <= 0) {
+                    gameRunning = false;
+                    const winner = player1.health <= 0 ? "玩家 2" : "玩家 1";
+                    winnerText.textContent = `${winner} 獲勝！`;
+                    gameOverScreen.style.display = 'block';
+                }
+            }
+            
+            // 繪製玩家
+            player1.draw();
+            player2.draw();
+            
+            // 繪製遊戲標題
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.font = '16px Arial';
+            ctx.fillText('雙人對打遊戲', 20, 30);
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // 啟動遊戲循環
+        gameLoop();
     </script>
 </body>
 </html>
