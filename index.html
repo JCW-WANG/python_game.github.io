@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>驾驶模拟游戏</title>
+    <title>駕駛模擬遊戲</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', 'Microsoft JhengHei', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
@@ -18,15 +18,15 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         .container {
             display: flex;
             flex-direction: column;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            height: 100vh;
+            min-height: 100vh;
             padding: 20px;
         }
 
@@ -53,10 +53,12 @@
             flex: 1;
             gap: 20px;
             overflow: hidden;
+            flex-wrap: wrap;
         }
 
         .left-panel {
-            flex: 0 0 300px;
+            flex: 1;
+            min-width: 320px;
             background: rgba(0, 20, 40, 0.7);
             border-radius: 15px;
             padding: 20px;
@@ -68,15 +70,17 @@
         }
 
         .game-screen {
-            flex: 1;
+            flex: 2;
+            min-width: 600px;
             background: rgba(0, 10, 25, 0.8);
             border-radius: 15px;
             position: relative;
             overflow: hidden;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+            min-height: 500px;
         }
 
-        .vehicle-selection, .scenario-selection {
+        .panel-section {
             background: rgba(0, 30, 60, 0.6);
             padding: 15px;
             border-radius: 10px;
@@ -90,77 +94,80 @@
             padding-bottom: 8px;
         }
 
-        .vehicle-options, .scenario-options {
-            display: flex;
-            flex-direction: column;
+        .selection-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 10px;
         }
 
-        .vehicle-option, .scenario-option {
-            padding: 12px;
+        .option {
+            padding: 15px;
             background: rgba(0, 40, 80, 0.5);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
             border: 2px solid transparent;
+            text-align: center;
         }
 
-        .vehicle-option:hover, .scenario-option:hover {
+        .option:hover {
             background: rgba(0, 60, 120, 0.7);
             transform: translateY(-2px);
         }
 
-        .vehicle-option.selected, .scenario-option.selected {
+        .option.selected {
             background: rgba(0, 80, 160, 0.8);
             border-color: #4da6ff;
             box-shadow: 0 0 10px rgba(77, 166, 255, 0.5);
         }
 
-        .vehicle-name {
+        .option-name {
             font-weight: bold;
             font-size: 1.1rem;
+            margin-bottom: 5px;
         }
 
-        .vehicle-specs {
+        .option-details {
             font-size: 0.9rem;
             color: #a0c8ff;
-            margin-top: 5px;
         }
 
         .dashboard {
-            background: rgba(0, 30, 60, 0.6);
-            padding: 15px;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 15px;
         }
 
         .dashboard-item {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
+            background: rgba(0, 40, 80, 0.5);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
         }
 
         .dashboard-label {
             font-size: 1rem;
             color: #a0c8ff;
+            margin-bottom: 8px;
         }
 
         .dashboard-value {
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             font-weight: bold;
         }
 
         .controls {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(4, 1fr);
             gap: 10px;
-            margin-top: 10px;
         }
 
         .control-btn {
-            padding: 10px;
+            padding: 12px 8px;
             background: rgba(0, 60, 120, 0.7);
             border: none;
             border-radius: 8px;
@@ -168,6 +175,7 @@
             cursor: pointer;
             transition: all 0.2s;
             font-weight: bold;
+            font-size: 0.9rem;
         }
 
         .control-btn:hover {
@@ -369,7 +377,7 @@
             background: rgba(0, 20, 40, 0.8);
             padding: 15px;
             border-radius: 10px;
-            min-width: 200px;
+            min-width: 220px;
             z-index: 20;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
         }
@@ -429,6 +437,7 @@
             z-index: 30;
             box-shadow: 0 0 30px rgba(0, 150, 255, 0.5);
             display: none;
+            max-width: 90%;
         }
 
         .message-title {
@@ -440,6 +449,7 @@
         .message-text {
             font-size: 1.2rem;
             margin-bottom: 20px;
+            line-height: 1.5;
         }
 
         .message-btn {
@@ -494,19 +504,36 @@
         }
 
         /* 响应式设计 */
-        @media (max-width: 900px) {
+        @media (max-width: 1200px) {
             .game-container {
                 flex-direction: column;
             }
             
             .left-panel {
-                flex: 0 0 auto;
                 max-height: 40vh;
                 overflow-y: auto;
             }
+        }
+        
+        @media (max-width: 768px) {
+            .game-screen {
+                min-width: 100%;
+            }
+            
+            .selection-options {
+                grid-template-columns: 1fr;
+            }
             
             .controls {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .instructions {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                max-width: 100%;
+                margin-top: 20px;
             }
         }
     </style>
@@ -514,69 +541,74 @@
 <body>
     <div class="container">
         <header>
-            <h1>驾驶模拟游戏</h1>
-            <p class="subtitle">测试您的驾驶技术与情绪控制能力</p>
+            <h1>駕駛模擬遊戲</h1>
+            <p class="subtitle">測試您的駕駛技術與情緒控制能力</p>
         </header>
         
         <div class="game-container">
             <div class="left-panel">
-                <div class="vehicle-selection">
-                    <h2>选择车辆</h2>
-                    <div class="vehicle-options">
-                        <div class="vehicle-option selected" data-vehicle="city_car">
-                            <div class="vehicle-name">城市小车</div>
-                            <div class="vehicle-specs">1200cc · 稳定性高</div>
+                <div class="panel-section">
+                    <h2>選擇車輛</h2>
+                    <div class="selection-options">
+                        <div class="option selected" data-vehicle="city_car">
+                            <div class="option-name">城市小車</div>
+                            <div class="option-details">1200cc · 穩定性高</div>
                         </div>
-                        <div class="vehicle-option" data-vehicle="sedan">
-                            <div class="vehicle-name">家庭轿车</div>
-                            <div class="vehicle-specs">1800cc · 平衡性好</div>
+                        <div class="option" data-vehicle="sedan">
+                            <div class="option-name">家庭轎車</div>
+                            <div class="option-details">1800cc · 平衡性好</div>
                         </div>
-                        <div class="vehicle-option" data-vehicle="sports_car">
-                            <div class="vehicle-name">运动跑车</div>
-                            <div class="vehicle-specs">2500cc · 加速性能强</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="scenario-selection">
-                    <h2>选择情境</h2>
-                    <div class="scenario-options">
-                        <div class="scenario-option selected" data-scenario="city_traffic">
-                            <div class="scenario-name">繁忙市区高峰时段</div>
-                        </div>
-                        <div class="scenario-option" data-scenario="mountain_road">
-                            <div class="scenario-name">山区蜿蜒道路</div>
-                        </div>
-                        <div class="scenario-option" data-scenario="highway">
-                            <div class="scenario-name">高速公路复杂变道</div>
+                        <div class="option" data-vehicle="sports_car">
+                            <div class="option-name">運動跑車</div>
+                            <div class="option-details">2500cc · 加速性能強</div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="dashboard">
-                    <h2>车辆状态</h2>
-                    <div class="dashboard-item">
-                        <span class="dashboard-label">速度</span>
-                        <span class="dashboard-value" id="speed-value">0 km/h</span>
+                <div class="panel-section">
+                    <h2>選擇情境</h2>
+                    <div class="selection-options">
+                        <div class="option selected" data-scenario="city_traffic">
+                            <div class="option-name">繁忙市區高峰時段</div>
+                        </div>
+                        <div class="option" data-scenario="mountain_road">
+                            <div class="option-name">山區蜿蜒道路</div>
+                        </div>
+                        <div class="option" data-scenario="highway">
+                            <div class="option-name">高速公路複雜變道</div>
+                        </div>
                     </div>
-                    <div class="dashboard-item">
-                        <span class="dashboard-label">档位</span>
-                        <span class="dashboard-value" id="gear-value">D</span>
+                </div>
+                
+                <div class="panel-section">
+                    <h2>車輛狀態</h2>
+                    <div class="dashboard">
+                        <div class="dashboard-item">
+                            <div class="dashboard-label">速度</div>
+                            <div class="dashboard-value" id="speed-value">0 km/h</div>
+                        </div>
+                        <div class="dashboard-item">
+                            <div class="dashboard-label">檔位</div>
+                            <div class="dashboard-value" id="gear-value">D</div>
+                        </div>
+                        <div class="dashboard-item">
+                            <div class="dashboard-label">運動模式</div>
+                            <div class="dashboard-value" id="sport-mode">關閉</div>
+                        </div>
+                        <div class="dashboard-item">
+                            <div class="dashboard-label">方向燈</div>
+                            <div class="dashboard-value" id="turn-signal">無</div>
+                        </div>
                     </div>
-                    <div class="dashboard-item">
-                        <span class="dashboard-label">运动模式</span>
-                        <span class="dashboard-value" id="sport-mode">关闭</span>
-                    </div>
-                    <div class="dashboard-item">
-                        <span class="dashboard-label">方向灯</span>
-                        <span class="dashboard-value" id="turn-signal">无</span>
-                    </div>
-                    
+                </div>
+                
+                <div class="panel-section">
+                    <h2>車輛控制</h2>
                     <div class="controls">
-                        <button class="control-btn" id="left-signal">左转灯</button>
-                        <button class="control-btn" id="right-signal">右转灯</button>
-                        <button class="control-btn" id="sport-toggle">运动模式</button>
-                        <button class="control-btn" id="start-game">开始游戏</button>
+                        <button class="control-btn" id="left-signal">左轉燈</button>
+                        <button class="control-btn" id="right-signal">右轉燈</button>
+                        <button class="control-btn" id="sport-toggle">運動模式</button>
+                        <button class="control-btn" id="start-game">開始遊戲</button>
                     </div>
                 </div>
             </div>
@@ -589,7 +621,7 @@
                     </div>
                     
                     <div class="scenario-elements">
-                        <!-- 情境元素会动态生成 -->
+                        <!-- 情境元素會動態生成 -->
                     </div>
                     
                     <div class="player-car">
@@ -604,7 +636,7 @@
                     </div>
                     
                     <div class="score-panel">
-                        <div class="score-title">驾驶评估</div>
+                        <div class="score-title">駕駛評估</div>
                         <div class="score-item">
                             <span class="score-label">路怒症程度:</span>
                             <span class="score-value" id="rage-score">0/100</span>
@@ -613,74 +645,74 @@
                             <div class="progress-fill rage-progress" style="width: 0%;"></div>
                         </div>
                         <div class="score-item">
-                            <span class="score-label">驾驶技术:</span>
+                            <span class="score-label">駕駛技術:</span>
                             <span class="score-value" id="skill-score">0/100</span>
                         </div>
                         <div class="progress-bar">
                             <div class="progress-fill skill-progress" style="width: 0%;"></div>
                         </div>
                         <div class="score-item">
-                            <span class="score-label">碰撞次数:</span>
+                            <span class="score-label">碰撞次數:</span>
                             <span class="score-value" id="collisions">0</span>
                         </div>
                         <div class="score-item">
-                            <span class="score-label">危险操作:</span>
+                            <span class="score-label">危險操作:</span>
                             <span class="score-value" id="dangerous-actions">0</span>
                         </div>
                     </div>
                     
                     <div class="instructions">
-                        <h3>操作说明</h3>
-                        <p>加速: <span class="key">↑</span> 键</p>
-                        <p>刹车: <span class="key">↓</span> 键</p>
-                        <p>左转: <span class="key">←</span> 键</p>
-                        <p>右转: <span class="key">→</span> 键</p>
-                        <p>手刹: <span class="key">空格</span> 键</p>
+                        <h3>操作說明</h3>
+                        <p>加速: <span class="key">↑</span> 鍵</p>
+                        <p>煞車: <span class="key">↓</span> 鍵</p>
+                        <p>左轉: <span class="key">←</span> 鍵</p>
+                        <p>右轉: <span class="key">→</span> 鍵</p>
+                        <p>手煞: <span class="key">空格</span> 鍵</p>
                     </div>
                 </div>
                 
                 <div class="game-message" id="game-message">
                     <div class="message-title" id="message-title">情境完成</div>
-                    <div class="message-text" id="message-text">您已完成当前情境，请查看您的评分。</div>
-                    <button class="message-btn" id="message-btn">确定</button>
+                    <div class="message-text" id="message-text">您已完成目前情境，請查看您的評分。</div>
+                    <button class="message-btn" id="message-btn">確定</button>
                 </div>
             </div>
         </div>
         
         <footer>
-            <p>驾驶模拟游戏 &copy; 2023 - 测试您的驾驶技术与情绪控制能力</p>
+            <p>駕駛模擬遊戲 &copy; 2023 - 測試您的駕駛技術與情緒控制能力</p>
         </footer>
     </div>
 
     <script>
-        // 游戏主类
+        // 遊戲主類
         class DrivingGame {
             constructor() {
-                // 车辆选择
+                // 車輛選擇
                 this.vehicles = {
-                    "city_car": {"name": "城市小车", "cc": 1200, "stability": 0.8, "color": "#ff4d4d"},
-                    "sedan": {"name": "家庭轿车", "cc": 1800, "stability": 0.9, "color": "#3498db"},
-                    "sports_car": {"name": "运动跑车", "cc": 2500, "stability": 0.7, "color": "#9b59b6"}
+                    "city_car": {"name": "城市小車", "cc": 1200, "stability": 0.8, "color": "#ff4d4d"},
+                    "sedan": {"name": "家庭轎車", "cc": 1800, "stability": 0.9, "color": "#3498db"},
+                    "sports_car": {"name": "運動跑車", "cc": 2500, "stability": 0.7, "color": "#9b59b6"}
                 };
 
-                // 游戏状态
+                // 遊戲狀態
                 this.speed = 0;
                 this.maxSpeed = 200;
-                this.gear = "D";  // D:前进, S:运动, R:倒车
+                this.gear = "D";  // D:前進, S:運動, R:倒車
                 this.turnSignal = "none";  // left, right, none
                 this.sportMode = false;
-                this.position = 0;  // 简化位置
+                this.position = 0;  // 簡化位置
                 this.gameActive = false;
                 this.currentScenario = null;
                 this.currentVehicle = null;
 
-                // 评分数据
+                // 評分數據
                 this.collisions = 0;
                 this.dangerousActions = 0;
                 this.smoothActions = 0;
                 this.aggressiveActions = 0;
 
-                // 其他车辆和障碍物
+                // 其他車輛和障礙物
                 this.otherVehicles = [];
                 this.obstacles = [];
                 this.trafficLights = [];
@@ -691,54 +723,54 @@
             }
 
             init() {
-                // 设置事件监听器
+                // 設置事件監聽器
                 this.setupEventListeners();
                 
-                // 选择默认车辆
+                // 選擇預設車輛
                 this.selectVehicle("city_car");
                 
-                // 选择默认情境
+                // 選擇預設情境
                 this.selectScenario("city_traffic");
                 
                 // 更新UI
                 this.updateDashboard();
                 
-                // 开始游戏循环
+                // 開始遊戲循環
                 this.gameLoop();
             }
 
             setupEventListeners() {
-                // 车辆选择
-                document.querySelectorAll('.vehicle-option').forEach(option => {
+                // 車輛選擇
+                document.querySelectorAll('.option[data-vehicle]').forEach(option => {
                     option.addEventListener('click', () => {
-                        document.querySelectorAll('.vehicle-option').forEach(opt => opt.classList.remove('selected'));
+                        document.querySelectorAll('.option[data-vehicle]').forEach(opt => opt.classList.remove('selected'));
                         option.classList.add('selected');
                         this.selectVehicle(option.dataset.vehicle);
                     });
                 });
 
-                // 情境选择
-                document.querySelectorAll('.scenario-option').forEach(option => {
+                // 情境選擇
+                document.querySelectorAll('.option[data-scenario]').forEach(option => {
                     option.addEventListener('click', () => {
                         if (this.gameActive) return;
-                        document.querySelectorAll('.scenario-option').forEach(opt => opt.classList.remove('selected'));
+                        document.querySelectorAll('.option[data-scenario]').forEach(opt => opt.classList.remove('selected'));
                         option.classList.add('selected');
                         this.selectScenario(option.dataset.scenario);
                     });
                 });
 
-                // 控制按钮
+                // 控制按鈕
                 document.getElementById('left-signal').addEventListener('click', () => this.toggleTurnSignal('left'));
                 document.getElementById('right-signal').addEventListener('click', () => this.toggleTurnSignal('right'));
                 document.getElementById('sport-toggle').addEventListener('click', () => this.toggleSportMode());
                 document.getElementById('start-game').addEventListener('click', () => this.startGame());
                 document.getElementById('message-btn').addEventListener('click', () => this.hideMessage());
 
-                // 键盘控制
+                // 鍵盤控制
                 document.addEventListener('keydown', (e) => this.handleKeyDown(e));
                 document.addEventListener('keyup', (e) => this.handleKeyUp(e));
 
-                // 防止方向键滚动页面
+                // 防止方向鍵滾動頁面
                 window.addEventListener('keydown', function(e) {
                     if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].indexOf(e.code) > -1) {
                         e.preventDefault();
@@ -749,23 +781,23 @@
             selectVehicle(vehicleType) {
                 if (vehicleType in this.vehicles) {
                     this.currentVehicle = this.vehicles[vehicleType];
-                    console.log(`已选择: ${this.currentVehicle['name']}`);
+                    console.log(`已選擇: ${this.currentVehicle['name']}`);
                     
-                    // 更新车辆颜色
+                    // 更新車輛顏色
                     const playerCar = document.querySelector('.player-car');
                     playerCar.style.background = `linear-gradient(135deg, ${this.currentVehicle.color}, ${this.darkenColor(this.currentVehicle.color, 20)})`;
                     playerCar.querySelector('.car-front').style.background = `linear-gradient(to bottom, ${this.lightenColor(this.currentVehicle.color, 10)}, ${this.darkenColor(this.currentVehicle.color, 10)})`;
                     playerCar.querySelector('.car-rear').style.background = `linear-gradient(to top, ${this.lightenColor(this.currentVehicle.color, 10)}, ${this.darkenColor(this.currentVehicle.color, 10)})`;
                 } else {
-                    console.log("无效的车辆选择");
+                    console.log("無效的車輛選擇");
                 }
             }
 
             selectScenario(scenarioName) {
                 this.currentScenario = scenarioName;
-                console.log(`开始 ${scenarioName} 情境`);
+                console.log(`開始 ${scenarioName} 情境`);
                 
-                // 清除现有元素
+                // 清除現有元素
                 this.clearScenarioElements();
                 
                 // 生成情境特定元素
@@ -785,7 +817,7 @@
                 const scenarioElements = document.querySelector('.scenario-elements');
                 
                 if (this.currentScenario === "city_traffic") {
-                    // 生成交通灯
+                    // 生成交通燈
                     const trafficLight = document.createElement('div');
                     trafficLight.className = 'traffic-light';
                     trafficLight.innerHTML = `
@@ -798,7 +830,7 @@
                     scenarioElements.appendChild(trafficLight);
                     this.trafficLights.push(trafficLight);
                     
-                    // 生成其他车辆
+                    // 生成其他車輛
                     for (let i = 0; i < 3; i++) {
                         this.addOtherVehicle(100 + i * 200, 300 + i * 150);
                     }
@@ -808,17 +840,17 @@
                         this.addPedestrian(200 + i * 300, 500);
                     }
                 } else if (this.currentScenario === "mountain_road") {
-                    // 生成障碍物
+                    // 生成障礙物
                     for (let i = 0; i < 4; i++) {
                         this.addObstacle(200 + i * 200, 300 + i * 100);
                     }
                     
-                    // 生成其他车辆
+                    // 生成其他車輛
                     for (let i = 0; i < 2; i++) {
                         this.addOtherVehicle(150 + i * 300, 400 + i * 200);
                     }
                 } else if (this.currentScenario === "highway") {
-                    // 生成其他车辆
+                    // 生成其他車輛
                     for (let i = 0; i < 5; i++) {
                         this.addOtherVehicle(100 + i * 150, 200 + i * 100);
                     }
@@ -879,36 +911,43 @@
                 this.smoothActions = 0;
                 this.aggressiveActions = 0;
                 
-                document.getElementById('start-game').textContent = '游戏中...';
+                document.getElementById('start-game').textContent = '遊戲中...';
                 document.getElementById('start-game').classList.add('active');
                 
-                console.log(`开始 ${this.currentScenario} 情境游戏`);
+                console.log(`開始 ${this.currentScenario} 情境遊戲`);
                 
-                // 重置车辆位置
+                // 重置車輛位置
                 this.position = 0;
                 
-                // 更新评分显示
+                // 更新評分顯示
                 this.updateScores();
+                
+                // 設定遊戲計時器
+                setTimeout(() => {
+                    if (this.gameActive) {
+                        this.endGame();
+                    }
+                }, 60000); // 60秒後自動結束遊戲
             }
 
             endGame() {
                 this.gameActive = false;
                 this.speed = 0;
                 
-                document.getElementById('start-game').textContent = '开始游戏';
+                document.getElementById('start-game').textContent = '開始遊戲';
                 document.getElementById('start-game').classList.remove('active');
                 
-                // 计算最终评分
+                // 計算最終評分
                 const roadRageLevel = this.calculateRageScore();
                 const drivingSkill = this.calculateSkillScore();
                 
-                // 显示结果消息
+                // 顯示結果訊息
                 this.showMessage(
                     "情境完成", 
-                    `路怒症程度: ${roadRageLevel.toFixed(1)}/100<br>驾驶技术: ${drivingSkill.toFixed(1)}/100<br><br>${this.getEvaluationText(roadRageLevel, drivingSkill)}`
+                    `路怒症程度: ${roadRageLevel.toFixed(1)}/100<br>駕駛技術: ${drivingSkill.toFixed(1)}/100<br><br>${this.getEvaluationText(roadRageLevel, drivingSkill)}`
                 );
                 
-                console.log(`游戏结束 - 路怒症: ${roadRageLevel.toFixed(1)}, 驾驶技术: ${drivingSkill.toFixed(1)}`);
+                console.log(`遊戲結束 - 路怒症: ${roadRageLevel.toFixed(1)}, 駕駛技術: ${drivingSkill.toFixed(1)}`);
             }
 
             showMessage(title, text) {
@@ -926,19 +965,19 @@
                 let skillText = "";
                 
                 if (rage < 30) {
-                    rageText = "冷静的安全驾驶者";
+                    rageText = "冷靜的安全駕駛者";
                 } else if (rage < 60) {
-                    rageText = "普通驾驶者";
+                    rageText = "普通駕駛者";
                 } else {
-                    rageText = "需要注意路怒倾向";
+                    rageText = "需要注意路怒傾向";
                 }
                 
                 if (skill > 80) {
-                    skillText = "优秀驾驶技术";
+                    skillText = "優秀駕駛技術";
                 } else if (skill > 60) {
-                    skillText = "良好驾驶技术";
+                    skillText = "良好駕駛技術";
                 } else {
-                    skillText = "需要提升驾驶技术";
+                    skillText = "需要提升駕駛技術";
                 }
                 
                 return `${rageText}<br>${skillText}`;
@@ -948,11 +987,11 @@
                 if (!this.gameActive) return;
                 
                 if (this.gear !== "D" && this.gear !== "S") {
-                    console.log("当前档位无法加速");
+                    console.log("目前檔位無法加速");
                     return;
                 }
 
-                // 基础加速计算
+                // 基礎加速計算
                 let baseAccel = 0.1;
                 if (this.sportMode) {
                     baseAccel *= 1.3;
@@ -961,7 +1000,7 @@
                 const speedIncrease = baseAccel * intensity * 10;
                 this.speed = Math.min(this.maxSpeed, this.speed + speedIncrease);
 
-                // 记录操作类型
+                // 記錄操作類型
                 if (intensity > 0.7) {
                     this.aggressiveActions++;
                     console.log("激烈加速");
@@ -969,7 +1008,7 @@
                     this.smoothActions++;
                 }
 
-                // 情境特定检查
+                // 情境特定檢查
                 this.checkScenarioSpeed();
             }
 
@@ -979,32 +1018,32 @@
                 const speedDecrease = 15 * intensity;
                 this.speed = Math.max(0, this.speed - speedDecrease);
 
-                // 急刹车检测
+                // 急煞車檢測
                 if (intensity > 0.8 && this.speed > 30) {
                     this.dangerousActions++;
-                    console.log("注意！急刹车警告");
+                    console.log("注意！急煞車警告");
                 }
             }
 
             turn(direction, angle) {
                 if (!this.gameActive) return;
                 
-                // 计算安全转向角度
+                // 計算安全轉向角度
                 const safeAngle = this.calculateSafeTurnAngle();
 
                 if (angle > safeAngle * 0.8) {
                     this.dangerousActions++;
-                    console.log("危险转向");
+                    console.log("危險轉向");
                 }
 
-                // 检查方向灯使用
+                // 檢查方向燈使用
                 if ((direction === "left" && this.turnSignal !== "left") || 
                     (direction === "right" && this.turnSignal !== "right")) {
                     this.dangerousActions++;
-                    console.log("转向未打方向灯");
+                    console.log("轉向未打方向燈");
                 }
                 
-                // 实际转向效果
+                // 實際轉向效果
                 const playerCar = document.querySelector('.player-car');
                 const rotation = direction === 'left' ? -angle/5 : angle/5;
                 playerCar.style.transform = `translateX(-50%) rotate(${rotation}deg)`;
@@ -1020,10 +1059,10 @@
             shiftGear(newGear) {
                 if (!this.gameActive) return;
                 
-                // 危险换档检测
+                // 危險換檔檢測
                 if (this.speed > 20 && newGear === "R") {
                     this.dangerousActions += 2;
-                    console.log("警告！高速时换倒档很危险");
+                    console.log("警告！高速時換倒檔很危險");
                 } else {
                     this.smoothActions++;
                 }
@@ -1053,8 +1092,8 @@
 
             toggleSportMode() {
                 this.sportMode = !this.sportMode;
-                const status = this.sportMode ? "开启" : "关闭";
-                console.log(`运动模式 ${status}`);
+                const status = this.sportMode ? "開啟" : "關閉";
+                console.log(`運動模式 ${status}`);
                 this.updateDashboard();
             }
 
@@ -1063,10 +1102,10 @@
 
                 if (this.currentScenario === "city_traffic" && this.speed > 60) {
                     this.dangerousActions++;
-                    console.log("注意！市区超速");
+                    console.log("注意！市區超速");
                 } else if (this.currentScenario === "mountain_road" && this.speed > 80) {
                     this.dangerousActions++;
-                    console.log("注意！山区道路超速");
+                    console.log("注意！山區道路超速");
                 } else if (this.currentScenario === "highway" && this.speed > 110) {
                     this.dangerousActions++;
                     console.log("注意！高速公路超速");
@@ -1076,33 +1115,33 @@
             checkCollision() {
                 if (!this.gameActive) return false;
                 
-                // 简化碰撞检测
+                // 簡化碰撞檢測
                 const playerCar = document.querySelector('.player-car');
                 const playerRect = playerCar.getBoundingClientRect();
                 
-                // 检查与其他车辆的碰撞
+                // 檢查與其他車輛的碰撞
                 for (const vehicle of this.otherVehicles) {
                     const vehicleRect = vehicle.element.getBoundingClientRect();
                     
                     if (this.rectIntersect(playerRect, vehicleRect)) {
                         this.collisions++;
-                        console.log("发生碰撞！");
+                        console.log("發生碰撞！");
                         return true;
                     }
                 }
                 
-                // 检查与障碍物的碰撞
+                // 檢查與障礙物的碰撞
                 for (const obstacle of this.obstacles) {
                     const obstacleRect = obstacle.element.getBoundingClientRect();
                     
                     if (this.rectIntersect(playerRect, obstacleRect)) {
                         this.collisions++;
-                        console.log("撞到障碍物！");
+                        console.log("撞到障礙物！");
                         return true;
                     }
                 }
                 
-                // 检查与行人的碰撞
+                // 檢查與行人的碰撞
                 for (const pedestrian of this.pedestrians) {
                     const pedestrianRect = pedestrian.element.getBoundingClientRect();
                     
@@ -1124,7 +1163,7 @@
             }
 
             calculateRageScore() {
-                // 路怒症程度 (0-100，越高越严重)
+                // 路怒症程度 (0-100，越高越嚴重)
                 const rageScore = (
                     this.collisions * 25 +
                     this.dangerousActions * 8 +
@@ -1134,8 +1173,8 @@
             }
 
             calculateSkillScore() {
-                // 驾驶技术 (0-100，越高越好)
-                let skillScore = 50;  // 基础分
+                // 駕駛技術 (0-100，越高越好)
+                let skillScore = 50;  // 基礎分
                 skillScore += this.smoothActions * 0.5;
                 skillScore -= this.dangerousActions * 3;
                 skillScore -= this.collisions * 15;
@@ -1145,10 +1184,10 @@
             updateDashboard() {
                 document.getElementById('speed-value').textContent = `${Math.round(this.speed)} km/h`;
                 document.getElementById('gear-value').textContent = this.gear;
-                document.getElementById('sport-mode').textContent = this.sportMode ? "开启" : "关闭";
+                document.getElementById('sport-mode').textContent = this.sportMode ? "開啟" : "關閉";
                 document.getElementById('turn-signal').textContent = 
-                    this.turnSignal === "left" ? "左转" : 
-                    this.turnSignal === "right" ? "右转" : "无";
+                    this.turnSignal === "left" ? "左轉" : 
+                    this.turnSignal === "right" ? "右轉" : "無";
             }
 
             updateScores() {
@@ -1181,7 +1220,7 @@
                         this.turn('right', 30);
                         break;
                     case ' ':
-                        this.brake(1.0); // 空格键紧急刹车
+                        this.brake(1.0); // 空格鍵緊急煞車
                         break;
                     case 'a':
                     case 'A':
@@ -1199,7 +1238,7 @@
             }
 
             handleKeyUp(e) {
-                // 释放按键时停止转向效果
+                // 釋放按鍵時停止轉向效果
                 if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
                     document.querySelector('.player-car').style.transform = 'translateX(-50%) rotate(0deg)';
                 }
@@ -1208,12 +1247,12 @@
             updateOtherVehicles() {
                 if (!this.gameActive) return;
                 
-                // 更新其他车辆位置
+                // 更新其他車輛位置
                 for (const vehicle of this.otherVehicles) {
                     vehicle.y += vehicle.speed;
                     vehicle.element.style.top = `${vehicle.y}px`;
                     
-                    // 如果车辆离开屏幕，重新放置到顶部
+                    // 如果車輛離開螢幕，重新放置到頂部
                     if (vehicle.y > window.innerHeight) {
                         vehicle.y = -200;
                         vehicle.x = Math.random() * (window.innerWidth - 100);
@@ -1226,7 +1265,7 @@
                     pedestrian.x += pedestrian.direction * 1;
                     pedestrian.element.style.left = `${pedestrian.x}px`;
                     
-                    // 如果行人走到边缘，改变方向
+                    // 如果行人走到邊緣，改變方向
                     if (pedestrian.x < 50 || pedestrian.x > window.innerWidth - 70) {
                         pedestrian.direction *= -1;
                     }
@@ -1234,31 +1273,31 @@
             }
 
             gameLoop() {
-                // 更新游戏状态
+                // 更新遊戲狀態
                 if (this.gameActive) {
-                    // 减速（模拟阻力）
+                    // 減速（模擬阻力）
                     if (this.speed > 0) {
                         this.speed = Math.max(0, this.speed - 0.1);
                     }
                     
-                    // 更新其他车辆和行人
+                    // 更新其他車輛和行人
                     this.updateOtherVehicles();
                     
-                    // 检查碰撞
+                    // 檢查碰撞
                     this.checkCollision();
                     
-                    // 更新评分
+                    // 更新評分
                     this.updateScores();
                     
-                    // 更新仪表板
+                    // 更新儀表板
                     this.updateDashboard();
                 }
                 
-                // 继续游戏循环
+                // 繼續遊戲循環
                 requestAnimationFrame(() => this.gameLoop());
             }
 
-            // 工具函数
+            // 工具函數
             lightenColor(color, percent) {
                 const num = parseInt(color.replace("#", ""), 16);
                 const amt = Math.round(2.55 * percent);
@@ -1282,16 +1321,16 @@
             }
         }
 
-        // 初始化游戏
+        // 初始化遊戲
         document.addEventListener('DOMContentLoaded', () => {
             const game = new DrivingGame();
             
-            // 模拟游戏结束（在实际游戏中，这将在特定条件下触发）
+            // 模擬遊戲結束（在實際遊戲中，這將在特定條件下觸發）
             setTimeout(() => {
                 if (!game.gameActive) {
                     game.showMessage(
-                        "欢迎来到驾驶模拟游戏", 
-                        "请选择车辆和情境，然后点击开始游戏按钮。<br><br>使用方向键控制车辆，A/D键控制方向灯，S键切换运动模式。"
+                        "歡迎來到駕駛模擬遊戲", 
+                        "請選擇車輛和情境，然後點擊開始遊戲按鈕。<br><br>使用方向鍵控制車輛，A/D鍵控制方向燈，S鍵切換運動模式。"
                     );
                 }
             }, 1000);
