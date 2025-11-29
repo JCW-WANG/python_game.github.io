@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全驾驶诊断游戏</title>
+    <script src="https://cdn.jsdelivr.net/npm/brython@3.10.5/brython.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/brython@3.10.5/brython_stdlib.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2a3a7c);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            margin-top: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #3498db;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ecf0f1;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .game-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background-color: #2c3e50;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 3px solid #34495e;
+        }
+        
+        #gameCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .game-ui {
+            display: flex;
+            justify-content: space-between;
+            background-color: rgba(44, 62, 80, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #3498db;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .stat-box {
+            background-color: #34495e;
+            padding: 10px 15px;
+            border-radius: 8px;
+            min-width: 150px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #3498db;
+            margin-top: 5px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        button {
+            padding: 12px 25px;
+            background: linear-gradient(to bottom, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:hover {
+            background: linear-gradient(to bottom, #3cb0fd, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .instructions {
+            background-color: rgba(44, 62, 80, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #3498db;
+        }
+        
+        .instructions h2 {
+            color: #3498db;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .instructions ul {
+            list-style-type: none;
+            padding-left: 10px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .instructions li:before {
+            content: "•";
+            color: #3498db;
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -5px;
+        }
+        
+        .game-screen {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 10;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        
+        #startScreen {
+            display: flex;
+        }
+        
+        #resultScreen {
+            display: none;
+        }
+        
+        .screen-title {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        .screen-content {
+            max-width: 600px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .result-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .result-box {
+            background-color: #34495e;
+            padding: 15px;
+            border-radius: 10px;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .result-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .good {
+            color: #2ecc71;
+        }
+        
+        .warning {
+            color: #f39c12;
+        }
+        
+        .danger {
+            color: #e74c3c;
+        }
+        
+        .diagnosis {
+            font-size: 1.4rem;
+            margin: 20px 0;
+            color: #ecf0f1;
+        }
+        
+        .advice {
+            font-size: 1.1rem;
+            color: #bdc3c7;
+            font-style: italic;
+            margin-top: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .game-ui {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .stats {
+                justify-content: space-between;
+            }
+            
+            .stat-box {
+                min-width: 120px;
+            }
+            
+            .controls {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .stat-box {
+                min-width: 100%;
+            }
+            
+            .game-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>安全驾驶诊断游戏</h1>
+            <p class="subtitle">测试您的驾驶习惯，诊断潜在的路怒症倾向</p>
+        </header>
+        
+        <div class="game-area">
+            <div class="game-container">
+                <canvas id="gameCanvas"></canvas>
+                
+                <div id="startScreen" class="game-screen">
+                    <h2 class="screen-title">安全驾驶诊断</h2>
+                    <div class="screen-content">
+                        <p>欢迎参加安全驾驶诊断测试！在游戏中，您将面临各种驾驶场景，系统会根据您的反应评估您的驾驶习惯和潜在的路怒症倾向。</p>
+                        <p>游戏时长约60秒，请尽量保持冷静，遵守交通规则。</p>
+                    </div>
+                    <button id="startButton">开始游戏</button>
+                </div>
+                
+                <div id="resultScreen" class="game-screen">
+                    <h2 class="screen-title">诊断结果</h2>
+                    <div class="result-details">
+                        <div class="result-box">
+                            <div>安全驾驶分数</div>
+                            <div id="finalScore" class="result-value">0</div>
+                            <div>/100</div>
+                        </div>
+                        <div class="result-box">
+                            <div>路怒症指数</div>
+                            <div id="angerLevel" class="result-value">0</div>
+                            <div>/10</div>
+                        </div>
+                    </div>
+                    <div id="diagnosis" class="diagnosis"></div>
+                    <div id="advice" class="advice"></div>
+                    <button id="restartButton">重新开始</button>
+                </div>
+            </div>
+            
+            <div class="game-ui">
+                <div class="stats">
+                    <div class="stat-box">
+                        <div>安全分数</div>
+                        <div id="score" class="stat-value">100</div>
+                    </div>
+                    <div class="stat-box">
+                        <div>路怒指数</div>
+                        <div id="anger" class="stat-value">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div>剩余时间</div>
+                        <div id="time" class="stat-value">60</div>
+                    </div>
+                </div>
+                
+                <div class="controls">
+                    <button id="pauseButton">暂停</button>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                <h2>游戏说明</h2>
+                <ul>
+                    <li>使用 <strong>WASD</strong> 或 <strong>方向键</strong> 控制车辆移动</li>
+                    <li>避免与其他车辆发生碰撞</li>
+                    <li>保持在车道内行驶，不要频繁变道</li>
+                    <li>控制车速，不要超速行驶</li>
+                    <li>游戏会根据您的驾驶行为评估安全分数和路怒症指数</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/python">
+        from browser import window, document
+        import random
+        import math
+        
+        # 游戏状态
+        START = 0
+        PLAYING = 1
+        PAUSED = 2
+        GAME_OVER = 3
+        
+        # 游戏设置
+        CANVAS_WIDTH = 1000
+        CANVAS_HEIGHT = 500
+        ROAD_WIDTH = 700
+        LANE_COUNT = 3
+        LANE_WIDTH = ROAD_WIDTH / LANE_COUNT
+        
+        class PlayerCar:
+            def __init__(self):
+                self.width = 40
+                self.height = 70
+                self.x = CANVAS_WIDTH / 2 - self.width / 2
+                self.y = CANVAS_HEIGHT - 100
+                self.speed = 0
+                self.max_speed = 8
+                self.acceleration = 0.1
+                self.deceleration = 0.2
+                self.steering = 3
+                self.lane = 1  # 0=左, 1=中, 2=右
+                self.score = 100
+                self.infractions = []
+                self.anger_level = 0
+                self.last_lane_change = 0
+                
+            def draw(self, ctx):
+                # 绘制车辆主体
+                ctx.fillStyle = "#3498db"
+                ctx.fillRect(self.x, self.y, self.width, self.height)
+                
+                # 绘制车窗
+                ctx.fillStyle = "#2c3e50"
+                ctx.fillRect(self.x + 5, self.y + 5, self.width - 10, 15)
+                
+                # 绘制车轮
+                ctx.fillStyle = "#1a1a1a"
+                ctx.fillRect(self.x - 3, self.y + 10, 6, 15)
+                ctx.fillRect(self.x + self.width - 3, self.y + 10, 6, 15)
+                ctx.fillRect(self.x - 3, self.y + self.height - 25, 6, 15)
+                ctx.fillRect(self.x + self.width - 3, self.y + self.height - 25, 6, 15)
+                
+            def move(self, keys, game_time):
+                # 加速和减速
+                if keys.get("ArrowUp") or keys.get("KeyW"):
+                    self.speed = min(self.speed + self.acceleration, self.max_speed)
+                elif keys.get("ArrowDown") or keys.get("KeyS"):
+                    self.speed = max(self.speed - self.deceleration, 0)
+                else:
+                    self.speed = max(self.speed - self.deceleration/2, 0)
+                    
+                # 转向和变道
+                target_lane = self.lane
+                if (keys.get("ArrowLeft") or keys.get("KeyA")) and self.lane > 0:
+                    target_lane = self.lane - 1
+                if (keys.get("ArrowRight") or keys.get("KeyD")) and self.lane < 2:
+                    target_lane = self.lane + 1
+                
+                # 计算目标x坐标
+                road_left = (CANVAS_WIDTH - ROAD_WIDTH) / 2
+                target_x = road_left + target_lane * LANE_WIDTH + LANE_WIDTH/2 - self.width/2
+                
+                # 平滑移动到目标车道
+                if abs(self.x - target_x) > 1:
+                    self.x += (target_x - self.x) * 0.1
+                    
+                    # 记录变道时间
+                    if target_lane != self.lane and game_time - self.last_lane_change > 1000:
+                        self.last_lane_change = game_time
+                        self.lane = target_lane
+                
+            def update_score(self, infraction_type, severity=1):
+                self.score = max(0, self.score - severity)
+                self.infractions.append(infraction_type)
+                
+                # 增加路怒症指数
+                if infraction_type == "超速" or infraction_type == "危险超车":
+                    self.anger_level = min(10, self.anger_level + 1)
+        
+        class TrafficCar:
+            def __init__(self, lane, speed):
+                self.width = 40
+                self.height = 70
+                self.lane = lane
+                road_left = (CANVAS_WIDTH - ROAD_WIDTH) / 2
+                self.x = road_left + lane * LANE_WIDTH + LANE_WIDTH/2 - self.width/2
+                self.y = -self.height
+                self.speed = speed
+                self.color = random.choice(["#e74c3c", "#2ecc71", "#f39c12", "#9b59b6"])
+                
+            def draw(self, ctx):
+                ctx.fillStyle = self.color
+                ctx.fillRect(self.x, self.y, self.width, self.height)
+                
+                # 绘制车窗
+                ctx.fillStyle = "#2c3e50"
+                ctx.fillRect(self.x + 5, self.y + 5, self.width - 10, 15)
+                
+                # 绘制车轮
+                ctx.fillStyle = "#1a1a1a"
+                ctx.fillRect(self.x - 3, self.y + 10, 6, 15)
+                ctx.fillRect(self.x + self.width - 3, self.y + 10, 6, 15)
+                ctx.fillRect(self.x - 3, self.y + self.height - 25, 6, 15)
+                ctx.fillRect(self.x + self.width - 3, self.y + self.height - 25, 6, 15)
+                
+            def move(self):
+                self.y += self.speed
+                
+            def is_off_screen(self):
+                return self.y > CANVAS_HEIGHT
+        
+        class DrivingGame:
+            def __init__(self):
+                self.state = START
+                self.player = PlayerCar()
+                self.traffic = []
+                self.road_offset = 0
+                self.timer = 0
+                self.game_duration = 60000  # 60秒游戏时间
+                self.spawn_timer = 0
+                self.spawn_delay = 1500  # 生成新车辆的延迟
+                self.keys = {}
+                self.last_time = 0
+                self.ctx = None
+                
+            def init_canvas(self):
+                canvas = document["gameCanvas"]
+                canvas.width = CANVAS_WIDTH
+                canvas.height = CANVAS_HEIGHT
+                self.ctx = canvas.getContext("2d")
+                
+            def draw_road(self):
+                # 绘制道路
+                road_left = (CANVAS_WIDTH - ROAD_WIDTH) / 2
+                self.ctx.fillStyle = "#34495e"
+                self.ctx.fillRect(road_left, 0, ROAD_WIDTH, CANVAS_HEIGHT)
+                
+                # 绘制道路标记
+                self.ctx.fillStyle = "#f1c40f"
+                for i in range(20):
+                    mark_y = (i * 100 + self.road_offset) % (CANVAS_HEIGHT + 200) - 100
+                    self.ctx.fillRect(CANVAS_WIDTH/2 - 5, mark_y, 10, 50)
+                    
+                # 绘制车道线
+                self.ctx.fillStyle = "#ecf0f1"
+                for i in range(1, LANE_COUNT):
+                    lane_x = road_left + i * LANE_WIDTH
+                    for j in range(30):
+                        dash_y = (j * 40 + self.road_offset) % (CANVAS_HEIGHT + 40) - 20
+                        self.ctx.fillRect(lane_x, dash_y, 4, 20)
+            
+            def draw(self):
+                # 清空画布
+                self.ctx.fillStyle = "#2c3e50"
+                self.ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+                
+                if self.state == PLAYING or self.state == PAUSED:
+                    self.draw_road()
+                    for car in self.traffic:
+                        car.draw(self.ctx)
+                    self.player.draw(self.ctx)
+                    
+                    # 如果游戏暂停，显示暂停文本
+                    if self.state == PAUSED:
+                        self.ctx.fillStyle = "rgba(0, 0, 0, 0.7)"
+                        self.ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT)
+                        self.ctx.font = "bold 48px Arial"
+                        self.ctx.fillStyle = "#3498db"
+                        self.ctx.textAlign = "center"
+                        self.ctx.fillText("游戏暂停", CANVAS_WIDTH/2, CANVAS_HEIGHT/2)
+                        self.ctx.font = "24px Arial"
+                        self.ctx.fillText("按空格键继续", CANVAS_WIDTH/2, CANVAS_HEIGHT/2 + 50)
+            
+            def check_collisions(self):
+                player_rect = {
+                    "x": self.player.x,
+                    "y": self.player.y,
+                    "width": self.player.width,
+                    "height": self.player.height
+                }
+                
+                for car in self.traffic:
+                    car_rect = {
+                        "x": car.x,
+                        "y": car.y,
+                        "width": car.width,
+                        "height": car.height
+                    }
+                    
+                    if (player_rect["x"] < car_rect["x"] + car_rect["width"] and
+                        player_rect["x"] + player_rect["width"] > car_rect["x"] and
+                        player_rect["y"] < car_rect["y"] + car_rect["height"] and
+                        player_rect["y"] + player_rect["height"] > car_rect["y"]):
+                        
+                        self.player.update_score("碰撞", 20)
+                        self.traffic.remove(car)
+                        return True
+                return False
+            
+            def check_speeding(self):
+                if self.player.speed > self.player.max_speed * 0.8:
+                    self.player.update_score("超速", 0.5)
+            
+            def check_lane_discipline(self):
+                # 检查是否频繁变道
+                if hasattr(self, 'last_lane_check'):
+                    if self.timer - self.last_lane_check > 1000:  # 每秒检查一次
+                        lane_changes = 0
+                        for i in range(len(self.player.infractions)-1, max(0, len(self.player.infractions)-10), -1):
+                            if self.player.infractions[i] == "频繁变道":
+                                lane_changes += 1
+                        
+                        if lane_changes >= 3:
+                            self.player.update_score("频繁变道", 1)
+                        
+                        self.last_lane_check = self.timer
+                else:
+                    self.last_lane_check = self.timer
+            
+            def update(self, dt):
+                if self.state == PLAYING:
+                    self.timer += dt
+                    self.road_offset += self.player.speed * 2
+                    
+                    # 生成新车辆
+                    self.spawn_timer += dt
+                    if self.spawn_timer >= self.spawn_delay:
+                        self.spawn_timer = 0
+                        lane = random.randint(0, LANE_COUNT - 1)
+                        speed = random.uniform(3, 6)
+                        self.traffic.append(TrafficCar(lane, speed))
+                    
+                    # 更新车辆位置
+                    for car in self.traffic[:]:
+                        car.move()
+                        if car.is_off_screen():
+                            self.traffic.remove(car)
+                    
+                    # 更新玩家位置
+                    self.player.move(self.keys, self.timer)
+                    
+                    # 检查各种违规行为
+                    self.check_collisions()
+                    self.check_speeding()
+                    self.check_lane_discipline()
+                    
+                    # 更新UI
+                    document["score"].text = str(self.player.score)
+                    document["anger"].text = str(self.player.anger_level)
+                    document["time"].text = str(max(0, (self.game_duration - self.timer) // 1000))
+                    
+                    # 检查游戏是否结束
+                    if self.timer >= self.game_duration or self.player.score <= 0:
+                        self.state = GAME_OVER
+                        self.show_results()
+            
+            def show_results(self):
+                document["resultScreen"].style.display = "flex"
+                document["finalScore"].text = str(self.player.score)
+                document["angerLevel"].text = str(self.player.anger_level)
+                
+                diagnosis = document["diagnosis"]
+                advice = document["advice"]
+                
+                if self.player.score >= 80 and self.player.anger_level <= 3:
+                    diagnosis.textContent = "优秀的安全驾驶员!"
+                    diagnosis.className = "diagnosis good"
+                    advice.textContent = "您表现出优秀的驾驶习惯和情绪控制能力，请继续保持。"
+                elif self.player.score >= 60:
+                    diagnosis.textContent = "基本安全的驾驶员"
+                    diagnosis.className = "diagnosis warning"
+                    advice.textContent = "您的驾驶习惯基本安全，但需要注意一些细节改进。"
+                else:
+                    diagnosis.textContent = "需要改善驾驶行为"
+                    diagnosis.className = "diagnosis danger"
+                    advice.textContent = "您可能有路怒症倾向，建议学习情绪管理技巧，保持冷静驾驶。"
+            
+            def start_game(self):
+                self.state = PLAYING
+                document["startScreen"].style.display = "none"
+                self.last_time = window.Date.now()
+                self.game_loop()
+            
+            def pause_game(self):
+                if self.state == PLAYING:
+                    self.state = PAUSED
+                    document["pauseButton"].textContent = "继续"
+                elif self.state == PAUSED:
+                    self.state = PLAYING
+                    document["pauseButton"].textContent = "暂停"
+                    self.last_time = window.Date.now()
+                    self.game_loop()
+            
+            def restart_game(self):
+                self.__init__()
+                document["resultScreen"].style.display = "none"
+                document["startScreen"].style.display = "flex"
+                document["score"].text = "100"
+                document["anger"].text = "0"
+                document["time"].text = "60"
+                document["pauseButton"].textContent = "暂停"
+            
+            def game_loop(self):
+                if self.state == PLAYING:
+                    current_time = window.Date.now()
+                    dt = current_time - self.last_time
+                    self.last_time = current_time
+                    
+                    self.update(dt)
+                    self.draw()
+                    
+                    window.requestAnimationFrame(self.game_loop)
+        
+        # 创建游戏实例
+        game = DrivingGame()
+        
+        # 初始化Brython
+        def init_brython():
+            game.init_canvas()
+            
+            # 设置事件监听器
+            document["startButton"].bind("click", lambda e: game.start_game())
+            document["restartButton"].bind("click", lambda e: game.restart_game())
+            document["pauseButton"].bind("click", lambda e: game.pause_game())
+            
+            # 键盘事件监听
+            def keydown(event):
+                game.keys[event.code] = True
+                
+                # 空格键暂停/继续游戏
+                if event.code == "Space" and (game.state == PLAYING or game.state == PAUSED):
+                    game.pause_game()
+                    event.preventDefault()
+            
+            def keyup(event):
+                game.keys[event.code] = False
+            
+            document.bind("keydown", keydown)
+            document.bind("keyup", keyup)
+        
+        # 当页面加载完成后初始化游戏
+        window.onload = init_brython
+    </script>
+</body>
+</html>
