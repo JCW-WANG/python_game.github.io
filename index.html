@@ -115,6 +115,21 @@
             background: linear-gradient(90deg, #4d79ff, #99bbff);
         }
         
+        .skill-bar {
+            height: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+        
+        .skill-fill {
+            height: 100%;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #00cc66, #66ff99);
+            transition: width 0.3s;
+        }
+        
         .controls {
             display: flex;
             flex-wrap: wrap;
@@ -147,7 +162,7 @@
             font-family: monospace;
         }
         
-        .game-over {
+        .game-over, .character-select {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -159,16 +174,22 @@
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255, 215, 0, 0.5);
             box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-            display: none;
+            width: 80%;
+            max-width: 600px;
         }
         
-        .game-over h2 {
+        .character-select {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .game-over h2, .character-select h2 {
             font-size: 2.5rem;
             margin-bottom: 20px;
             color: #ffcc00;
         }
         
-        .restart-btn {
+        .restart-btn, .start-btn {
             background: linear-gradient(90deg, #ff9900, #ffcc00);
             color: #000;
             border: none;
@@ -182,9 +203,57 @@
             box-shadow: 0 5px 15px rgba(255, 204, 0, 0.4);
         }
         
-        .restart-btn:hover {
+        .restart-btn:hover, .start-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(255, 204, 0, 0.6);
+        }
+        
+        .character-options {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        
+        .character-option {
+            background: rgba(30, 35, 60, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 45%;
+        }
+        
+        .character-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+        }
+        
+        .character-option.selected {
+            border: 2px solid #ffcc00;
+            box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+        }
+        
+        .character-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 10px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        
+        .character-name {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .character-desc {
+            font-size: 0.9rem;
+            color: #a0a0c0;
         }
         
         footer {
@@ -217,6 +286,16 @@
             .player-name {
                 font-size: 1rem;
             }
+            
+            .character-options {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+            }
+            
+            .character-option {
+                width: 90%;
+            }
         }
         
         @media (max-width: 480px) {
@@ -242,7 +321,7 @@
     <div class="container">
         <header>
             <h1>雙人對打遊戲</h1>
-            <p class="subtitle">與朋友一決高下！使用鍵盤控制你的角色</p>
+            <p class="subtitle">選擇你的角色，與朋友一決高下！</p>
         </header>
         
         <div class="game-area">
@@ -255,6 +334,10 @@
                         <div class="health-fill" id="p1Health" style="width: 100%"></div>
                     </div>
                     <div>生命值: <span id="p1HealthText">100</span></div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" id="p1Skill" style="width: 0%"></div>
+                    </div>
+                    <div>技能能量: <span id="p1SkillText">0%</span></div>
                 </div>
                 
                 <div class="player-ui player2-ui">
@@ -263,7 +346,28 @@
                         <div class="health-fill" id="p2Health" style="width: 100%"></div>
                     </div>
                     <div>生命值: <span id="p2HealthText">100</span></div>
+                    <div class="skill-bar">
+                        <div class="skill-fill" id="p2Skill" style="width: 0%"></div>
+                    </div>
+                    <div>技能能量: <span id="p2SkillText">0%</span></div>
                 </div>
+            </div>
+            
+            <div class="character-select" id="characterSelect">
+                <h2>選擇你的角色</h2>
+                <div class="character-options">
+                    <div class="character-option" data-character="warrior">
+                        <div class="character-icon" style="background: linear-gradient(135deg, #ff4d4d, #cc0000);">⚔️</div>
+                        <div class="character-name">戰士</div>
+                        <div class="character-desc">高生命值，普通攻擊力強，技能：旋風斬</div>
+                    </div>
+                    <div class="character-option" data-character="mage">
+                        <div class="character-icon" style="background: linear-gradient(135deg, #4d79ff, #0044cc);">🔮</div>
+                        <div class="character-name">法師</div>
+                        <div class="character-desc">普通攻擊力弱，技能：火球術</div>
+                    </div>
+                </div>
+                <button class="start-btn" id="startBtn">開始遊戲</button>
             </div>
             
             <div class="game-over" id="gameOver">
@@ -280,6 +384,7 @@
                 <p><span class="key">A</span> 向左移動</p>
                 <p><span class="key">D</span> 向右移動</p>
                 <p><span class="key">F</span> 攻擊</p>
+                <p><span class="key">G</span> 特殊技能</p>
             </div>
             
             <div class="control-card">
@@ -287,7 +392,8 @@
                 <p><span class="key">↑</span> 跳躍</p>
                 <p><span class="key">←</span> 向左移動</p>
                 <p><span class="key">→</span> 向右移動</p>
-                <p><span class="key">R Ctrl</span> 攻擊</p>
+                <p><span class="key">/</span> 攻擊</p>
+                <p><span class="key">.</span> 特殊技能</p>
             </div>
         </div>
         
@@ -301,12 +407,18 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const gameOverScreen = document.getElementById('gameOver');
+        const characterSelectScreen = document.getElementById('characterSelect');
         const winnerText = document.getElementById('winnerText');
         const restartBtn = document.getElementById('restartBtn');
+        const startBtn = document.getElementById('startBtn');
         const p1Health = document.getElementById('p1Health');
         const p2Health = document.getElementById('p2Health');
         const p1HealthText = document.getElementById('p1HealthText');
         const p2HealthText = document.getElementById('p2HealthText');
+        const p1Skill = document.getElementById('p1Skill');
+        const p2Skill = document.getElementById('p2Skill');
+        const p1SkillText = document.getElementById('p1SkillText');
+        const p2SkillText = document.getElementById('p2SkillText');
         
         // 設定畫布尺寸
         function resizeCanvas() {
@@ -327,19 +439,43 @@
             text: '#ffffff'
         };
         
+        // 角色定義
+        const characters = {
+            warrior: {
+                name: "戰士",
+                color: "#ff4d4d",
+                health: 120,
+                attackDamage: 8,
+                skillDamage: 15,
+                skillName: "旋風斬",
+                skillDescription: "對周圍敵人造成範圍傷害"
+            },
+            mage: {
+                name: "法師",
+                color: "#4d79ff",
+                health: 80,
+                attackDamage: 5,
+                skillDamage: 25,
+                skillName: "火球術",
+                skillDescription: "發射火球攻擊遠距離敵人"
+            }
+        };
+        
         // 玩家類
         class Player {
-            constructor(x, y, color, controls, name) {
+            constructor(x, y, character, controls, name) {
                 this.x = x;
                 this.y = y;
                 this.width = 50;
                 this.height = 80;
-                this.color = color;
+                this.character = character;
+                this.color = characters[character].color;
                 this.speed = 5;
                 this.jumpPower = 15;
                 this.velY = 0;
                 this.isJumping = false;
-                this.health = 100;
+                this.health = characters[character].health;
+                this.maxHealth = characters[character].health;
                 this.attackCooldown = 0;
                 this.controls = controls;
                 this.name = name;
@@ -347,6 +483,10 @@
                 this.attackAnimation = 0;
                 this.onGround = false;
                 this.isAttacking = false;
+                this.skillEnergy = 0;
+                this.skillActive = false;
+                this.skillAnimation = 0;
+                this.projectiles = [];
             }
             
             draw() {
@@ -360,6 +500,32 @@
                     const attackX = this.facingRight ? this.x + this.width : this.x - 30;
                     ctx.fillRect(attackX, this.y, 30, this.height);
                     this.attackAnimation--;
+                }
+                
+                // 繪製技能動畫
+                if (this.skillAnimation > 0) {
+                    if (this.character === 'warrior') {
+                        // 戰士旋風斬
+                        ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
+                        ctx.lineWidth = 5;
+                        ctx.beginPath();
+                        ctx.arc(this.x + this.width/2, this.y + this.height/2, 60, 0, Math.PI * 2);
+                        ctx.stroke();
+                    } else if (this.character === 'mage') {
+                        // 法師火球
+                        for (const proj of this.projectiles) {
+                            ctx.fillStyle = 'rgba(255, 100, 0, 0.8)';
+                            ctx.beginPath();
+                            ctx.arc(proj.x, proj.y, 15, 0, Math.PI * 2);
+                            ctx.fill();
+                            
+                            ctx.fillStyle = 'rgba(255, 200, 0, 0.9)';
+                            ctx.beginPath();
+                            ctx.arc(proj.x, proj.y, 8, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+                    this.skillAnimation--;
                 }
                 
                 // 繪製眼睛（方向指示）
@@ -426,30 +592,102 @@
                 if (keys[this.controls.attack] && this.attackCooldown === 0) {
                     this.isAttacking = true;
                     this.attackAnimation = 10;
-                    this.attackCooldown = 30;
+                    this.attackCooldown = 20;
+                    this.skillEnergy = Math.min(100, this.skillEnergy + 10);
+                }
+                
+                // 特殊技能
+                if (keys[this.controls.skill] && this.skillEnergy >= 100 && !this.skillActive) {
+                    this.skillActive = true;
+                    this.skillAnimation = 30;
+                    this.skillEnergy = 0;
+                    
+                    if (this.character === 'mage') {
+                        // 法師發射火球
+                        this.projectiles.push({
+                            x: this.facingRight ? this.x + this.width : this.x - 15,
+                            y: this.y + this.height/2,
+                            direction: this.facingRight ? 1 : -1,
+                            speed: 8
+                        });
+                    }
+                }
+                
+                // 更新法師火球位置
+                if (this.character === 'mage') {
+                    for (let i = this.projectiles.length - 1; i >= 0; i--) {
+                        this.projectiles[i].x += this.projectiles[i].direction * this.projectiles[i].speed;
+                        
+                        // 移除超出畫布的火球
+                        if (this.projectiles[i].x < 0 || this.projectiles[i].x > canvas.width) {
+                            this.projectiles.splice(i, 1);
+                        }
+                    }
                 }
             }
             
             attack(otherPlayer) {
                 if (this.isAttacking && this.attackAnimation > 0) {
-                    // 簡單的攻擊邏輯
+                    // 基本攻擊
                     const attackRange = 70;
                     const horizontalDistance = Math.abs(this.x - otherPlayer.x);
                     const verticalDistance = Math.abs(this.y - otherPlayer.y);
                     
                     if (horizontalDistance < attackRange && verticalDistance < this.height) {
-                        const damage = Math.floor(Math.random() * 11) + 5; // 5-15傷害
+                        const damage = characters[this.character].attackDamage + Math.floor(Math.random() * 6);
                         otherPlayer.health -= damage;
                         this.isAttacking = false;
                         return true;
                     }
                 }
+                
+                // 戰士技能攻擊
+                if (this.skillActive && this.character === 'warrior') {
+                    const skillRange = 100;
+                    const horizontalDistance = Math.abs(this.x - otherPlayer.x);
+                    const verticalDistance = Math.abs(this.y - otherPlayer.y);
+                    
+                    if (horizontalDistance < skillRange && verticalDistance < this.height) {
+                        const damage = characters[this.character].skillDamage;
+                        otherPlayer.health -= damage;
+                        this.skillActive = false;
+                        return true;
+                    }
+                }
+                
+                // 法師技能攻擊
+                if (this.character === 'mage') {
+                    for (let i = this.projectiles.length - 1; i >= 0; i--) {
+                        const proj = this.projectiles[i];
+                        const horizontalDistance = Math.abs(proj.x - (otherPlayer.x + otherPlayer.width/2));
+                        const verticalDistance = Math.abs(proj.y - (otherPlayer.y + otherPlayer.height/2));
+                        
+                        if (horizontalDistance < 30 && verticalDistance < 40) {
+                            const damage = characters[this.character].skillDamage;
+                            otherPlayer.health -= damage;
+                            this.projectiles.splice(i, 1);
+                            this.skillActive = false;
+                            return true;
+                        }
+                    }
+                }
+                
                 return false;
             }
             
             update() {
                 if (this.attackCooldown > 0) {
                     this.attackCooldown--;
+                }
+                
+                // 技能能量自然恢復
+                if (this.skillEnergy < 100) {
+                    this.skillEnergy = Math.min(100, this.skillEnergy + 0.2);
+                }
+                
+                // 技能動畫結束後重置
+                if (this.skillAnimation <= 0) {
+                    this.skillActive = false;
                 }
             }
         }
@@ -474,19 +712,7 @@
         }
         
         // 創建玩家
-        const player1 = new Player(100, 300, colors.player1, {
-            up: 'KeyW',
-            left: 'KeyA',
-            right: 'KeyD',
-            attack: 'KeyF'
-        }, "Player 1");
-        
-        const player2 = new Player(600, 300, colors.player2, {
-            up: 'ArrowUp',
-            left: 'ArrowLeft',
-            right: 'ArrowRight',
-            attack: 'ControlRight'
-        }, "Player 2");
+        let player1, player2;
         
         // 創建平台
         let platforms = [];
@@ -504,14 +730,65 @@
         const keys = {};
         
         // 遊戲狀態
-        let gameRunning = true;
+        let gameRunning = false;
+        let selectedCharacters = { player1: null, player2: null };
+        
+        // 角色選擇
+        document.querySelectorAll('.character-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const character = this.getAttribute('data-character');
+                
+                // 移除所有選擇
+                document.querySelectorAll('.character-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // 標記選擇
+                this.classList.add('selected');
+                
+                // 儲存選擇
+                if (!selectedCharacters.player1) {
+                    selectedCharacters.player1 = character;
+                } else if (!selectedCharacters.player2) {
+                    selectedCharacters.player2 = character;
+                }
+            });
+        });
+        
+        // 開始遊戲
+        startBtn.addEventListener('click', () => {
+            if (selectedCharacters.player1 && selectedCharacters.player2) {
+                player1 = new Player(100, 300, selectedCharacters.player1, {
+                    up: 'KeyW',
+                    left: 'KeyA',
+                    right: 'KeyD',
+                    attack: 'KeyF',
+                    skill: 'KeyG'
+                }, "Player 1");
+                
+                player2 = new Player(600, 300, selectedCharacters.player2, {
+                    up: 'ArrowUp',
+                    left: 'ArrowLeft',
+                    right: 'ArrowRight',
+                    attack: 'Slash',
+                    skill: 'Period'
+                }, "Player 2");
+                
+                characterSelectScreen.style.display = 'none';
+                gameRunning = true;
+            } else {
+                alert('請兩位玩家都選擇角色！');
+            }
+        });
         
         // 鍵盤事件監聽
         window.addEventListener('keydown', (e) => {
             keys[e.code] = true;
             
             // 防止按鍵默認行為（例如方向鍵滾動頁面）
-            if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyF', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown', 'ControlRight'].includes(e.code)) {
+            if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 
+                 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown', 
+                 'Slash', 'Period'].includes(e.code)) {
                 e.preventDefault();
             }
         });
@@ -522,8 +799,8 @@
         
         // 重新開始遊戲
         restartBtn.addEventListener('click', () => {
-            player1.health = 100;
-            player2.health = 100;
+            player1.health = player1.maxHealth;
+            player2.health = player2.maxHealth;
             player1.x = 100;
             player1.y = 300;
             player2.x = 600;
@@ -536,6 +813,10 @@
             player2.isAttacking = false;
             player1.attackCooldown = 0;
             player2.attackCooldown = 0;
+            player1.skillEnergy = 0;
+            player2.skillEnergy = 0;
+            player1.projectiles = [];
+            player2.projectiles = [];
             gameRunning = true;
             gameOverScreen.style.display = 'none';
         });
@@ -549,7 +830,7 @@
             // 繪製平台
             platforms.forEach(platform => platform.draw());
             
-            if (gameRunning) {
+            if (gameRunning && player1 && player2) {
                 // 更新玩家位置
                 player1.move(keys, platforms);
                 player2.move(keys, platforms);
@@ -563,10 +844,15 @@
                 player2.attack(player1);
                 
                 // 更新UI
-                p1Health.style.width = `${Math.max(0, player1.health)}%`;
-                p2Health.style.width = `${Math.max(0, player2.health)}%`;
-                p1HealthText.textContent = Math.max(0, player1.health);
-                p2HealthText.textContent = Math.max(0, player2.health);
+                p1Health.style.width = `${Math.max(0, (player1.health / player1.maxHealth) * 100)}%`;
+                p2Health.style.width = `${Math.max(0, (player2.health / player2.maxHealth) * 100)}%`;
+                p1HealthText.textContent = Math.max(0, Math.round(player1.health));
+                p2HealthText.textContent = Math.max(0, Math.round(player2.health));
+                
+                p1Skill.style.width = `${player1.skillEnergy}%`;
+                p2Skill.style.width = `${player2.skillEnergy}%`;
+                p1SkillText.textContent = `${Math.round(player1.skillEnergy)}%`;
+                p2SkillText.textContent = `${Math.round(player2.skillEnergy)}%`;
                 
                 // 檢查遊戲結束條件
                 if (player1.health <= 0 || player2.health <= 0) {
@@ -578,8 +864,10 @@
             }
             
             // 繪製玩家
-            player1.draw();
-            player2.draw();
+            if (player1 && player2) {
+                player1.draw();
+                player2.draw();
+            }
             
             // 繪製遊戲標題
             ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
