@@ -3,535 +3,486 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎬 電影配樂猜謎大賽</title>
+    <title>經典電影聽音辨位 | Movie Soundtrack Quiz</title>
     <style>
         :root {
-            --primary-color: #f5c518; /* IMDB Yellow */
             --bg-color: #121212;
-            --card-bg: #1f1f1f;
-            --text-color: #ffffff;
-            --p1-color: #ff4d4d; /* Player 1 Red */
-            --p2-color: #4d79ff; /* Player 2 Blue */
-            --accent-color: #00e676;
+            --card-bg: #1e1e1e;
+            --primary: #e50914; /* Netflix Red */
+            --accent: #f5c518;  /* IMDb Gold */
+            --text: #ffffff;
+            --text-secondary: #b3b3b3;
+            --correct: #46d369;
+            --wrong: #f44336;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        
         body {
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text);
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /*Header & Scoreboard*/
-        header {
-            background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
-            padding: 20px;
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 2rem;
-            color: var(--primary-color);
-            text-shadow: 0 0 10px rgba(245, 197, 24, 0.5);
-            margin-bottom: 15px;
-        }
-
-        .scoreboard {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .score-box {
-            background: var(--card-bg);
-            padding: 10px 20px;
-            border-radius: 10px;
-            min-width: 120px;
-            border: 2px solid transparent;
-            transition: transform 0.2s;
-        }
-
-        .p1-score { border-color: var(--p1-color); color: var(--p1-color); }
-        .p2-score { border-color: var(--p2-color); color: var(--p2-color); }
-
-        /* Main Game Area */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        /* Container */
+        .app-container {
+            width: 100%;
+            max-width: 600px;
             padding: 20px;
             position: relative;
         }
 
-        /* Status Indicator */
-        .status-text {
-            font-size: 1.5rem;
-            margin-bottom: 30px;
-            min-height: 2em;
-            text-align: center;
-            color: #ddd;
-        }
-
-        /* Visual Elements */
-        .visualizer {
-            width: 100%;
-            max-width: 600px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            margin-bottom: 30px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .visualizer.active { opacity: 1; }
-
-        .bar {
-            width: 8px;
-            height: 20px;
-            background-color: var(--primary-color);
-            animation: bounce 1s infinite ease-in-out;
-        }
-
-        @keyframes bounce {
-            0%, 100% { height: 20px; }
-            50% { height: 50px; }
-        }
-
-        /* Controls / Buzzer Buttons */
-        .controls-area {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            width: 100%;
-            max-width: 600px;
-        }
-
+        /* Utility Classes */
+        .hidden { display: none !important; }
         .btn {
+            background: var(--primary);
+            color: white;
             border: none;
-            padding: 20px;
+            padding: 15px 30px;
             font-size: 1.2rem;
-            border-radius: 12px;
+            border-radius: 50px;
             cursor: pointer;
-            text-transform: uppercase;
-            font-weight: bold;
-            transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            display: none; /* Hidden by default, shown via JS */
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 10px;
         }
+        .btn:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(229, 9, 20, 0.6); }
+        .btn-secondary { background: #333; }
 
-        .btn:active { transform: scale(0.95); }
-
-        .btn-p1 { background-color: var(--p1-color); color: white; }
-        .btn-p2 { background-color: var(--p2-color); color: white; }
-        .btn-main { 
-            grid-column: span 2; 
-            background-color: var(--primary-color); 
-            color: black; 
-        }
-        .btn-judge {
-            grid-column: span 2;
+        /* Screens */
+        .screen {
             display: flex;
-            gap: 10px;
-            background: transparent;
-            box-shadow: none;
-            padding: 0;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
         }
-        .btn-yes { flex: 1; background-color: var(--accent-color); color: black; }
-        .btn-no { flex: 1; background-color: #ff4444; color: white; }
 
-        /* Result Card */
-        .movie-card {
-            background-color: var(--card-bg);
+        /* 1. Start Screen */
+        h1 { font-size: 2.5rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
+        .subtitle { color: var(--text-secondary); margin-bottom: 40px; }
+        
+        /* 2. Game Screen */
+        .hud {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .visualizer {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #333 10%, #000 70%);
+            border-radius: 50%;
+            margin: 20px auto;
+            position: relative;
+            border: 5px solid #333;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* Vinyl Animation */
+        .visualizer.playing { animation: spin 4s linear infinite; border-color: var(--accent); }
+        .visualizer::after { content: ''; width: 20px; height: 20px; background: var(--bg-color); border-radius: 50%; position: absolute; }
+        .music-icon { font-size: 3rem; opacity: 0.5; }
+
+        .timer-bar {
+            width: 100%;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .timer-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 100%;
+            transition: width 0.1s linear;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            width: 100%;
+        }
+        .option-btn {
+            background: var(--card-bg);
+            border: 1px solid #444;
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+            font-size: 1rem;
+        }
+        .option-btn:hover { background: #333; border-color: #666; }
+        
+        /* States for buttons */
+        .option-btn.correct { background: var(--correct); border-color: var(--correct); color: black; font-weight: bold; }
+        .option-btn.wrong { background: var(--wrong); border-color: var(--wrong); opacity: 0.6; }
+
+        /* 3. Result Overlay/Modal */
+        .result-card {
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 25px;
-            max-width: 600px;
-            width: 100%;
             text-align: left;
-            display: none; /* Hidden by default */
+            margin-top: 20px;
+            border-left: 5px solid var(--accent);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            animation: slideUp 0.5s ease-out;
         }
+        .result-title { font-size: 1.5rem; color: var(--accent); margin-bottom: 5px; }
+        .result-year { color: #888; font-size: 0.9rem; margin-bottom: 15px; display: block; }
+        .result-desc { font-size: 0.95rem; line-height: 1.6; color: #ddd; margin-bottom: 20px; max-height: 200px; overflow-y: auto; }
+        
+        /* Animations */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .movie-title {
-            font-size: 1.8rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            border-bottom: 1px solid #444;
-            padding-bottom: 10px;
-        }
-
-        .movie-desc {
-            font-size: 1rem;
-            line-height: 1.6;
-            color: #ccc;
-            white-space: pre-wrap; /* Preserve line breaks from data */
-        }
-
-        .citation {
-            font-size: 0.8rem;
-            color: #666;
-            margin-top: 15px;
-            font-style: italic;
-        }
-
-        /* Keyboard Hints */
-        .kb-hint {
-            display: block;
-            font-size: 0.8rem;
-            opacity: 0.7;
-            margin-top: 5px;
-        }
-
-        /* RWD Adjustments */
-        @media (max-width: 768px) {
-            h1 { font-size: 1.5rem; }
-            .kb-hint { display: none; } /* Hide keyboard hints on mobile */
-            .controls-area { grid-template-columns: 1fr 1fr; }
-            .btn { padding: 30px 10px; } /* Larger touch area */
+        /* Responsive */
+        @media (min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+            h1 { font-size: 3rem; }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>🎬 電影配樂猜謎</h1>
-        <div class="scoreboard">
-            <div class="score-box p1-score">
-                <div>P1 (紅)</div>
-                <div id="score-p1-display">0</div>
-            </div>
-            <div class="score-box p2-score">
-                <div>P2 (藍)</div>
-                <div id="score-p2-display">0</div>
-            </div>
+<div class="app-container">
+    
+    <div id="start-screen" class="screen">
+        <div style="font-size: 4rem;">🎬</div>
+        <h1>電影猜謎大師</h1>
+        <p class="subtitle">聆聽經典配樂，猜出正確電影</p>
+        <div class="instruction" style="background: #222; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9rem;">
+            <p>🎧 請開啟音效</p>
+            <p>⏱️ 每題有 30 秒作答時間</p>
+            <p>🏆 答對得 100 分，答錯不扣分</p>
         </div>
-    </header>
+        <button class="btn" onclick="game.start()">開始遊戲</button>
+    </div>
 
-    <main>
-        <div id="status-display" class="status-text">準備好了嗎？</div>
-
-        <div id="visualizer" class="visualizer">
-            <div class="bar" style="animation-delay: 0s"></div>
-            <div class="bar" style="animation-delay: 0.2s"></div>
-            <div class="bar" style="animation-delay: 0.4s"></div>
-            <div class="bar" style="animation-delay: 0.1s"></div>
-            <div class="bar" style="animation-delay: 0.5s"></div>
-            <div class="bar" style="animation-delay: 0.3s"></div>
+    <div id="game-screen" class="screen hidden">
+        <div class="hud">
+            <span>第 <span id="current-q">1</span>/10 題</span>
+            <span>分數: <span id="score">0</span></span>
         </div>
 
-        <div id="result-card" class="movie-card">
-            <h2 class="movie-title" id="card-title">電影標題</h2>
-            <div class="movie-desc" id="card-desc">描述內容...</div>
-            <div class="citation" id="card-cite"></div>
+        <div class="visualizer" id="visualizer">
+            <div class="music-icon">🎵</div>
         </div>
-
-        <div class="controls-area">
-            <button id="btn-start" class="btn btn-main" style="display: block;">
-                播放音樂 (空白鍵)
-            </button>
-
-            <button id="btn-p1" class="btn btn-p1">
-                P1 搶答 <span class="kb-hint">(按 A)</span>
-            </button>
-            <button id="btn-p2" class="btn btn-p2">
-                P2 搶答 <span class="kb-hint">(按 L)</span>
-            </button>
-
-            <div id="judge-controls" class="btn btn-judge" style="display: none;">
-                <button id="btn-correct" class="btn btn-yes">⭕ 答對 (Y)</button>
-                <button id="btn-wrong" class="btn btn-no">❌ 答錯 (N)</button>
-            </div>
-
-            <button id="btn-next" class="btn btn-main">
-                下一題 (空白鍵)
-            </button>
-        </div>
-    </main>
-
-    <script>
-        // --- 1. 資料庫 (從 PDF 轉換) ---
-        // 注意：音訊檔案路徑 (file) 預設為 'assets/music/xxx.mp3'。
-        // 你需要在 GitHub 儲存庫建立對應資料夾並上傳檔案。
-        const MOVIES = [
-            {
-                id: 1,
-                title: "The Godfather (教父, 1972)",
-                file: "godfather.mp3",
-                [cite_start]desc: "法蘭西斯·柯波拉執導，講述紐約黑手黨柯里昂家族的故事。探討權力、家庭倫理與移民掙扎。尼諾·羅塔的配樂哀傷而優美 [cite: 1]。",
-                cite: ""
-            },
-            {
-                id: 2,
-                title: "Star Wars (星際大戰, 1977)",
-                file: "starwars.mp3",
-                [cite_start]desc: "喬治·盧卡斯執導的太空歌劇。路克·天行者對抗銀河帝國。約翰·威廉斯創作的交響樂配樂氣勢磅礴 [cite: 2]。",
-                cite: ""
-            },
-            {
-                id: 3,
-                title: "Casablanca (北非諜影, 1942)",
-                file: "casablanca.mp3",
-                [cite_start]desc: "二戰時期摩洛哥的愛情經典。瑞克在愛情與正義間抉擇。「As Time Goes By」貫穿全片，成為愛情象徵 [cite: 3]。",
-                cite: ""
-            },
-            {
-                id: 4,
-                title: "Gone with the Wind (亂世佳人, 1939)",
-                file: "gonewiththewind.mp3",
-                [cite_start]desc: "南北戰爭史詩巨作，費雯·麗飾演郝思嘉。展現南方社會崩潰與重建。「明天又是新的一天」成為名言 [cite: 4]。",
-                cite: ""
-            },
-            {
-                id: 5,
-                title: "The Wizard of Oz (綠野仙蹤, 1939)",
-                file: "wizardofoz.mp3",
-                [cite_start]desc: "桃樂絲被龍捲風捲到奧茲國的奇幻旅程。「Over the Rainbow」成為影史最偉大歌曲之一 [cite: 5]。",
-                cite: ""
-            },
-            {
-                id: 6,
-                title: "Titanic (鐵達尼號, 1997)",
-                file: "titanic.mp3",
-                [cite_start]desc: "詹姆斯·卡麥隆執導的災難愛情史詩。席琳·狄翁的主題曲「My Heart Will Go On」風靡全球 [cite: 6]。",
-                cite: ""
-            },
-            {
-                id: 7,
-                title: "Jaws (大白鯊, 1975)",
-                file: "jaws.mp3",
-                [cite_start]desc: "史蒂芬·史匹柏執導。約翰·威廉斯的兩音符主題曲製造極大緊張感。開創暑期大片商業模式 [cite: 7]。",
-                cite: ""
-            },
-            {
-                id: 8,
-                title: "Rocky (洛基, 1976)",
-                file: "rocky.mp3",
-                [cite_start]desc: "史特龍自編自演的勵志拳擊片。「Gonna Fly Now」配樂搭配費城美術館階梯跑動場景為經典 [cite: 8]。",
-                cite: ""
-            },
-            {
-                id: 9,
-                title: "E.T. the Extra-Terrestrial (E.T.外星人, 1982)",
-                file: "et.mp3",
-                [cite_start]desc: "80年代代表性家庭電影。約翰·威廉斯的配樂充滿童真。孩子們騎車飛越月亮的畫面是影史經典 [cite: 9]。",
-                cite: ""
-            },
-            {
-                id: 10,
-                title: "Raiders of the Lost Ark (法櫃奇兵, 1981)",
-                file: "raiders.mp3",
-                [cite_start]desc: "印第安納·瓊斯系列首作。約翰·威廉斯的進行曲主題氣勢磅礴，成為冒險電影典範 [cite: 10]。",
-                cite: ""
-            }
-        ];
-
-        // --- 2. 遊戲變數 ---
-        let currentIndex = 0;
-        let p1Score = 0;
-        let p2Score = 0;
-        let gameState = "READY"; // READY, PLAYING, BUZZED, RESULT, END
-        let currentAudio = null;
-        let activePlayer = null; // 'P1' or 'P2'
-
-        // --- 3. DOM 元素 ---
-        const statusDisplay = document.getElementById('status-display');
-        const visualizer = document.getElementById('visualizer');
-        const scoreP1 = document.getElementById('score-p1-display');
-        const scoreP2 = document.getElementById('score-p2-display');
         
-        const btnStart = document.getElementById('btn-start');
-        const btnP1 = document.getElementById('btn-p1');
-        const btnP2 = document.getElementById('btn-p2');
-        const judgeControls = document.getElementById('judge-controls');
-        const btnNext = document.getElementById('btn-next');
+        <div id="status-text" style="height: 20px; margin-bottom: 10px; color: var(--accent);">播放中...</div>
+
+        <div class="timer-bar">
+            <div class="timer-fill" id="timer-fill"></div>
+        </div>
+
+        <div class="options-grid" id="options-container">
+            </div>
+
+        <div id="result-section" class="hidden">
+            <div class="result-card">
+                <h3 class="result-title" id="res-title">電影標題</h3>
+                <span class="result-year" id="res-year">1999</span>
+                <p class="result-desc" id="res-desc">電影描述...</p>
+                <button class="btn" id="next-btn" onclick="game.nextQuestion()">下一題</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="end-screen" class="screen hidden">
+        <h1>遊戲結束</h1>
+        <p class="subtitle">你的最終得分</p>
+        <div style="font-size: 4rem; color: var(--accent); font-weight: bold; margin: 20px 0;" id="final-score">0</div>
+        <p id="feedback-msg">看來你需要多看點電影了！</p>
+        <button class="btn" onclick="location.reload()">再玩一次</button>
+    </div>
+
+    <audio id="bgm-player"></audio>
+
+</div>
+
+<script>
+/**
+ * 資料庫：包含 PDF 中的所有電影資訊
+ * 重要：請在 "driveId" 欄位填入你 Google Drive 檔案的 ID
+ * (例如連結是 https://drive.google.com/file/d/123456789/view，ID 就是 123456789)
+ */
+const MOVIE_DATA = [
+    {
+        id: 1,
+        title: "The Godfather (教父)",
+        year: "1972",
+        desc: "講述1940年代紐約黑手黨柯里昂家族的故事。探討了權力、家庭倫理、美國夢的黑暗面。尼諾·羅塔的配樂哀傷而優美，完美詮釋了家族的悲劇命運。",
+        driveId: "1mtzOEaHkyTDJWUJx7IcMVQEc-XDESjuy" 
+    },
+    {
+        id: 2,
+        title: "Star Wars (星際大戰)",
+        year: "1977",
+        desc: "太空歌劇巨作，年輕的路克·天行者對抗邪惡帝國。約翰·威廉斯創作的交響樂配樂氣勢磅礴，開場的主題曲已成為影史最知名的音樂之一。",
+        driveId: "1rGaBco16fCX_xoiqR6T45Il1ly4xWMCy"
+    },
+    {
+        id: 3,
+        title: "Casablanca (北非諜影)",
+        year: "1942",
+        desc: "二戰時期的摩洛哥，酒吧老闆瑞克在愛情與正義間抉擇。「As Time Goes By」這首歌貫穿全片，成為永恆的愛情象徵。",
+        driveId: "1ACsVFKbgNu_VQ-xeY_7QQaB1p7mVsGUu"
+    },
+    {
+        id: 4,
+        title: "Gone with the Wind (亂世佳人)",
+        year: "1939",
+        desc: "美國南北戰爭史詩，展現南方社會的崩潰與重建。郝思嘉與白瑞德的愛恨糾葛。榮獲十項奧斯卡獎，場面宏大，服裝華麗。",
+        driveId: "1WuEggOIWq9wm5IJ4j_y-v8xEoJ6Zl89B"
+    },
+    {
+        id: 5,
+        title: "The Wizard of Oz (綠野仙蹤)",
+        year: "1939",
+        desc: "桃樂絲被龍捲風捲到奧茲國的奇幻旅程。「Over the Rainbow」成為影史最偉大的電影歌曲，寓意家永遠是最溫暖的地方。",
+        driveId: "1riBCad4BObnYnIdiddKzZm-hkSv9pEkY"
+    },
+    {
+        id: 6,
+        title: "Titanic (鐵達尼號)",
+        year: "1997",
+        desc: "窮畫家傑克與貴族少女蘿絲在沉船前的刻骨銘心愛情。席琳·狄翁演唱的「My Heart Will Go On」風靡全球。",
+        driveId: "1CM8Zdor-AlzAPZF7sSsAewdMl97N6FCL"
+    },
+    {
+        id: 7,
+        title: "Jaws (大白鯊)",
+        year: "1975",
+        desc: "巨大食人鯊攻擊度假小鎮。約翰·威廉斯創作的兩音符主題曲製造了極強的緊張感。開創了暑期大片的商業模式。",
+        driveId: "1o6zBN8J4gEFZ7mZbp4X0uwj-mZKbFDxT"
+    },
+    {
+        id: 8,
+        title: "Rocky (洛基)",
+        year: "1976",
+        desc: "三流拳擊手洛基獲得挑戰拳王的機會。「Gonna Fly Now」的激昂配樂搭配階梯奔跑場景，成為體育電影最經典畫面。",
+        driveId: "13yKggnZ2t6CZbL7esZOhiCwbGYGnDSgI"
+    },
+    {
+        id: 9,
+        title: "E.T. the Extra-Terrestrial (E.T.外星人)",
+        year: "1982",
+        desc: "小男孩與外星人建立跨越種族的友誼。孩子們騎腳踏車飛越天際的畫面搭配約翰·威廉斯的配樂，充滿童真與感動。",
+        driveId: "15R3ICtA6eEdF6-iwPSlrwK3E8PjD7s_F"
+    },
+    {
+        id: 10,
+        title: "Raiders of the Lost Ark (法櫃奇兵)",
+        year: "1981",
+        desc: "印第安納·瓊斯尋找約櫃的全球冒險。約翰·威廉斯創作的進行曲主題氣勢磅礴，成為冒險電影音樂的典範。",
+        driveId: "1nCn31D4IZ6xQn4Dbt3x-BpzI6iQf6hzW"
+    }
+];
+
+class GameEngine {
+    constructor() {
+        this.score = 0;
+        this.currentIndex = 0;
+        this.timer = null;
+        this.timeLeft = 30;
+        this.isPlaying = false;
         
-        const resultCard = document.getElementById('result-card');
-        const cardTitle = document.getElementById('card-title');
-        const cardDesc = document.getElementById('card-desc');
-        const cardCite = document.getElementById('card-cite');
+        // DOM Elements
+        this.screens = {
+            start: document.getElementById('start-screen'),
+            game: document.getElementById('game-screen'),
+            end: document.getElementById('end-screen')
+        };
+        this.audioPlayer = document.getElementById('bgm-player');
+        this.visualizer = document.getElementById('visualizer');
+        this.timerFill = document.getElementById('timer-fill');
+        this.statusText = document.getElementById('status-text');
+        
+        // Shuffle questions
+        this.questions = [...MOVIE_DATA].sort(() => Math.random() - 0.5);
+    }
 
-        // --- 4. 遊戲邏輯函數 ---
+    // 將 Google Drive ID 轉換為可播放連結
+    getAudioUrl(id) {
+        // 這是 Google Drive 的串流 API 格式
+        return `https://drive.google.com/uc?export=download&id=${id}`;
+        // 注意：如果檔案很大或流量過高，Google 可能會限制。
+        // 測試用時，可以換成自己的 mp3 連結。
+    }
 
-        function updateUI() {
-            // 隱藏所有控制項，再根據狀態開啟
-            btnStart.style.display = 'none';
-            btnP1.style.display = 'none';
-            btnP2.style.display = 'none';
-            judgeControls.style.display = 'none';
-            btnNext.style.display = 'none';
-            resultCard.style.display = 'none';
-            visualizer.classList.remove('active');
+    start() {
+        this.switchScreen('game');
+        this.loadQuestion();
+    }
 
-            if (gameState === "READY") {
-                statusDisplay.textContent = `第 ${currentIndex + 1} 題 / 共 ${MOVIES.length} 題`;
-                statusDisplay.style.color = "#ddd";
-                btnStart.style.display = 'block'; // 顯示開始按鈕
-            } 
-            else if (gameState === "PLAYING") {
-                statusDisplay.textContent = "🎶 音樂播放中... 請搶答！";
-                statusDisplay.style.color = "var(--primary-color)";
-                btnP1.style.display = 'block';
-                btnP2.style.display = 'block';
-                visualizer.classList.add('active');
-            } 
-            else if (gameState === "BUZZED") {
-                statusDisplay.textContent = `⚡ 玩家 ${activePlayer} 搶答中！請口頭回答`;
-                statusDisplay.style.color = activePlayer === 'P1' ? 'var(--p1-color)' : 'var(--p2-color)';
-                judgeControls.style.display = 'flex'; // 顯示裁判按鈕
-            } 
-            else if (gameState === "RESULT") {
-                // 顯示結果卡片
-                resultCard.style.display = 'block';
-                // 判斷是否還有下一題
-                if (currentIndex < MOVIES.length - 1) {
-                    btnNext.style.display = 'block';
-                    btnNext.textContent = "下一題 (空白鍵)";
-                } else {
-                    btnNext.style.display = 'block';
-                    btnNext.textContent = "查看最終成績 (空白鍵)";
-                }
-            }
-            else if (gameState === "END") {
-                let winner = "";
-                if (p1Score > p2Score) winner = "🏆 玩家 1 獲勝！";
-                else if (p2Score > p1Score) winner = "🏆 玩家 2 獲勝！";
-                else winner = "🤝 平手！";
-                
-                statusDisplay.innerHTML = `遊戲結束<br>${winner}`;
-                statusDisplay.style.color = "var(--primary-color)";
-                resultCard.style.display = 'none';
-            }
+    switchScreen(name) {
+        Object.values(this.screens).forEach(el => el.classList.add('hidden'));
+        this.screens[name].classList.remove('hidden');
+    }
 
-            // 更新分數顯示
-            scoreP1.textContent = p1Score;
-            scoreP2.textContent = p2Score;
+    loadQuestion() {
+        if (this.currentIndex >= this.questions.length) {
+            this.endGame();
+            return;
         }
 
-        function playMusic() {
-            if (currentIndex >= MOVIES.length) return;
-            
-            // 停止舊音樂
-            if (currentAudio) {
-                currentAudio.pause();
-                currentAudio.currentTime = 0;
-            }
-
-            const movie = MOVIES[currentIndex];
-            // 假設路徑結構
-            const audioPath = `assets/music/${movie.file}`;
-            
-            currentAudio = new Audio(audioPath);
-            
-            // 錯誤處理：如果找不到檔案，alert 提示（方便除錯）
-            currentAudio.onerror = () => {
-                console.warn(`找不到音訊檔案: ${audioPath}，請確認檔案是否上傳至 assets/music/ 資料夾`);
-                // 就算沒音樂也讓遊戲繼續
-            };
-
-            currentAudio.play().catch(e => console.log("需使用者互動才能播放", e));
-            
-            gameState = "PLAYING";
-            updateUI();
+        const currentMovie = this.questions[this.currentIndex];
+        
+        // UI Reset
+        document.getElementById('current-q').innerText = this.currentIndex + 1;
+        document.getElementById('result-section').classList.add('hidden');
+        document.getElementById('options-container').classList.remove('hidden');
+        this.visualizer.classList.add('playing');
+        this.statusText.innerText = "🎶 音樂播放中... 請猜測！";
+        
+        // Audio
+        this.audioPlayer.src = this.getAudioUrl(currentMovie.driveId);
+        this.audioPlayer.volume = 0.5;
+        // 處理瀏覽器自動播放限制：需要確保使用者有互動過
+        const playPromise = this.audioPlayer.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                this.statusText.innerText = "⚠️ 請點擊畫面播放音樂";
+                document.body.addEventListener('click', () => this.audioPlayer.play(), {once:true});
+            });
         }
 
-        function handleBuzz(player) {
-            if (gameState !== "PLAYING") return;
-            
-            activePlayer = player;
-            if (currentAudio) currentAudio.pause();
-            gameState = "BUZZED";
-            updateUI();
-        }
+        // Generate Options (1 Correct + 3 Random Wrong)
+        this.generateOptions(currentMovie);
 
-        function handleJudge(isCorrect) {
-            if (gameState !== "BUZZED") return;
+        // Start Timer
+        this.timeLeft = 30;
+        this.startTimer();
+    }
 
-            if (isCorrect) {
-                if (activePlayer === 'P1') p1Score += 1;
-                else p2Score += 1;
-                statusDisplay.textContent = "⭕ 答對了！";
-                showResult();
-            } else {
-                statusDisplay.textContent = "❌ 答錯了... 顯示答案";
-                showResult();
-            }
-        }
+    generateOptions(correctMovie) {
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
 
-        function showResult() {
-            const movie = MOVIES[currentIndex];
-            cardTitle.textContent = movie.title;
-            cardDesc.textContent = movie.desc;
-            cardCite.textContent = `來源: ${movie.cite}`;
-            
-            gameState = "RESULT";
-            updateUI();
-        }
+        // Get 3 unique wrong answers
+        let wrongOptions = MOVIE_DATA
+            .filter(m => m.id !== correctMovie.id)
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 3);
+        
+        let options = [...wrongOptions, correctMovie].sort(() => Math.random() - 0.5);
 
-        function nextRound() {
-            if (currentIndex < MOVIES.length - 1) {
-                currentIndex++;
-                gameState = "READY";
-                updateUI();
-            } else {
-                gameState = "END";
-                updateUI();
-            }
-        }
-
-        // --- 5. 事件監聽 (鍵盤 & 觸控) ---
-
-        // 鍵盤控制
-        document.addEventListener('keydown', (e) => {
-            const key = e.key.toLowerCase();
-
-            if (gameState === "READY" && key === " ") {
-                playMusic();
-            }
-            else if (gameState === "PLAYING") {
-                if (key === "a") handleBuzz('P1');
-                if (key === "l") handleBuzz('P2');
-            }
-            else if (gameState === "BUZZED") {
-                if (key === "y") handleJudge(true);
-                if (key === "n") handleJudge(false);
-            }
-            else if (gameState === "RESULT" && key === " ") {
-                nextRound();
-            }
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt.title;
+            btn.onclick = () => this.checkAnswer(opt, correctMovie, btn);
+            container.appendChild(btn);
         });
+    }
 
-        // 按鈕點擊 (觸控支援)
-        btnStart.addEventListener('click', playMusic);
-        btnP1.addEventListener('click', () => handleBuzz('P1'));
-        btnP2.addEventListener('click', () => handleBuzz('P2'));
-        document.getElementById('btn-correct').addEventListener('click', () => handleJudge(true));
-        document.getElementById('btn-wrong').addEventListener('click', () => handleJudge(false));
-        btnNext.addEventListener('click', nextRound);
+    startTimer() {
+        if(this.timer) clearInterval(this.timer);
+        this.timerFill.style.width = '100%';
+        
+        this.timer = setInterval(() => {
+            this.timeLeft--;
+            const pct = (this.timeLeft / 30) * 100;
+            this.timerFill.style.width = `${pct}%`;
 
-        // 初始化
-        updateUI();
+            if (this.timeLeft <= 0) {
+                this.handleTimeout();
+            }
+        }, 1000);
+    }
 
-    </script>
+    checkAnswer(selected, correct, btnElement) {
+        clearInterval(this.timer);
+        this.audioPlayer.pause();
+        this.visualizer.classList.remove('playing');
+        
+        // Disable all buttons
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        let isCorrect = selected.id === correct.id;
+
+        if (isCorrect) {
+            btnElement.classList.add('correct');
+            this.score += 100;
+            // Bonus for time left
+            this.score += Math.max(0, this.timeLeft * 2);
+            this.statusText.innerText = "✅ 答對了！";
+        } else {
+            btnElement.classList.add('wrong');
+            // Highlight the correct one
+            allBtns.forEach(b => {
+                if(b.innerText === correct.title) b.classList.add('correct');
+            });
+            this.statusText.innerText = "❌ 答錯了...";
+        }
+
+        document.getElementById('score').innerText = this.score;
+        this.showResult(correct);
+    }
+
+    handleTimeout() {
+        clearInterval(this.timer);
+        this.audioPlayer.pause();
+        this.visualizer.classList.remove('playing');
+        
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(b => {
+            b.disabled = true;
+            // Highlight correct one
+            if(b.innerText === this.questions[this.currentIndex].title) b.classList.add('correct');
+        });
+        
+        this.statusText.innerText = "⏰ 時間到！";
+        this.showResult(this.questions[this.currentIndex]);
+    }
+
+    showResult(movie) {
+        document.getElementById('options-container').classList.add('hidden');
+        const resDiv = document.getElementById('result-section');
+        resDiv.classList.remove('hidden');
+        
+        document.getElementById('res-title').innerText = movie.title;
+        document.getElementById('res-year').innerText = movie.year;
+        document.getElementById('res-desc').innerText = movie.desc;
+    }
+
+    nextQuestion() {
+        this.currentIndex++;
+        this.loadQuestion();
+    }
+
+    endGame() {
+        this.switchScreen('end');
+        document.getElementById('final-score').innerText = this.score;
+        
+        let msg = "";
+        if(this.score >= 1000) msg = "🎬 影史大師！奧斯卡非你莫屬！";
+        else if(this.score >= 600) msg = "🍿 資深影迷，表現不錯！";
+        else msg = "📺 沒關係，回家再多看幾部電影吧！";
+        
+        document.getElementById('feedback-msg').innerText = msg;
+    }
+}
+
+// Init Game
+const game = new GameEngine();
+
+</script>
 </body>
 </html>
