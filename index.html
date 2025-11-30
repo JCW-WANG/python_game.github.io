@@ -8,8 +8,8 @@
         :root {
             --bg-color: #121212;
             --card-bg: #1e1e1e;
-            --primary: #e50914; /* Netflix Red */
-            --accent: #f5c518;  /* IMDb Gold */
+            --primary: #e50914;
+            --accent: #f5c518;
             --text: #ffffff;
             --text-secondary: #b3b3b3;
             --correct: #46d369;
@@ -26,9 +26,9 @@
             align-items: center;
             min-height: 100vh;
             overflow-x: hidden;
+            padding: 10px;
         }
 
-        /* Container */
         .app-container {
             width: 100%;
             max-width: 600px;
@@ -36,8 +36,8 @@
             position: relative;
         }
 
-        /* Utility Classes */
         .hidden { display: none !important; }
+
         .btn {
             background: var(--primary);
             color: white;
@@ -49,23 +49,35 @@
             transition: transform 0.2s, box-shadow 0.2s;
             width: 100%;
             margin-top: 10px;
+            font-weight: bold;
         }
-        .btn:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(229, 9, 20, 0.6); }
-        .btn-secondary { background: #333; }
+        .btn:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(229, 9, 20, 0.6); }
+        .btn:disabled { background: #555; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        /* Screens */
         .screen {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
             animation: fadeIn 0.5s ease;
+            width: 100%;
         }
 
         /* 1. Start Screen */
         h1 { font-size: 2.5rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; }
-        .subtitle { color: var(--text-secondary); margin-bottom: 40px; }
-        
+        .subtitle { color: var(--text-secondary); margin-bottom: 30px; }
+        .instruction {
+            background: #222; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            font-size: 0.95rem;
+            line-height: 1.8;
+            text-align: left;
+            width: 100%;
+            border-left: 4px solid var(--accent);
+        }
+
         /* 2. Game Screen */
         .hud {
             width: 100%;
@@ -73,67 +85,98 @@
             justify-content: space-between;
             margin-bottom: 20px;
             font-weight: bold;
+            font-size: 1.1rem;
             color: var(--accent);
+            background: #222;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        .visualizer-container {
+            position: relative;
+            margin: 20px auto;
         }
 
         .visualizer {
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             background: radial-gradient(circle, #333 10%, #000 70%);
             border-radius: 50%;
-            margin: 20px auto;
-            position: relative;
             border: 5px solid #333;
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
             display: flex;
             justify-content: center;
             align-items: center;
+            transition: border-color 0.3s;
         }
         
-        /* Vinyl Animation */
-        .visualizer.playing { animation: spin 4s linear infinite; border-color: var(--accent); }
+        .visualizer.playing { animation: spin 4s linear infinite; border-color: var(--accent); box-shadow: 0 0 30px rgba(245, 197, 24, 0.4); }
         .visualizer::after { content: ''; width: 20px; height: 20px; background: var(--bg-color); border-radius: 50%; position: absolute; }
-        .music-icon { font-size: 3rem; opacity: 0.5; }
+        .music-icon { font-size: 3rem; opacity: 0.5; z-index: 1; }
+        
+        /* Loading Spinner Over Visualizer */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -20px;
+            margin-left: -20px;
+            z-index: 10;
+        }
+
+        .status-text {
+            height: 24px;
+            margin-bottom: 10px;
+            color: var(--accent);
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
 
         .timer-bar {
             width: 100%;
-            height: 6px;
+            height: 8px;
             background: #333;
-            border-radius: 3px;
-            margin: 20px 0;
+            border-radius: 4px;
+            margin: 10px 0 20px 0;
             overflow: hidden;
         }
         .timer-fill {
             height: 100%;
             background: var(--accent);
             width: 100%;
-            transition: width 0.1s linear;
+            transition: width 1s linear;
         }
 
         .options-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 10px;
+            gap: 12px;
             width: 100%;
         }
         .option-btn {
             background: var(--card-bg);
             border: 1px solid #444;
-            padding: 15px;
+            padding: 16px;
             border-radius: 8px;
             color: white;
             cursor: pointer;
             transition: all 0.2s;
             text-align: left;
             font-size: 1rem;
+            position: relative;
+            overflow: hidden;
         }
-        .option-btn:hover { background: #333; border-color: #666; }
-        
-        /* States for buttons */
+        .option-btn:hover:not(:disabled) { background: #333; border-color: #666; transform: translateX(5px); }
         .option-btn.correct { background: var(--correct); border-color: var(--correct); color: black; font-weight: bold; }
         .option-btn.wrong { background: var(--wrong); border-color: var(--wrong); opacity: 0.6; }
 
-        /* 3. Result Overlay/Modal */
+        /* 3. Result Overlay */
         .result-card {
             background: var(--card-bg);
             border-radius: 15px;
@@ -142,16 +185,15 @@
             margin-top: 20px;
             border-left: 5px solid var(--accent);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: fadeIn 0.5s;
         }
         .result-title { font-size: 1.5rem; color: var(--accent); margin-bottom: 5px; }
         .result-year { color: #888; font-size: 0.9rem; margin-bottom: 15px; display: block; }
-        .result-desc { font-size: 0.95rem; line-height: 1.6; color: #ddd; margin-bottom: 20px; max-height: 200px; overflow-y: auto; }
+        .result-desc { font-size: 0.95rem; line-height: 1.6; color: #ddd; margin-bottom: 20px; }
         
-        /* Animations */
         @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Responsive */
         @media (min-width: 600px) {
             .options-grid { grid-template-columns: 1fr 1fr; }
             h1 { font-size: 3rem; }
@@ -163,15 +205,17 @@
 <div class="app-container">
     
     <div id="start-screen" class="screen">
-        <div style="font-size: 4rem;">🎬</div>
+        <div style="font-size: 4rem; margin-bottom: 10px;">🎬</div>
         <h1>電影猜謎大師</h1>
-        <p class="subtitle">聆聽經典配樂，猜出正確電影</p>
-        <div class="instruction" style="background: #222; padding: 15px; border-radius: 10px; margin-bottom: 20px; font-size: 0.9rem;">
-            <p>🎧 請開啟音效</p>
-            <p>⏱️ 每題有 30 秒作答時間</p>
-            <p>🏆 答對得 100 分，答錯不扣分</p>
+        <p class="subtitle">聽配樂 • 猜電影</p>
+        
+        <div class="instruction">
+            <p>🎧 <b>請開啟音效</b>：部分瀏覽器需手動允許播放。</p>
+            <p>⏱️ <b>限時挑戰</b>：每題有 30 秒作答時間。</p>
+            <p>🎵 <b>聆聽提示</b>：音樂載入後計時才會開始。</p>
         </div>
-        <button class="btn" onclick="game.start()">開始遊戲</button>
+        
+        <button class="btn" id="start-btn">開始遊戲</button>
     </div>
 
     <div id="game-screen" class="screen hidden">
@@ -180,11 +224,14 @@
             <span>分數: <span id="score">0</span></span>
         </div>
 
-        <div class="visualizer" id="visualizer">
-            <div class="music-icon">🎵</div>
+        <div class="visualizer-container">
+            <div class="visualizer" id="visualizer">
+                <div class="music-icon">🎵</div>
+            </div>
+            <div id="loading-spinner" class="loader hidden"></div>
         </div>
         
-        <div id="status-text" style="height: 20px; margin-bottom: 10px; color: var(--accent);">播放中...</div>
+        <div id="status-text" class="status-text">準備播放...</div>
 
         <div class="timer-bar">
             <div class="timer-fill" id="timer-fill"></div>
@@ -197,7 +244,7 @@
             <div class="result-card">
                 <h3 class="result-title" id="res-title">電影標題</h3>
                 <span class="result-year" id="res-year">1999</span>
-                <p class="result-desc" id="res-desc">電影描述...</p>
+                <p class="result-desc" id="res-desc">描述...</p>
                 <button class="btn" id="next-btn" onclick="game.nextQuestion()">下一題</button>
             </div>
         </div>
@@ -206,91 +253,97 @@
     <div id="end-screen" class="screen hidden">
         <h1>遊戲結束</h1>
         <p class="subtitle">你的最終得分</p>
-        <div style="font-size: 4rem; color: var(--accent); font-weight: bold; margin: 20px 0;" id="final-score">0</div>
-        <p id="feedback-msg">看來你需要多看點電影了！</p>
+        <div style="font-size: 5rem; color: var(--accent); font-weight: bold; margin: 20px 0; text-shadow: 0 0 20px rgba(245, 197, 24, 0.3);" id="final-score">0</div>
+        <p id="feedback-msg" style="font-size: 1.2rem; margin-bottom: 30px;">...</p>
         <button class="btn" onclick="location.reload()">再玩一次</button>
     </div>
 
-    <audio id="bgm-player"></audio>
+    <audio id="bgm-player" preload="auto"></audio>
 
 </div>
 
 <script>
 /**
- * 資料庫：包含 PDF 中的所有電影資訊
- * 重要：請在 "driveId" 欄位填入你 Google Drive 檔案的 ID
- * (例如連結是 https://drive.google.com/file/d/123456789/view，ID 就是 123456789)
+ * ⚠️ 重要說明：
+ * 由於版權原因，我無法提供 "Star Wars" 或 "Godfather" 的原版 MP3 檔案連結。
+ * * 下方的 `audioUrl` 欄位目前填入的是「範例音效」連結。
+ * * ✅ 如何加入您自己的音樂：
+ * 1. 將您的 MP3 上傳到 Dropbox (將連結結尾改為 ?raw=1)
+ * 2. 或者上傳到您的 GitHub Pages / 網站伺服器。
+ * 3. 絕對不要使用 Google Drive (它會阻擋遊戲讀取)。
  */
+
 const MOVIE_DATA = [
     {
         id: 1,
         title: "The Godfather (教父)",
         year: "1972",
-        desc: "講述1940年代紐約黑手黨柯里昂家族的故事。探討了權力、家庭倫理、美國夢的黑暗面。尼諾·羅塔的配樂哀傷而優美，完美詮釋了家族的悲劇命運。",
-        driveId: "1mtzOEaHkyTDJWUJx7IcMVQEc-XDESjuy" 
+        desc: "講述1940年代紐約黑手黨柯里昂家族的故事。尼諾·羅塔的配樂哀傷而優美，完美詮釋了家族的悲劇命運。",
+        // 請在此處替換為您的 MP3 連結
+        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Gustav_Mahler_-_Symphony_No._5_-_4._Adagietto_%28harp_solo%29.ogg" 
     },
     {
         id: 2,
         title: "Star Wars (星際大戰)",
         year: "1977",
-        desc: "太空歌劇巨作，年輕的路克·天行者對抗邪惡帝國。約翰·威廉斯創作的交響樂配樂氣勢磅礴，開場的主題曲已成為影史最知名的音樂之一。",
-        driveId: "1rGaBco16fCX_xoiqR6T45Il1ly4xWMCy"
+        desc: "太空歌劇巨作，年輕的路克·天行者對抗邪惡帝國。約翰·威廉斯的交響樂配樂氣勢磅礴。",
+        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Holst_-_The_Planets%2C_Op._32_-_I._Mars%2C_the_Bringer_of_War.ogg"
     },
     {
         id: 3,
         title: "Casablanca (北非諜影)",
         year: "1942",
-        desc: "二戰時期的摩洛哥，酒吧老闆瑞克在愛情與正義間抉擇。「As Time Goes By」這首歌貫穿全片，成為永恆的愛情象徵。",
-        driveId: "1ACsVFKbgNu_VQ-xeY_7QQaB1p7mVsGUu"
+        desc: "二戰時期的摩洛哥，酒吧老闆瑞克在愛情與正義間抉擇。「As Time Goes By」這首歌貫穿全片。",
+        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/7/73/As_time_goes_by_1931_f.ogg"
     },
     {
         id: 4,
         title: "Gone with the Wind (亂世佳人)",
         year: "1939",
-        desc: "美國南北戰爭史詩，展現南方社會的崩潰與重建。郝思嘉與白瑞德的愛恨糾葛。榮獲十項奧斯卡獎，場面宏大，服裝華麗。",
-        driveId: "1WuEggOIWq9wm5IJ4j_y-v8xEoJ6Zl89B"
+        desc: "美國南北戰爭史詩，展現南方社會的崩潰與重建。場面宏大，服裝華麗。",
+        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/3/30/Tchaikovsky_-_Romeo_and_Juliet_Overture_-_Theme.ogg"
     },
     {
         id: 5,
         title: "The Wizard of Oz (綠野仙蹤)",
         year: "1939",
-        desc: "桃樂絲被龍捲風捲到奧茲國的奇幻旅程。「Over the Rainbow」成為影史最偉大的電影歌曲，寓意家永遠是最溫暖的地方。",
-        driveId: "1riBCad4BObnYnIdiddKzZm-hkSv9pEkY"
+        desc: "桃樂絲被龍捲風捲到奧茲國的奇幻旅程。「Over the Rainbow」成為影史最偉大的電影歌曲。",
+        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/4/46/Waltz_of_the_Flowers_%28by_Tchaikovsky%29.ogg"
     },
     {
         id: 6,
         title: "Titanic (鐵達尼號)",
         year: "1997",
-        desc: "窮畫家傑克與貴族少女蘿絲在沉船前的刻骨銘心愛情。席琳·狄翁演唱的「My Heart Will Go On」風靡全球。",
-        driveId: "1CM8Zdor-AlzAPZF7sSsAewdMl97N6FCL"
+        desc: "窮畫家傑克與貴族少女蘿絲在沉船前的刻骨銘心愛情。席琳·狄翁的歌曲風靡全球。",
+        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/0/09/Debussy_-_La_Mer_-_2._Jeux_de_vagues.ogg"
     },
     {
         id: 7,
         title: "Jaws (大白鯊)",
         year: "1975",
-        desc: "巨大食人鯊攻擊度假小鎮。約翰·威廉斯創作的兩音符主題曲製造了極強的緊張感。開創了暑期大片的商業模式。",
-        driveId: "1o6zBN8J4gEFZ7mZbp4X0uwj-mZKbFDxT"
+        desc: "巨大食人鯊攻擊度假小鎮。兩音符主題曲製造了極強的緊張感。",
+        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Dvorak_-_Symphony_no._9_in_e_minor_%27from_the_new_world%27%2C_op._95_-_iv._allegro_con_fuoco.ogg"
     },
     {
         id: 8,
         title: "Rocky (洛基)",
         year: "1976",
-        desc: "三流拳擊手洛基獲得挑戰拳王的機會。「Gonna Fly Now」的激昂配樂搭配階梯奔跑場景，成為體育電影最經典畫面。",
-        driveId: "13yKggnZ2t6CZbL7esZOhiCwbGYGnDSgI"
+        desc: "三流拳擊手洛基獲得挑戰拳王的機會。激昂配樂搭配階梯奔跑場景，成為經典。",
+        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/e/eb/Beethoven_-_Symphony_No._5_in_C_minor%2C_Op._67_-_I._Allegro_con_brio.ogg"
     },
     {
         id: 9,
         title: "E.T. the Extra-Terrestrial (E.T.外星人)",
         year: "1982",
-        desc: "小男孩與外星人建立跨越種族的友誼。孩子們騎腳踏車飛越天際的畫面搭配約翰·威廉斯的配樂，充滿童真與感動。",
-        driveId: "15R3ICtA6eEdF6-iwPSlrwK3E8PjD7s_F"
+        desc: "小男孩與外星人建立跨越種族的友誼。騎腳踏車飛越天際的畫面充滿童真。",
+        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/8/87/Dance_of_the_Sugar_Plum_Fairy_%28by_Tchaikovsky%29.ogg"
     },
     {
         id: 10,
         title: "Raiders of the Lost Ark (法櫃奇兵)",
         year: "1981",
-        desc: "印第安納·瓊斯尋找約櫃的全球冒險。約翰·威廉斯創作的進行曲主題氣勢磅礴，成為冒險電影音樂的典範。",
-        driveId: "1nCn31D4IZ6xQn4Dbt3x-BpzI6iQf6hzW"
+        desc: "印第安納·瓊斯尋找約櫃的全球冒險。進行曲主題氣勢磅礴，成為冒險電影音樂典範。",
+        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Wagner_-_Ride_of_the_Valkyries.ogg"
     }
 ];
 
@@ -299,8 +352,9 @@ class GameEngine {
         this.score = 0;
         this.currentIndex = 0;
         this.timer = null;
-        this.timeLeft = 30;
-        this.isPlaying = false;
+        this.maxTime = 30;
+        this.timeLeft = this.maxTime;
+        this.isLoading = false;
         
         // DOM Elements
         this.screens = {
@@ -310,24 +364,30 @@ class GameEngine {
         };
         this.audioPlayer = document.getElementById('bgm-player');
         this.visualizer = document.getElementById('visualizer');
+        this.spinner = document.getElementById('loading-spinner');
         this.timerFill = document.getElementById('timer-fill');
         this.statusText = document.getElementById('status-text');
         
         // Shuffle questions
         this.questions = [...MOVIE_DATA].sort(() => Math.random() - 0.5);
-    }
 
-    // 將 Google Drive ID 轉換為可播放連結
-    getAudioUrl(id) {
-        // 這是 Google Drive 的串流 API 格式
-        return `https://drive.google.com/uc?export=download&id=${id}`;
-        // 注意：如果檔案很大或流量過高，Google 可能會限制。
-        // 測試用時，可以換成自己的 mp3 連結。
+        // Bind Start Button
+        document.getElementById('start-btn').addEventListener('click', () => this.start());
     }
 
     start() {
-        this.switchScreen('game');
-        this.loadQuestion();
+        // 重要：在使用者點擊時初始化 Audio Context，解鎖 iOS/Chrome 自動播放限制
+        this.audioPlayer.play().then(() => {
+            this.audioPlayer.pause();
+            this.audioPlayer.currentTime = 0;
+            this.switchScreen('game');
+            this.loadQuestion();
+        }).catch(e => {
+            console.error("Audio unlock failed:", e);
+            alert("請允許網頁播放聲音！");
+            this.switchScreen('game');
+            this.loadQuestion();
+        });
     }
 
     switchScreen(name) {
@@ -347,27 +407,46 @@ class GameEngine {
         document.getElementById('current-q').innerText = this.currentIndex + 1;
         document.getElementById('result-section').classList.add('hidden');
         document.getElementById('options-container').classList.remove('hidden');
-        this.visualizer.classList.add('playing');
-        this.statusText.innerText = "🎶 音樂播放中... 請猜測！";
+        this.visualizer.classList.remove('playing');
+        this.spinner.classList.remove('hidden'); // Show spinner
+        this.statusText.innerText = "音樂載入中...";
+        this.statusText.style.color = "#ccc";
+        this.timerFill.style.transition = 'none';
+        this.timerFill.style.width = '100%';
         
-        // Audio
-        this.audioPlayer.src = this.getAudioUrl(currentMovie.driveId);
-        this.audioPlayer.volume = 0.5;
-        // 處理瀏覽器自動播放限制：需要確保使用者有互動過
-        const playPromise = this.audioPlayer.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(error => {
-                this.statusText.innerText = "⚠️ 請點擊畫面播放音樂";
-                document.body.addEventListener('click', () => this.audioPlayer.play(), {once:true});
-            });
-        }
+        // 停止之前的計時與音樂
+        if(this.timer) clearInterval(this.timer);
+        this.audioPlayer.pause();
 
-        // Generate Options (1 Correct + 3 Random Wrong)
+        // 設定音樂來源
+        this.audioPlayer.src = currentMovie.audioUrl;
+        this.audioPlayer.volume = 0.6;
+        
+        // 音樂載入處理
+        this.isLoading = true;
+
+        // 當音樂準備好可以播放時
+        this.audioPlayer.oncanplay = () => {
+            if(this.isLoading) {
+                this.isLoading = false;
+                this.spinner.classList.add('hidden');
+                this.visualizer.classList.add('playing');
+                this.statusText.innerText = "🎶 音樂播放中... 請猜測！";
+                this.statusText.style.color = "var(--accent)";
+                this.audioPlayer.play().catch(e => console.log("Play interrupted", e));
+                this.startTimer();
+            }
+        };
+
+        // 錯誤處理 (如果連結壞了)
+        this.audioPlayer.onerror = () => {
+            this.spinner.classList.add('hidden');
+            this.statusText.innerText = "⚠️ 音訊讀取失敗";
+            console.error("Audio Load Error for:", currentMovie.title);
+        };
+
+        // 產生選項
         this.generateOptions(currentMovie);
-
-        // Start Timer
-        this.timeLeft = 30;
-        this.startTimer();
     }
 
     generateOptions(correctMovie) {
@@ -392,12 +471,15 @@ class GameEngine {
     }
 
     startTimer() {
-        if(this.timer) clearInterval(this.timer);
-        this.timerFill.style.width = '100%';
-        
+        this.timeLeft = this.maxTime;
+        // Restore transition for countdown
+        setTimeout(() => {
+             this.timerFill.style.transition = 'width 1s linear';
+        }, 50);
+
         this.timer = setInterval(() => {
             this.timeLeft--;
-            const pct = (this.timeLeft / 30) * 100;
+            const pct = (this.timeLeft / this.maxTime) * 100;
             this.timerFill.style.width = `${pct}%`;
 
             if (this.timeLeft <= 0) {
@@ -420,9 +502,10 @@ class GameEngine {
         if (isCorrect) {
             btnElement.classList.add('correct');
             this.score += 100;
-            // Bonus for time left
+            // Bonus for time left (2 points per sec)
             this.score += Math.max(0, this.timeLeft * 2);
             this.statusText.innerText = "✅ 答對了！";
+            this.statusText.style.color = "var(--correct)";
         } else {
             btnElement.classList.add('wrong');
             // Highlight the correct one
@@ -430,6 +513,7 @@ class GameEngine {
                 if(b.innerText === correct.title) b.classList.add('correct');
             });
             this.statusText.innerText = "❌ 答錯了...";
+            this.statusText.style.color = "var(--wrong)";
         }
 
         document.getElementById('score').innerText = this.score;
@@ -444,11 +528,11 @@ class GameEngine {
         const allBtns = document.querySelectorAll('.option-btn');
         allBtns.forEach(b => {
             b.disabled = true;
-            // Highlight correct one
             if(b.innerText === this.questions[this.currentIndex].title) b.classList.add('correct');
         });
         
         this.statusText.innerText = "⏰ 時間到！";
+        this.statusText.style.color = "#f44336";
         this.showResult(this.questions[this.currentIndex]);
     }
 
