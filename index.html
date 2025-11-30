@@ -3,858 +3,898 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>雙人對打遊戲 | Fighting Game</title>
+    <title>終極雙人亂鬥 | Ultimate Brawl</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Roboto:wght@400;700&display=swap');
+
+        :root {
+            --p1-color: #ff4757;
+            --p2-color: #3742fa;
+            --bg-color: #1e272e;
+            --ui-bg: rgba(0, 0, 0, 0.8);
+            --accent: #ffa502;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         
         body {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: #fff;
-            min-height: 100vh;
+            background-color: #000;
+            background-image: radial-gradient(circle at center, #2f3542 0%, #000 100%);
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            overflow-x: hidden;
-        }
-        
-        .container {
-            max-width: 1000px;
-            width: 100%;
-            text-align: center;
-        }
-        
-        header {
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, #ff4d4d, #4d79ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            color: #a0a0c0;
-            margin-bottom: 30px;
-        }
-
-        /* 角色選擇介面 */
-        .selection-screen {
-            background: rgba(10, 15, 30, 0.9);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .character-selection {
-            display: flex;
-            justify-content: space-around;
-            gap: 20px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-
-        .character-card {
-            background: #202538;
-            padding: 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            min-width: 150px;
-            border: 2px solid transparent;
-        }
-
-        .character-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        .character-card.selected-p1 {
-            border-color: #ff4d4d;
-            box-shadow: 0 0 15px #ff4d4d;
-        }
-
-        .character-card.selected-p2 {
-            border-color: #4d79ff;
-            box-shadow: 0 0 15px #4d79ff;
-        }
-
-        .character-card h4 {
-            color: #ffcc00;
-            margin-bottom: 5px;
-        }
-
-        .character-info {
-            font-size: 0.9rem;
-            color: #c0c0e0;
-        }
-
-        .start-btn {
-            background: linear-gradient(90deg, #10b981, #059669);
-            color: #fff;
-            border: none;
-            padding: 12px 25px;
-            font-size: 1.1rem;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            margin-top: 25px;
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        .start-btn.ready {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .start-btn.ready:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
-        }
-
-        /* 遊戲區域 */
-        .game-area {
-            position: relative;
-            width: 100%;
-            background: rgba(10, 15, 30, 0.7);
-            border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            margin-bottom: 30px;
         }
-        
-        #gameCanvas {
-            display: block;
-            width: 100%;
-            background: #0a0f1e;
+
+        /* 遊戲容器 */
+        #game-container {
+            position: relative;
+            width: 960px;
+            height: 540px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            border: 2px solid #57606f;
+            background: #111;
         }
-        
-        .ui-overlay {
+
+        canvas { display: block; width: 100%; height: 100%; }
+
+        /* UI 層 */
+        .ui-layer {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
             padding: 20px;
+        }
+
+        /* 頂部 HUD */
+        .hud {
             display: flex;
             justify-content: space-between;
-            pointer-events: none;
-            z-index: 10;
-        }
-        
-        .player-ui {
-            background: rgba(0, 0, 0, 0.6);
-            padding: 15px;
-            border-radius: 10px;
-            min-width: 180px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: left;
-        }
-        
-        .player-name {
-            font-size: 1.2rem;
-            font-weight: bold;
-            margin-bottom: 10px;
+            align-items: flex-start;
+            width: 100%;
         }
 
-        .player-skill {
-            font-size: 0.8rem;
-            margin-top: 5px;
-            color: #ffcc00;
-        }
-        
-        .health-bar {
-            height: 20px;
-            background: rgba(255, 0, 0, 0.3);
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 10px;
-        }
-        
-        .health-fill {
-            height: 100%;
-            border-radius: 10px;
-            transition: width 0.3s;
-        }
-        
-        .player1-ui .health-fill {
-            background: linear-gradient(90deg, #ff4d4d, #ff9999);
-        }
-        
-        .player2-ui .health-fill {
-            background: linear-gradient(90deg, #4d79ff, #99bbff);
-        }
-        
-        .controls {
-            display: none; /* 遊戲開始後才顯示 */
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .controls.visible {
-            display: flex;
-        }
-        
-        .control-card {
-            background: rgba(20, 25, 45, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            min-width: 250px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            text-align: left;
-        }
-        
-        .control-card h3 {
-            margin-bottom: 15px;
-            color: #ffcc00;
-            text-align: center;
-        }
-        
-        .key {
-            display: inline-block;
-            padding: 5px 10px;
-            margin: 5px 2px 5px 0;
-            background: rgba(255, 255, 255, 0.1);
+        .player-stat {
+            width: 40%;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
             border-radius: 5px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            font-family: monospace;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        .control-card p {
-            margin: 5px 0;
+        .bar-container {
+            height: 20px;
+            background: #333;
+            margin-top: 5px;
+            position: relative;
+            transform: skewX(-20deg);
+            overflow: hidden;
+            border: 1px solid #fff;
         }
-        
-        .game-over {
+
+        .hp-bar { height: 100%; transition: width 0.1s; }
+        .mp-bar { height: 6px; background: #eccc68; margin-top: 5px; width: 100%; transition: width 0.1s; box-shadow: 0 0 5px #eccc68; }
+
+        .p1-stat .hp-bar { background: var(--p1-color); float: right; }
+        .p2-stat .hp-bar { background: var(--p2-color); float: left; }
+        .p1-stat { text-align: right; }
+        .p2-stat { text-align: left; }
+
+        .vs-logo {
+            font-family: 'Black Ops One', cursive;
+            font-size: 3rem;
+            color: var(--accent);
+            text-shadow: 0 0 10px var(--accent);
+        }
+
+        /* 角色選擇螢幕 */
+        #menu-screen {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.85);
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 215, 0, 0.5);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-            display: none;
-            z-index: 20;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            display: flex; /* Flex handles visibility */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            pointer-events: auto;
         }
+
+        .char-select-container {
+            display: flex;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .char-card {
+            width: 120px;
+            height: 180px;
+            background: #2f3640;
+            border: 2px solid #57606f;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .char-card:hover { transform: translateY(-10px); border-color: #fff; }
+        .char-card.selected-p1 { box-shadow: 0 0 15px var(--p1-color); border-color: var(--p1-color); }
+        .char-card.selected-p2 { box-shadow: 0 0 15px var(--p2-color); border-color: var(--p2-color); }
         
-        .game-over h2 {
-            font-size: 2.5rem;
+        .char-icon { width: 50px; height: 50px; margin-bottom: 10px; border-radius: 50%; }
+        .char-name { font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; }
+        .char-type { font-size: 0.7rem; color: #aaa; }
+        .char-desc { font-size: 0.65rem; color: #ccc; text-align: center; padding: 5px; }
+
+        #status-text {
+            font-size: 1.5rem;
             margin-bottom: 20px;
-            color: #ffcc00;
+            color: #ffda79;
         }
-        
-        .restart-btn {
-            background: linear-gradient(90deg, #ff9900, #ffcc00);
+
+        .btn {
+            padding: 10px 30px;
+            font-size: 1.2rem;
+            background: var(--accent);
             color: #000;
             border: none;
-            padding: 12px 25px;
-            font-size: 1.1rem;
-            border-radius: 50px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.3s;
-            margin-top: 15px;
-            box-shadow: 0 5px 15px rgba(255, 204, 0, 0.4);
+            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            transition: transform 0.2s;
         }
-        
-        .restart-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 204, 0, 0.6);
-        }
-        
-        footer {
-            margin-top: 20px;
-            color: #a0a0c0;
-            font-size: 0.9rem;
-            text-align: center;
-        }
-        
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.2rem;
-            }
-            
-            .controls {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .control-card {
-                width: 100%;
-                max-width: 350px;
-            }
-            
-            .player-ui {
-                min-width: 140px;
-                padding: 10px;
-            }
-            
-            .player-name {
-                font-size: 1rem;
-            }
+        .btn:hover { transform: scale(1.05); }
+        .btn:disabled { background: #555; cursor: not-allowed; }
 
-            .character-selection {
-                flex-direction: column;
-            }
-            
-            .character-card {
-                width: 100%;
-            }
+        /* 控制說明 */
+        .controls-info {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+            margin-top: 10px;
+            color: #aaa;
+            font-size: 0.9rem;
         }
-        
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.8rem;
-            }
-            
-            .ui-overlay {
-                padding: 10px;
-                flex-direction: column;
-                gap: 10px;
-                align-items: center;
-            }
-            
-            .player-ui {
-                width: 100%;
-                max-width: 200px;
-            }
+        .key { display: inline-block; padding: 2px 6px; background: #333; border: 1px solid #555; border-radius: 4px; color: #fff; font-family: monospace; font-size: 0.8rem; }
+
+        /* 遊戲結束 */
+        #game-over-screen {
+            display: none;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            pointer-events: auto;
         }
+        #winner-text { font-size: 3rem; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; }
+
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>雙人對打遊戲</h1>
-            <p class="subtitle">選擇你的英雄，與朋友一決高下！</p>
-        </header>
 
-        <div class="selection-screen" id="selectionScreen">
-            <h2>選擇你的角色</h2>
-            <div class="character-selection" id="characterSelection">
+    <div id="game-container">
+        <canvas id="gameCanvas"></canvas>
+
+        <div class="ui-layer" id="hud-layer" style="display: none;">
+            <div class="hud">
+                <div class="player-stat p1-stat">
+                    <div id="p1-name-display">PLAYER 1</div>
+                    <div class="bar-container"><div class="hp-bar" id="p1-hp"></div></div>
+                    <div class="mp-bar" id="p1-mp" style="width: 100%"></div>
                 </div>
-            <button class="start-btn" id="startBtn">開始戰鬥！</button>
-        </div>
-        
-        <div class="game-area" style="display: none;" id="gameArea">
-            <canvas id="gameCanvas"></canvas>
-            
-            <div class="ui-overlay">
-                <div class="player-ui player1-ui">
-                    <div class="player-name">玩家 1: <span id="p1Name"></span></div>
-                    <div class="health-bar">
-                        <div class="health-fill" id="p1Health" style="width: 100%"></div>
-                    </div>
-                    <div>生命值: <span id="p1HealthText">100</span></div>
-                    <div class="player-skill">技能 (F): <span id="p1SkillName"></span></div>
-                </div>
-                
-                <div class="player-ui player2-ui">
-                    <div class="player-name">玩家 2: <span id="p2Name"></span></div>
-                    <div class="health-bar">
-                        <div class="health-fill" id="p2Health" style="width: 100%"></div>
-                    </div>
-                    <div>生命值: <span id="p2HealthText">100</span></div>
-                    <div class="player-skill">技能 (R Ctrl): <span id="p2SkillName"></span></div>
+                <div class="vs-logo">VS</div>
+                <div class="player-stat p2-stat">
+                    <div id="p2-name-display">PLAYER 2</div>
+                    <div class="bar-container"><div class="hp-bar" id="p2-hp"></div></div>
+                    <div class="mp-bar" id="p2-mp" style="width: 100%"></div>
                 </div>
             </div>
+        </div>
+
+        <div id="menu-screen">
+            <h1>選擇你的鬥士</h1>
+            <div id="status-text">玩家 1 請選擇角色</div>
             
-            <div class="game-over" id="gameOver">
-                <h2 id="winnerText">玩家 1 獲勝！</h2>
-                <p>遊戲結束，點擊按鈕重新開始</p>
-                <button class="restart-btn" id="restartBtn">重新開始遊戲</button>
+            <div class="char-select-container">
+                </div>
+
+            <button class="btn" id="start-btn" disabled>開始戰鬥</button>
+            
+            <div class="controls-info" style="margin-top: 40px;">
+                <div>
+                    <h3>玩家 1</h3>
+                    <p>移動: <span class="key">W</span> <span class="key">A</span> <span class="key">D</span></p>
+                    <p>防禦: <span class="key">S</span></p>
+                    <p>攻擊: <span class="key">F</span> (連點)</p>
+                    <p>技能: <span class="key">G</span> (耗能)</p>
+                </div>
+                <div>
+                    <h3>玩家 2</h3>
+                    <p>移動: <span class="key">↑</span> <span class="key">←</span> <span class="key">→</span></p>
+                    <p>防禦: <span class="key">↓</span></p>
+                    <p>攻擊: <span class="key">K</span> (連點)</p>
+                    <p>技能: <span class="key">L</span> (耗能)</p>
+                </div>
             </div>
         </div>
-        
-        <div class="controls" id="controls">
-            <div class="control-card">
-                <h3>玩家 1 控制</h3>
-                <p><span class="key">W</span> 跳躍</p>
-                <p><span class="key">A</span> 向左移動</p>
-                <p><span class="key">D</span> 向右移動</p>
-                <p><span class="key">F</span> **特殊技能**</p>
-            </div>
-            
-            <div class="control-card">
-                <h3>玩家 2 控制</h3>
-                <p><span class="key">↑</span> 跳躍</p>
-                <p><span class="key">←</span> 向左移動</p>
-                <p><span class="key">→</span> 向右移動</p>
-                <p><span class="key">R Ctrl</span> **特殊技能**</p>
-            </div>
+
+        <div id="game-over-screen">
+            <div id="winner-text" style="color: #fff;">PLAYER 1 WINS</div>
+            <button class="btn" onclick="location.reload()">重新選擇角色</button>
+            <br>
+            <button class="btn" id="rematch-btn" style="background: #2ecc71;">再戰一局</button>
         </div>
-        
-        <footer>
-            <p>專為 GitHub 設計 | 使用 HTML5 Canvas 和 JavaScript 開發</p>
-        </footer>
     </div>
 
     <script>
-        // --- 遊戲設定與角色資料 ---
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const gameOverScreen = document.getElementById('gameOver');
-        const winnerText = document.getElementById('winnerText');
-        const restartBtn = document.getElementById('restartBtn');
-        const p1Health = document.getElementById('p1Health');
-        const p2Health = document.getElementById('p2Health');
-        const p1HealthText = document.getElementById('p1HealthText');
-        const p2HealthText = document.getElementById('p2HealthText');
-        const selectionScreen = document.getElementById('selectionScreen');
-        const gameArea = document.getElementById('gameArea');
-        const startBtn = document.getElementById('startBtn');
-        const characterSelectionDiv = document.getElementById('characterSelection');
-        const controlsDiv = document.getElementById('controls');
-
-        // 顏色定義
-        const colors = {
-            background: '#0a0f1e',
-            platform: '#4a5f8c',
-            text: '#ffffff'
-        };
-
-        // 角色屬性定義
-        const characters = [
-            { id: 'fire_mage', name: '火焰法師', color: '#ff4d4d', skill: '火焰衝擊 (攻擊)', skillName: '火焰衝擊', dmg: 15, cd: 45, defense: 0.8 }, // 80% 傷害
-            { id: 'ice_knight', name: '冰霜騎士', color: '#4d79ff', skill: '冰霜護甲 (防禦)', skillName: '冰霜護甲', dmg: 10, cd: 60, defense: 0.5 }, // 50% 傷害
-            { id: 'shadow_ninja', name: '暗影忍者', color: '#8a2be2', skill: '瞬移突襲 (攻擊)', skillName: '瞬移突襲', dmg: 20, cd: 30, defense: 1.0 }, // 標準傷害
-            { id: 'thunder_monk', name: '雷電武僧', color: '#ffd700', skill: '閃電踢 (攻防)', skillName: '閃電踢', dmg: 12, cd: 40, defense: 0.9 }, // 90% 傷害
-            { id: 'earth_golem', name: '大地魔像', color: '#10b981', skill: '石牆術 (防禦)', skillName: '石牆術', dmg: 5, cd: 50, defense: 0.2 }, // 20% 傷害
+        /** * 遊戲核心配置與數據
+         */
+        const CHARACTERS = [
+            {
+                id: 'balanced',
+                name: '烈焰劍士',
+                type: '平衡型',
+                desc: '各項能力平均，技能為發射火球。',
+                color: '#ff4757',
+                stats: { speed: 5, jump: 12, hp: 100, damage: 10, def: 0 },
+                skillCost: 30,
+                skillType: 'projectile' // 技能類型：飛行道具
+            },
+            {
+                id: 'speed',
+                name: '瞬影忍者',
+                type: '速度型',
+                desc: '移動極快，攻擊頻率高但血量少。技能為無敵衝刺。',
+                color: '#2ed573',
+                stats: { speed: 8, jump: 15, hp: 80, damage: 8, def: -2 },
+                skillCost: 40,
+                skillType: 'dash' // 技能類型：衝刺
+            },
+            {
+                id: 'tank',
+                name: '鋼鐵巨像',
+                type: '坦克型',
+                desc: '血厚防高但移動緩慢。技能為霸體護盾衝撞。',
+                color: '#57606f',
+                stats: { speed: 3, jump: 10, hp: 140, damage: 15, def: 5 },
+                skillCost: 50,
+                skillType: 'shield_bash' // 技能類型：護盾衝撞
+            },
+            {
+                id: 'range',
+                name: '秘法術士',
+                type: '遠程型',
+                desc: '近戰較弱。技能為召喚閃電領域。',
+                color: '#a29bfe',
+                stats: { speed: 6, jump: 11, hp: 90, damage: 6, def: -1 },
+                skillCost: 45,
+                skillType: 'aoe' // 技能類型：範圍攻擊
+            },
+            {
+                id: 'lifesteal',
+                name: '吸血伯爵',
+                type: '特殊型',
+                desc: '攻擊可以恢復少量生命。技能為鮮血爆發。',
+                color: '#800000',
+                stats: { speed: 5.5, jump: 13, hp: 95, damage: 9, def: 0 },
+                skillCost: 35,
+                skillType: 'lifesteal_burst' // 技能類型：吸血爆發
+            }
         ];
 
-        // 遊戲狀態變數
-        let gameRunning = false;
-        let selectedCharP1 = null;
-        let selectedCharP2 = null;
-        let player1 = null;
-        let player2 = null;
-        let platforms = [];
+        // 畫布設置
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 960;
+        canvas.height = 540;
 
-        // --- 初始化與事件處理 ---
+        // 全局變量
+        let gameLoopId;
+        let lastTime = 0;
+        let gameState = 'MENU'; // MENU, PLAYING, END
+        let p1Selection = null;
+        let p2Selection = null;
+        
+        // 遊戲實體
+        let player1, player2;
+        let projectiles = [];
+        let particles = [];
+        let platforms = [
+            { x: 0, y: 500, w: 960, h: 40 }, // 地面
+            { x: 150, y: 350, w: 200, h: 20 },
+            { x: 610, y: 350, w: 200, h: 20 },
+            { x: 380, y: 200, w: 200, h: 20 }
+        ];
 
-        function resizeCanvas() {
-            const container = document.querySelector('.game-area');
-            if (container.style.display !== 'none') {
-                canvas.width = container.clientWidth;
-                canvas.height = Math.min(600, container.clientWidth * 0.75);
-                createPlatforms();
-            }
-        }
+        // 輸入控制
+        const keys = {};
+        window.addEventListener('keydown', e => keys[e.code] = true);
+        window.addEventListener('keyup', e => keys[e.code] = false);
 
-        function createPlatforms() {
-            platforms = [
-                new Platform(0, canvas.height - 50, canvas.width, 50), // 地面
-                new Platform(canvas.width * 0.2, canvas.height - 200, canvas.width * 0.15, 20), // 平台1
-                new Platform(canvas.width * 0.65, canvas.height - 200, canvas.width * 0.15, 20), // 平台2
-                new Platform(canvas.width * 0.35, canvas.height - 350, canvas.width * 0.3, 20), // 平台3
-            ];
-        }
-
-        window.addEventListener('resize', resizeCanvas);
-
-        // 繪製角色選擇卡片
-        function renderCharacterSelection() {
-            characterSelectionDiv.innerHTML = '';
-            characters.forEach(char => {
-                const card = document.createElement('div');
-                card.className = 'character-card';
-                card.id = `char-${char.id}`;
-                card.innerHTML = `
-                    <h4>${char.name}</h4>
-                    <p class="character-info">生命: 100</p>
-                    <p class="character-info">技能: ${char.skillName}</p>
-                    <p class="character-info">防禦係數: ${char.defense * 100}%</p>
-                `;
-                card.addEventListener('click', () => handleCharacterSelect(char));
-                characterSelectionDiv.appendChild(card);
-            });
-        }
-
-        function handleCharacterSelect(char) {
-            const cardElement = document.getElementById(`char-${char.id}`);
-            const isP1Selected = cardElement.classList.contains('selected-p1');
-            const isP2Selected = cardElement.classList.contains('selected-p2');
-
-            if (!isP1Selected && selectedCharP1 === null) {
-                selectedCharP1 = char;
-                cardElement.classList.add('selected-p1');
-            } else if (!isP2Selected && selectedCharP2 === null && selectedCharP1 !== char) {
-                selectedCharP2 = char;
-                cardElement.classList.add('selected-p2');
-            } else if (isP1Selected) {
-                cardElement.classList.remove('selected-p1');
-                selectedCharP1 = null;
-            } else if (isP2Selected) {
-                cardElement.classList.remove('selected-p2');
-                selectedCharP2 = null;
-            }
-
-            // 更新開始按鈕狀態
-            if (selectedCharP1 && selectedCharP2) {
-                startBtn.classList.add('ready');
-            } else {
-                startBtn.classList.remove('ready');
-            }
-        }
-
-        startBtn.addEventListener('click', startGame);
-
-        function startGame() {
-            if (!selectedCharP1 || !selectedCharP2) return;
-
-            selectionScreen.style.display = 'none';
-            gameArea.style.display = 'block';
-            controlsDiv.classList.add('visible');
-            resizeCanvas(); // 確保 Canvas 尺寸正確
-
-            // 初始化玩家
-            player1 = new Player(100, canvas.height - 130, selectedCharP1, {
-                up: 'KeyW',
-                left: 'KeyA',
-                right: 'KeyD',
-                attack: 'KeyF'
-            }, "玩家 1", 1);
-            
-            player2 = new Player(canvas.width - 150, canvas.height - 130, selectedCharP2, {
-                up: 'ArrowUp',
-                left: 'ArrowLeft',
-                right: 'ArrowRight',
-                attack: 'ControlRight'
-            }, "玩家 2", 2);
-
-            // 更新 UI 顯示
-            document.getElementById('p1Name').textContent = selectedCharP1.name;
-            document.getElementById('p2Name').textContent = selectedCharP2.name;
-            document.getElementById('p1SkillName').textContent = selectedCharP1.skillName;
-            document.getElementById('p2SkillName').textContent = selectedCharP2.skillName;
-
-            gameRunning = true;
-            gameLoop();
-        }
-
-        // --- 遊戲邏輯類別與函式 ---
-
-        // 平台類
-        class Platform {
-            constructor(x, y, width, height) {
+        /**
+         * 類別：粒子系統 (特效)
+         */
+        class Particle {
+            constructor(x, y, color, speed, size, life) {
                 this.x = x;
                 this.y = y;
-                this.width = width;
-                this.height = height;
+                this.vx = (Math.random() - 0.5) * speed;
+                this.vy = (Math.random() - 0.5) * speed;
+                this.color = color;
+                this.size = size;
+                this.life = life;
+                this.maxLife = life;
             }
-            
-            draw() {
-                ctx.fillStyle = colors.platform;
-                ctx.fillRect(this.x, this.y, this.width, this.height);
-                
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
-                ctx.fillRect(this.x, this.y, this.width, 5);
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life--;
             }
-        }
-
-        // 玩家類 (已大幅修改)
-        class Player {
-            constructor(x, y, char, controls, name, id) {
-                this.id = id;
-                this.x = x;
-                this.y = y;
-                this.width = 50;
-                this.height = 80;
-                this.color = char.color;
-                this.name = name;
-                this.char = char;
-
-                this.speed = 5;
-                this.jumpPower = 15;
-                this.velY = 0;
-                this.onGround = false;
-
-                this.health = 100;
-                this.controls = controls;
-                this.facingRight = id === 1; // P1 預設面向右，P2 預設面向左
-
-                this.attackCooldown = 0;
-                this.skillCooldown = 0;
-                this.skillActive = 0; // 技能持續時間
-                this.isAttacking = false;
-                this.isDefending = false;
-            }
-            
-            draw() {
-                // 繪製玩家本體
+            draw(ctx) {
+                ctx.globalAlpha = this.life / this.maxLife;
                 ctx.fillStyle = this.color;
-                ctx.fillRect(this.x, this.y, this.width, this.height);
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+                ctx.globalAlpha = 1.0;
+            }
+        }
+        
+        class DamageText {
+            constructor(x, y, text, color) {
+                this.x = x;
+                this.y = y;
+                this.text = text;
+                this.color = color;
+                this.life = 60;
+                this.vy = -1;
+            }
+            update() {
+                this.y += this.vy;
+                this.life--;
+            }
+            draw(ctx) {
+                ctx.globalAlpha = Math.max(0, this.life / 60);
+                ctx.fillStyle = this.color;
+                ctx.font = "bold 20px Arial";
+                ctx.strokeStyle = "black";
+                ctx.lineWidth = 2;
+                ctx.strokeText(this.text, this.x, this.y);
+                ctx.fillText(this.text, this.x, this.y);
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        /**
+         * 類別：飛行道具 (技能)
+         */
+        class Projectile {
+            constructor(owner, x, y, direction, type) {
+                this.owner = owner;
+                this.x = x;
+                this.y = y;
+                this.w = 30;
+                this.h = 20;
+                this.vx = direction * 12;
+                this.type = type;
+                this.life = 60; // 存在幀數
+                this.color = owner.color;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.life--;
                 
-                // 攻擊/技能動畫
-                if (this.isAttacking) {
-                    ctx.fillStyle = 'rgba(255, 255, 0, 0.5)';
-                    const attackX = this.facingRight ? this.x + this.width : this.x - 30;
-                    ctx.fillRect(attackX, this.y, 30, this.height);
+                // 特效
+                if (Math.random() < 0.5) {
+                    particles.push(new Particle(this.x, this.y + 10, this.color, 2, 4, 20));
+                }
+            }
+
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x + 15, this.y + 10, 10, 0, Math.PI*2);
+                ctx.fill();
+                // 拖尾
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.fillRect(this.x - (this.vx*2), this.y+5, 20, 10);
+            }
+        }
+
+        /**
+         * 類別：玩家
+         */
+        class Player {
+            constructor(x, y, config, controls, isP1) {
+                this.x = x;
+                this.y = y;
+                this.w = 40;
+                this.h = 70;
+                this.vx = 0;
+                this.vy = 0;
+                this.isP1 = isP1;
+                
+                // 屬性複製
+                this.name = config.name;
+                this.baseColor = config.color;
+                this.speed = config.stats.speed;
+                this.jumpPower = config.stats.jump;
+                this.maxHp = config.stats.hp;
+                this.hp = this.maxHp;
+                this.damage = config.stats.damage;
+                this.def = config.stats.def;
+                this.skillType = config.skillType;
+                this.skillCost = config.skillCost;
+                this.mp = 100; // 能量值
+
+                // 控制
+                this.controls = controls;
+
+                // 狀態
+                this.grounded = false;
+                this.facingRight = isP1;
+                this.isAttacking = false;
+                this.isBlocking = false;
+                this.attackCooldown = 0;
+                this.stunned = 0;
+                this.invincible = 0; // 無敵幀
+                this.dashTime = 0;
+            }
+
+            update() {
+                // 受傷硬直 / 暈眩
+                if (this.stunned > 0) {
+                    this.stunned--;
+                    this.vx *= 0.8; // 摩擦力
+                    this.applyGravity();
+                    this.checkCollision();
+                    return;
                 }
 
-                // 防禦/技能特效
-                if (this.isDefending || this.skillActive > 0) {
-                    ctx.strokeStyle = '#fff';
-                    ctx.lineWidth = 4;
-                    ctx.beginPath();
-                    ctx.rect(this.x - 5, this.y - 5, this.width + 10, this.height + 10);
-                    ctx.stroke();
+                // 無敵時間減少
+                if (this.invincible > 0) this.invincible--;
+                if (this.attackCooldown > 0) this.attackCooldown--;
+                if (this.mp < 100) this.mp += 0.1; // 自動回能
+
+                // 衝刺狀態 (忍者技能)
+                if (this.dashTime > 0) {
+                    this.x += this.facingRight ? 20 : -20;
+                    this.dashTime--;
+                    particles.push(new Particle(this.x, this.y + 35, '#fff', 5, 5, 10));
+                    this.checkBounds();
+                    return;
                 }
-                
-                // 繪製眼睛（方向指示）
-                ctx.fillStyle = '#ffffff';
-                const eyeX = this.facingRight ? this.x + this.width - 15 : this.x + 15;
-                ctx.beginPath();
-                ctx.arc(eyeX, this.y + 25, 8, 0, Math.PI * 2);
-                ctx.fill();
-                
-                ctx.fillStyle = '#000000';
-                ctx.beginPath();
-                ctx.arc(eyeX, this.y + 25, 4, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            
-            move(keys, platforms) {
-                let dx = 0;
-                // 水平移動
+
+                // 1. 移動邏輯
+                this.vx = 0;
+                this.isBlocking = false;
+
                 if (keys[this.controls.left]) {
-                    dx = -this.speed;
+                    this.vx = -this.speed;
                     this.facingRight = false;
                 }
                 if (keys[this.controls.right]) {
-                    dx = this.speed;
+                    this.vx = this.speed;
                     this.facingRight = true;
                 }
-                this.x += dx;
+
+                // 2. 跳躍
+                if (keys[this.controls.up] && this.grounded) {
+                    this.vy = -this.jumpPower;
+                    this.grounded = false;
+                    // 粒子特效
+                    for(let i=0; i<5; i++) particles.push(new Particle(this.x+20, this.y+70, '#ccc', 3, 5, 20));
+                }
+
+                // 3. 防禦
+                if (keys[this.controls.down] && this.grounded) {
+                    this.vx = 0; // 防禦時不能移動
+                    this.isBlocking = true;
+                }
+
+                // 4. 攻擊
+                if (keys[this.controls.attack] && this.attackCooldown <= 0 && !this.isBlocking) {
+                    this.performAttack();
+                }
+
+                // 5. 技能
+                if (keys[this.controls.skill] && this.mp >= this.skillCost && this.attackCooldown <= 0) {
+                    this.performSkill();
+                }
+
+                // 物理應用
+                this.applyGravity();
+                this.x += this.vx;
+                this.y += this.vy;
+
+                this.checkCollision();
+                this.checkBounds();
+            }
+
+            applyGravity() {
+                this.vy += 0.6; // 重力常數
+            }
+
+            checkCollision() {
+                this.grounded = false;
                 
-                // 確保玩家不會離開螢幕
-                this.x = Math.max(0, Math.min(canvas.width - this.width, this.x));
-                
-                // 重力
-                this.velY += 0.5;
-                this.y += this.velY;
-                
-                // 碰撞檢測 - 平台
-                this.onGround = false;
-                for (const platform of platforms) {
-                    // 檢查垂直碰撞
-                    if (this.x < platform.x + platform.width &&
-                        this.x + this.width > platform.x) {
-                        
-                        // 站在平台上 (從上方落下)
-                        if (this.y + this.height > platform.y && 
-                            this.y + this.height - this.velY <= platform.y) {
+                // 平台碰撞
+                for (let p of platforms) {
+                    // 簡單的AABB碰撞，只檢測腳下
+                    if (this.vy >= 0 && // 只有下落時檢測
+                        this.y + this.h - this.vy <= p.y + 10 && // 上一幀在平台上方
+                        this.y + this.h >= p.y && // 當前幀穿過或接觸平台
+                        this.x + this.w > p.x && 
+                        this.x < p.x + p.w) {
                             
-                            this.y = platform.y - this.height;
-                            this.velY = 0;
-                            this.onGround = true;
+                        this.y = p.y - this.h;
+                        this.vy = 0;
+                        this.grounded = true;
+                    }
+                }
+            }
+
+            checkBounds() {
+                if (this.x < 0) this.x = 0;
+                if (this.x + this.w > canvas.width) this.x = canvas.width - this.w;
+            }
+
+            performAttack() {
+                this.isAttacking = true;
+                this.attackCooldown = 20;
+                
+                // 攻擊判定箱
+                const range = 60;
+                const hitX = this.facingRight ? this.x + this.w : this.x - range;
+                const hitY = this.y + 10;
+                const hitW = range;
+                const hitH = 50;
+
+                // 獲取對手
+                const enemy = this.isP1 ? player2 : player1;
+
+                // 檢測是否擊中
+                if (checkRectCollide(hitX, hitY, hitW, hitH, enemy.x, enemy.y, enemy.w, enemy.h)) {
+                    // 計算傷害
+                    let dmg = this.damage;
+                    let knockback = 10;
+
+                    // 對手防禦邏輯
+                    if (enemy.isBlocking) {
+                        dmg = Math.max(1, dmg - enemy.def - 5); // 大幅減傷
+                        knockback = 2; // 減少擊退
+                        enemy.mp += 5; // 防禦成功回能
+                        createDamageText(enemy.x, enemy.y - 20, "BLOCKED", "#fff");
+                    } else {
+                        // 正常命中
+                        dmg = Math.max(1, dmg - (enemy.def/2));
+                        createDamageText(enemy.x, enemy.y - 20, dmg.toFixed(0), "#ff0000");
+                        enemy.stunned = 10; // 硬直
+                        
+                        // 特效
+                        for(let i=0; i<10; i++) particles.push(new Particle(enemy.x + enemy.w/2, enemy.y + enemy.h/2, '#ff0000', 5, 4, 30));
+                        
+                        // 吸血鬼特性
+                        if (this.skillType === 'lifesteal_burst') {
+                            this.hp = Math.min(this.maxHp, this.hp + 2);
                         }
                     }
-                }
-                
-                // 碰撞檢測 - 地面
-                if (this.y + this.height >= canvas.height) {
-                    this.y = canvas.height - this.height;
-                    this.velY = 0;
-                    this.onGround = true;
-                }
-                
-                // 跳躍
-                if (keys[this.controls.up] && this.onGround) {
-                    this.velY = -this.jumpPower;
-                    this.onGround = false; // 離開地面
-                }
-            }
-            
-            // 特殊技能
-            skill(otherPlayer) {
-                if (this.skillCooldown === 0) {
-                    this.skillCooldown = this.char.cd; // 設定冷卻時間
 
-                    switch (this.char.id) {
-                        case 'fire_mage':
-                            // 火焰衝擊 (攻擊)
-                            this.isAttacking = true;
-                            this.skillActive = 10;
-                            this.checkSkillHit(otherPlayer, this.char.dmg);
-                            break;
-                        case 'ice_knight':
-                            // 冰霜護甲 (防禦)
-                            this.isDefending = true;
-                            this.skillActive = 180; // 持續 3 秒 (60 FPS * 3)
-                            break;
-                        case 'shadow_ninja':
-                            // 瞬移突襲 (攻擊) - 簡單瞬移到對手附近並攻擊
-                            this.x = otherPlayer.x + (this.facingRight ? -this.width * 2 : this.width * 2);
-                            this.isAttacking = true;
-                            this.skillActive = 10;
-                            this.checkSkillHit(otherPlayer, this.char.dmg * 1.5); // 傷害提高
-                            break;
-                        case 'thunder_monk':
-                            // 閃電踢 (攻防) - 攻擊並獲得短暫防禦
-                            this.isAttacking = true;
-                            this.skillActive = 10;
-                            this.checkSkillHit(otherPlayer, this.char.dmg);
-                            this.isDefending = true; // 附加短暫防禦
-                            setTimeout(() => this.isDefending = false, 500); // 0.5秒後取消防禦
-                            break;
-                        case 'earth_golem':
-                            // 石牆術 (防禦)
-                            this.isDefending = true;
-                            this.skillActive = 300; // 持續 5 秒
-                            break;
+                    enemy.takeDamage(dmg);
+                    // 擊退
+                    enemy.vx = this.facingRight ? knockback : -knockback;
+                    enemy.vy = -2;
+                }
+                
+                // 攻擊動畫特效
+                particles.push(new Particle(hitX + hitW/2, hitY + hitH/2, '#fff', 1, 30, 5));
+                setTimeout(() => this.isAttacking = false, 150);
+            }
+
+            performSkill() {
+                this.mp -= this.skillCost;
+                this.attackCooldown = 30;
+                createDamageText(this.x, this.y - 50, "SKILL!", "#ffff00");
+
+                if (this.skillType === 'projectile') {
+                    const dir = this.facingRight ? 1 : -1;
+                    projectiles.push(new Projectile(this, this.facingRight ? this.x + 50 : this.x - 20, this.y + 20, dir));
+                } 
+                else if (this.skillType === 'dash') {
+                    this.dashTime = 10; // 衝刺持續時間
+                    this.invincible = 15;
+                }
+                else if (this.skillType === 'shield_bash') {
+                    this.invincible = 30; // 霸體
+                    this.damage *= 2; // 下一擊雙倍
+                    this.vx = this.facingRight ? 15 : -15; // 小衝撞
+                    setTimeout(() => this.damage /= 2, 500);
+                }
+                else if (this.skillType === 'aoe') {
+                    const enemy = this.isP1 ? player2 : player1;
+                    const dist = Math.abs((this.x + this.w/2) - (enemy.x + enemy.w/2));
+                    if (dist < 200) {
+                        enemy.takeDamage(15);
+                        enemy.stunned = 40; // 強暈
+                        enemy.vy = -10; // 擊飛
+                        createDamageText(enemy.x, enemy.y - 40, "THUNDER!", "#a29bfe");
+                        // 閃電特效
+                        for(let i=0; i<20; i++) particles.push(new Particle(enemy.x + Math.random()*40, enemy.y, '#ffff00', 8, 3, 20));
+                    }
+                }
+                else if (this.skillType === 'lifesteal_burst') {
+                    // 周圍爆炸
+                    const enemy = this.isP1 ? player2 : player1;
+                    const dist = Math.abs(this.x - enemy.x);
+                    if (dist < 100) {
+                        enemy.takeDamage(10);
+                        this.hp = Math.min(this.maxHp, this.hp + 15); // 大回血
+                        enemy.vx = this.facingRight ? 15 : -15;
+                        createDamageText(this.x, this.y - 40, "+HP", "#00ff00");
                     }
                 }
             }
 
-            checkSkillHit(otherPlayer, damage) {
-                const range = 100; // 攻擊距離
-                if (Math.abs(this.x - otherPlayer.x) < range && Math.abs(this.y - otherPlayer.y) < this.height) {
-                    otherPlayer.takeDamage(damage);
+            takeDamage(amount) {
+                if (this.invincible > 0) return;
+                this.hp -= amount;
+                if (this.hp <= 0) {
+                    this.hp = 0;
+                    endGame(this.isP1 ? "PLAYER 2" : "PLAYER 1");
                 }
+                updateHUD();
             }
 
-            takeDamage(baseDamage) {
-                let damage = baseDamage;
+            draw(ctx) {
+                // 保存畫布狀態
+                ctx.save();
 
-                // 檢查是否處於防禦狀態或技能防禦中
-                if (this.isDefending || this.skillActive > 0) {
-                    // 使用角色的防禦係數
-                    damage *= this.char.defense;
+                // 根據狀態改變透明度（如無敵）
+                if (this.invincible > 0 && Math.floor(Date.now() / 50) % 2 === 0) {
+                    ctx.globalAlpha = 0.5;
                 }
 
-                this.health -= damage;
-                this.health = Math.max(0, this.health);
-            }
-            
-            update(keys) {
-                // 減少冷卻時間
-                if (this.skillCooldown > 0) this.skillCooldown--;
-                if (this.skillActive > 0) this.skillActive--;
+                // 繪製身體
+                ctx.fillStyle = this.baseColor;
+                if (this.isBlocking) ctx.fillStyle = "#555"; // 防禦變灰
+                
+                ctx.fillRect(this.x, this.y, this.w, this.h);
 
-                // 攻擊動畫結束
-                if (this.isAttacking && this.skillActive === 0) {
-                    this.isAttacking = false;
+                // 繪製眼睛（方向指示）
+                ctx.fillStyle = "white";
+                const eyeX = this.facingRight ? this.x + 25 : this.x + 5;
+                ctx.fillRect(eyeX, this.y + 10, 10, 10);
+
+                // 攻擊視覺效果
+                if (this.isAttacking) {
+                    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+                    const atkX = this.facingRight ? this.x + this.w : this.x - 40;
+                    ctx.fillRect(atkX, this.y + 10, 40, 50);
                 }
 
-                // 冰霜騎士和大地魔像技能結束時取消防禦
-                if ((this.char.id === 'ice_knight' || this.char.id === 'earth_golem') && this.skillActive === 0) {
-                    this.isDefending = false;
+                // 護盾特效
+                if (this.isBlocking) {
+                    ctx.strokeStyle = "#00a8ff";
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(this.x + this.w/2, this.y + this.h/2, 50, 0, Math.PI*2);
+                    ctx.stroke();
                 }
+
+                ctx.restore();
             }
         }
+
+        /**
+         * 輔助函數
+         */
+        function checkRectCollide(x1, y1, w1, h1, x2, y2, w2, h2) {
+            return x1 < x2 + w2 && x1 + w1 > x2 && y1 < y2 + h2 && y1 + h1 > y2;
+        }
+
+        function createDamageText(x, y, text, color) {
+            particles.push(new DamageText(x, y, text, color));
+        }
+
+        function updateHUD() {
+            // HP Bar
+            const p1Pct = (player1.hp / player1.maxHp) * 100;
+            const p2Pct = (player2.hp / player2.maxHp) * 100;
+            document.getElementById('p1-hp').style.width = p1Pct + '%';
+            document.getElementById('p2-hp').style.width = p2Pct + '%';
+
+            // MP Bar
+            document.getElementById('p1-mp').style.width = player1.mp + '%';
+            document.getElementById('p2-mp').style.width = player2.mp + '%';
+        }
+
+        /**
+         * 遊戲流程控制
+         */
         
-        // 鍵盤狀態
-        const keys = {};
-        
-        // 鍵盤事件監聽
-        window.addEventListener('keydown', (e) => {
-            keys[e.code] = true;
+        // 1. 初始化選單
+        function initMenu() {
+            const container = document.querySelector('.char-select-container');
+            container.innerHTML = '';
             
-            if (!gameRunning) return;
-
-            // 特殊技能觸發
-            if (e.code === player1.controls.attack) {
-                player1.skill(player2);
-            }
-            if (e.code === player2.controls.attack) {
-                player2.skill(player1);
-            }
-
-            // 防止按鍵默認行為（例如方向鍵滾動頁面）
-            if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyF', 'ArrowUp', 'ArrowLeft', 'ArrowRight', 'ArrowDown', 'ControlRight'].includes(e.code)) {
-                e.preventDefault();
-            }
-        });
-        
-        window.addEventListener('keyup', (e) => {
-            keys[e.code] = false;
-        });
-        
-        // 重新開始遊戲 (回到選擇畫面)
-        restartBtn.addEventListener('click', () => {
-            gameRunning = false;
-            gameOverScreen.style.display = 'none';
-            gameArea.style.display = 'none';
-            controlsDiv.classList.remove('visible');
-            selectionScreen.style.display = 'block';
-
-            // 重置選擇狀態
-            selectedCharP1 = null;
-            selectedCharP2 = null;
-            startBtn.classList.remove('ready');
-            document.querySelectorAll('.character-card').forEach(card => {
-                card.classList.remove('selected-p1', 'selected-p2');
+            CHARACTERS.forEach((char, index) => {
+                const div = document.createElement('div');
+                div.className = 'char-card';
+                div.innerHTML = `
+                    <div class="char-icon" style="background: ${char.color}"></div>
+                    <div class="char-name">${char.name}</div>
+                    <div class="char-type">${char.type}</div>
+                    <div class="char-desc">${char.desc}</div>
+                `;
+                div.onclick = () => selectCharacter(index, div);
+                container.appendChild(div);
             });
-            player1 = null;
-            player2 = null;
-        });
-        
-        // 遊戲主循環
-        function gameLoop() {
-            if (!gameRunning) return;
-
-            // 清空畫布
-            ctx.fillStyle = colors.background;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // 繪製平台
-            platforms.forEach(platform => platform.draw());
-            
-            // 更新玩家位置
-            player1.move(keys, platforms);
-            player2.move(keys, platforms);
-            
-            // 更新玩家狀態
-            player1.update(keys);
-            player2.update(keys);
-            
-            // 繪製玩家
-            player1.draw();
-            player2.draw();
-
-            // 更新UI
-            p1Health.style.width = `${Math.max(0, player1.health)}%`;
-            p2Health.style.width = `${Math.max(0, player2.health)}%`;
-            p1HealthText.textContent = Math.max(0, Math.ceil(player1.health));
-            p2HealthText.textContent = Math.max(0, Math.ceil(player2.health));
-            
-            // 檢查遊戲結束條件
-            if (player1.health <= 0 || player2.health <= 0) {
-                gameRunning = false;
-                const winner = player1.health <= 0 ? player2.name : player1.name;
-                winnerText.textContent = `${winner} 獲勝！`;
-                gameOverScreen.style.display = 'block';
-                return;
-            }
-            
-            requestAnimationFrame(gameLoop);
         }
-        
-        // 首次初始化
-        renderCharacterSelection();
+
+        function selectCharacter(index, element) {
+            const status = document.getElementById('status-text');
+            const btn = document.getElementById('start-btn');
+
+            if (p1Selection === null) {
+                p1Selection = index;
+                element.classList.add('selected-p1');
+                status.innerText = "玩家 2 請選擇角色";
+                status.style.color = "#3742fa";
+            } else if (p2Selection === null) {
+                // 允許重複選角，如果是同一個 element
+                p2Selection = index;
+                element.classList.add('selected-p2');
+                status.innerText = "準備就緒！";
+                status.style.color = "#2ed573";
+                btn.disabled = false;
+            }
+        }
+
+        document.getElementById('start-btn').addEventListener('click', startGame);
+        document.getElementById('rematch-btn').addEventListener('click', () => {
+            document.getElementById('game-over-screen').style.display = 'none';
+            startGame();
+        });
+
+        // 2. 開始遊戲
+        function startGame() {
+            document.getElementById('menu-screen').style.display = 'none';
+            document.getElementById('hud-layer').style.display = 'flex';
+            gameState = 'PLAYING';
+
+            // 初始化玩家
+            const p1Config = CHARACTERS[p1Selection];
+            const p2Config = CHARACTERS[p2Selection];
+
+            document.getElementById('p1-name-display').innerText = p1Config.name;
+            document.getElementById('p2-name-display').innerText = p2Config.name;
+
+            // 控制器映射
+            const p1Controls = { up: 'KeyW', down: 'KeyS', left: 'KeyA', right: 'KeyD', attack: 'KeyF', skill: 'KeyG' };
+            const p2Controls = { up: 'ArrowUp', down: 'ArrowDown', left: 'ArrowLeft', right: 'ArrowRight', attack: 'KeyK', skill: 'KeyL' };
+
+            player1 = new Player(100, 300, p1Config, p1Controls, true);
+            player2 = new Player(800, 300, p2Config, p2Controls, false);
+            
+            projectiles = [];
+            particles = [];
+
+            updateHUD();
+
+            if (!gameLoopId) {
+                loop();
+            }
+        }
+
+        // 3. 遊戲循環
+        function loop() {
+            const now = Date.now();
+            const dt = now - lastTime;
+            lastTime = now;
+
+            if (gameState === 'PLAYING') {
+                update();
+                draw();
+            }
+
+            gameLoopId = requestAnimationFrame(loop);
+        }
+
+        function update() {
+            player1.update();
+            player2.update();
+
+            // 飛行道具邏輯
+            for (let i = projectiles.length - 1; i >= 0; i--) {
+                let p = projectiles[i];
+                p.update();
+
+                // 移除超時或出界的
+                if (p.life <= 0 || p.x < -100 || p.x > canvas.width + 100) {
+                    projectiles.splice(i, 1);
+                    continue;
+                }
+
+                // 擊中檢測
+                const enemy = p.owner.isP1 ? player2 : player1;
+                if (checkRectCollide(p.x, p.y, p.w, p.h, enemy.x, enemy.y, enemy.w, enemy.h)) {
+                    // 造成傷害
+                    let dmg = 8;
+                    if (enemy.isBlocking) {
+                        dmg = 1;
+                        createDamageText(enemy.x, enemy.y, "BLOCK", "#fff");
+                    } else {
+                        enemy.stunned = 15;
+                        enemy.vx = p.vx > 0 ? 5 : -5;
+                        createDamageText(enemy.x, enemy.y, dmg.toString(), p.color);
+                    }
+                    enemy.takeDamage(dmg);
+                    
+                    // 撞擊特效
+                    for(let k=0; k<8; k++) particles.push(new Particle(p.x, p.y, p.color, 4, 3, 15));
+                    
+                    projectiles.splice(i, 1);
+                }
+            }
+
+            // 粒子特效更新
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                if (particles[i].life <= 0) particles.splice(i, 1);
+            }
+        }
+
+        function draw() {
+            // 清空畫布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 繪製平台
+            ctx.fillStyle = "#34495e";
+            for (let p of platforms) {
+                ctx.fillRect(p.x, p.y, p.w, p.h);
+                // 平台邊框
+                ctx.strokeStyle = "#7f8c8d";
+                ctx.strokeRect(p.x, p.y, p.w, p.h);
+            }
+
+            // 繪製背景裝飾 (簡單網格)
+            ctx.strokeStyle = "rgba(255,255,255,0.05)";
+            ctx.beginPath();
+            for(let i=0; i<canvas.width; i+=50) { ctx.moveTo(i,0); ctx.lineTo(i,canvas.height); }
+            for(let i=0; i<canvas.height; i+=50) { ctx.moveTo(0,i); ctx.lineTo(canvas.width,i); }
+            ctx.stroke();
+
+            // 繪製物體
+            player1.draw(ctx);
+            player2.draw(ctx);
+
+            projectiles.forEach(p => p.draw(ctx));
+            particles.forEach(p => p.draw(ctx));
+        }
+
+        // 4. 結束遊戲
+        function endGame(winnerName) {
+            gameState = 'END';
+            document.getElementById('game-over-screen').style.display = 'flex';
+            document.getElementById('winner-text').innerText = `${winnerName} 獲勝！`;
+        }
+
+        // 啟動
+        initMenu();
+
     </script>
 </body>
 </html>
