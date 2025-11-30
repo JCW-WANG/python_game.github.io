@@ -263,15 +263,6 @@
 </div>
 
 <script>
-/**
- * ⚠️ 重要說明：
- * 由於版權原因，我無法提供 "Star Wars" 或 "Godfather" 的原版 MP3 檔案連結。
- * * 下方的 `audioUrl` 欄位目前填入的是「範例音效」連結。
- * * ✅ 如何加入您自己的音樂：
- * 1. 將您的 MP3 上傳到 Dropbox (將連結結尾改為 ?raw=1)
- * 2. 或者上傳到您的 GitHub Pages / 網站伺服器。
- * 3. 絕對不要使用 Google Drive (它會阻擋遊戲讀取)。
- */
 
 const MOVIE_DATA = [
     {
@@ -280,70 +271,70 @@ const MOVIE_DATA = [
         year: "1972",
         desc: "講述1940年代紐約黑手黨柯里昂家族的故事。尼諾·羅塔的配樂哀傷而優美，完美詮釋了家族的悲劇命運。",
         // 請在此處替換為您的 MP3 連結
-        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Gustav_Mahler_-_Symphony_No._5_-_4._Adagietto_%28harp_solo%29.ogg" 
+        audioUrl: "https://www.dropbox.com/scl/fi/lkjvtyebrs86ldetb2zmf/The-Godfather-1972-victoslava-youtube.mp3?rlkey=qfvu8gxznfhy3cdsoec51kqox&st=ipkjs0v5&raw=1" 
     },
     {
         id: 2,
         title: "Star Wars (星際大戰)",
         year: "1977",
         desc: "太空歌劇巨作，年輕的路克·天行者對抗邪惡帝國。約翰·威廉斯的交響樂配樂氣勢磅礴。",
-        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e4/Holst_-_The_Planets%2C_Op._32_-_I._Mars%2C_the_Bringer_of_War.ogg"
+        audioUrl: "https://www.dropbox.com/scl/fi/8daria055z63dzo7jej9i/Star-Wars-Music-Poyoko-youtube.mp3?rlkey=78zbfg6wxghvsz7znb6roogtg&st=g587lj7m&raw=1"
     },
     {
         id: 3,
         title: "Casablanca (北非諜影)",
         year: "1942",
         desc: "二戰時期的摩洛哥，酒吧老闆瑞克在愛情與正義間抉擇。「As Time Goes By」這首歌貫穿全片。",
-        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/7/73/As_time_goes_by_1931_f.ogg"
+        audioUrl: "https://www.dropbox.com/scl/fi/twusk57y2rh3dth5bnz9n/Casablanca-kuang-Lee-youtube.mp3?rlkey=h79zacik0ahc4a0dxopmrgpr7&st=ut0obki9&raw=1"
     },
     {
         id: 4,
         title: "Gone with the Wind (亂世佳人)",
         year: "1939",
         desc: "美國南北戰爭史詩，展現南方社會的崩潰與重建。場面宏大，服裝華麗。",
-        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/3/30/Tchaikovsky_-_Romeo_and_Juliet_Overture_-_Theme.ogg"
+        audioUrl: "https://www.dropbox.com/scl/fi/cg6wnfvpbvhputd9kb7yl/My-Own-True-Love-Nana-Mouskouri-1939-YN-youtube.mp3?rlkey=hjd90uclmbf5lf18e2mjdbgzl&st=rwverrzd&raw=1"
     },
     {
         id: 5,
         title: "The Wizard of Oz (綠野仙蹤)",
         year: "1939",
         desc: "桃樂絲被龍捲風捲到奧茲國的奇幻旅程。「Over the Rainbow」成為影史最偉大的電影歌曲。",
-        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/4/46/Waltz_of_the_Flowers_%28by_Tchaikovsky%29.ogg"
+        audioUrl: "https://www.dropbox.com/scl/fi/aazwjtn79toj2exbkwm5y/Somewhere-Over-the-Rainbow-The-Wizard-of-Oz-youtube.mp3?rlkey=6h4irhdimqbz0v8uf59cey5ze&st=uv46sah8&raw=1"
     },
     {
         id: 6,
         title: "Titanic (鐵達尼號)",
         year: "1997",
         desc: "窮畫家傑克與貴族少女蘿絲在沉船前的刻骨銘心愛情。席琳·狄翁的歌曲風靡全球。",
-        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/0/09/Debussy_-_La_Mer_-_2._Jeux_de_vagues.ogg"
+        audioUrl: "https://www.dropbox.com/scl/fi/zjm7x8stg6e8enq73suz5/Titanic-My-Heart-Will-Go-On-Celine-Dion-HD-Film-Tributes-youtube.mp3?rlkey=g6qwmu3pmq8qf8t44ifn3ftaw&st=8erk3hfg&raw=1"
     },
     {
         id: 7,
         title: "Jaws (大白鯊)",
         year: "1975",
         desc: "巨大食人鯊攻擊度假小鎮。兩音符主題曲製造了極強的緊張感。",
-        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/c/ce/Dvorak_-_Symphony_no._9_in_e_minor_%27from_the_new_world%27%2C_op._95_-_iv._allegro_con_fuoco.ogg"
+        audioUrl: "https://www.dropbox.com/scl/fi/1f5mmkdfnpuxa9zji302s/Main-Title-John-Williams-youtube.mp3?rlkey=ywdsxq9zjza2rh4r435ek9oic&st=pfag66ar&raw=1"
     },
     {
         id: 8,
         title: "Rocky (洛基)",
         year: "1976",
         desc: "三流拳擊手洛基獲得挑戰拳王的機會。激昂配樂搭配階梯奔跑場景，成為經典。",
-        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/e/eb/Beethoven_-_Symphony_No._5_in_C_minor%2C_Op._67_-_I._Allegro_con_brio.ogg"
+        audioUrl: "https://www.dropbox.com/scl/fi/euosj0j00pj3z5m2fd9kl/Rocky-OST-Gonna-Fly-Now-Going-The-Distance-The-Final-Bell-youtube.mp3?rlkey=nqh2ds67wly6uzqo0e312uvms&st=4yitm5hp&raw=1"
     },
     {
         id: 9,
         title: "E.T. the Extra-Terrestrial (E.T.外星人)",
         year: "1982",
         desc: "小男孩與外星人建立跨越種族的友誼。騎腳踏車飛越天際的畫面充滿童真。",
-        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/8/87/Dance_of_the_Sugar_Plum_Fairy_%28by_Tchaikovsky%29.ogg"
+        audioUrl: "https://www.dropbox.com/scl/fi/p2c1iitbtuq3mcueqenwg/E.T.-Theme-Song-EpicMusicStar-youtube.mp3?rlkey=qx3fs54qylxzizkf46d419as5&st=s5smfelb&raw=1"
     },
     {
         id: 10,
         title: "Raiders of the Lost Ark (法櫃奇兵)",
         year: "1981",
         desc: "印第安納·瓊斯尋找約櫃的全球冒險。進行曲主題氣勢磅礴，成為冒險電影音樂典範。",
-        audioUrl: "https://upload.wikimedia.org/wikipedia/commons/c/c8/Wagner_-_Ride_of_the_Valkyries.ogg"
+        audioUrl: "https://www.dropbox.com/scl/fi/dwdytpaxtrnsuv80rgmbq/Indiana-Jones-OST-1-4-Movie-Trailer-Ver.-MV-Digital-learning-youtube.mp3?rlkey=s7qrdj4zjf9rfnl48ws8bc1vs&st=5e321iev&raw=1"
     }
 ];
 
