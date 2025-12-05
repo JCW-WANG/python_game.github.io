@@ -8,7 +8,7 @@
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #1e1e1e, #3a3a3a, #121212);
-            --card-bg: rgba(20, 20, 20, 0.85); /* 稍微加深背景增加文字對比 */
+            --card-bg: rgba(25, 25, 25, 0.9); /* 加深背景，提升文字閱讀性 */
             --glass-border: rgba(255, 255, 255, 0.15);
             --primary: #00d2ff; 
             --accent: #ff4757;  
@@ -31,8 +31,8 @@
             align-items: center;
             overflow: hidden;
             padding: 15px;
-            /* 基礎字體大小優化 */
-            font-size: 16px; 
+            /* 基礎字體再加大，優化手機體驗 */
+            font-size: 18px; 
         }
 
         /* 背景動態 */
@@ -49,7 +49,7 @@
 
         .app-container {
             width: 100%;
-            max-width: 640px; /*稍微加寬 */
+            max-width: 600px;
             position: relative;
             z-index: 10;
         }
@@ -57,14 +57,14 @@
         /* 玻璃擬態卡片 */
         .glass-panel {
             background: var(--card-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 30px 20px; /* 增加內距 */
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            border-radius: 28px;
+            padding: 30px 20px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
             text-align: center;
-            transition: opacity 0.4s ease, transform 0.4s ease;
+            transition: opacity 0.3s ease;
             position: relative;
             overflow: hidden;
             display: flex;
@@ -74,51 +74,48 @@
 
         .hidden { display: none !important; opacity: 0; pointer-events: none; }
 
-        /* 按鈕樣式 - 加大觸控區 */
+        /* 通用按鈕樣式 */
         .btn {
             background: linear-gradient(90deg, var(--primary), #24243e);
             color: white;
             border: 1px solid rgba(255,255,255,0.2);
-            padding: 18px 30px; /* 加大按鈕 */
-            font-size: 1.25rem; /* 字體加大 */
+            padding: 18px 0; /* 高度加大 */
+            font-size: 1.3rem;
             font-weight: 700;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            transition: all 0.2s;
-            letter-spacing: 1px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+            transition: transform 0.1s, box-shadow 0.1s;
+            letter-spacing: 1.5px;
             margin-top: 25px;
             width: 100%;
             touch-action: manipulation;
         }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 210, 255, 0.4); }
-        .btn:active { transform: scale(0.98); }
+        .btn:active { transform: scale(0.96); box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
 
         /* Start Screen */
-        .logo { font-size: 5rem; margin-bottom: 15px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 0 15px rgba(255,255,255,0.3)); }
+        .logo { font-size: 5.5rem; margin-bottom: 10px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(255,255,255,0.2)); }
         
-        /* 響應式標題字體 */
         h1 { 
-            font-size: clamp(2rem, 5vw, 2.8rem); 
+            font-size: clamp(2.2rem, 6vw, 3rem); /* 字體加大 */
             margin-bottom: 10px; 
             color: var(--text-main); 
             font-weight: 900; 
-            letter-spacing: 1px; 
             line-height: 1.2;
         }
         
-        .subtitle { color: var(--primary); font-size: 1.1rem; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase; font-weight: bold;}
+        .subtitle { color: var(--primary); font-size: 1.2rem; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase; font-weight: bold;}
         
         .instruction { 
-            font-size: 1.05rem; /* 說明文字加大 */
+            font-size: 1.1rem; 
             color: var(--text-sub); 
             margin: 20px 0; 
             line-height: 1.8; 
             text-align: left; 
-            background: rgba(255,255,255,0.05); 
+            background: rgba(255,255,255,0.08); 
             padding: 25px; 
             border-radius: 15px; 
-            border-left: 5px solid var(--primary); 
+            border-left: 6px solid var(--primary); 
             width: 100%;
         }
         
@@ -129,30 +126,30 @@
             justify-content: space-between; 
             margin-bottom: 20px; 
             font-weight: bold; 
-            font-size: 1.2rem; /* 分數欄加大 */
+            font-size: 1.2rem; 
             color: var(--primary); 
             align-items: center; 
         }
         
-        /* === 唱片機視覺設計 === */
+        /* === 唱片機 === */
         .turntable-wrapper {
             position: relative;
-            width: 240px; /* 稍微加大 */
-            height: 240px;
+            width: 250px;
+            height: 250px;
             margin: 0 auto 25px auto;
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.3);
             border-radius: 50%;
-            border: 5px solid rgba(255,255,255,0.1);
+            border: 6px solid rgba(255,255,255,0.15);
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
-            flex-shrink: 0; /* 防止被擠壓 */
+            flex-shrink: 0;
         }
 
         .vinyl-record {
-            width: 95%;
-            height: 95%;
+            width: 96%;
+            height: 96%;
             background: repeating-radial-gradient(
                 #111 0, 
                 #111 2px, 
@@ -161,11 +158,10 @@
             );
             border-radius: 50%;
             position: relative;
-            box-shadow: 0 0 15px rgba(0,0,0,0.6);
+            box-shadow: 0 0 20px rgba(0,0,0,0.7);
             animation: spin 3s linear infinite;
             animation-play-state: paused;
         }
-        
         .vinyl-record.spinning { animation-play-state: running; }
 
         .vinyl-label {
@@ -173,11 +169,11 @@
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: 38%; height: 38%;
-            background: radial-gradient(circle, var(--accent) 0%, #880e1a 100%);
+            background: radial-gradient(circle, var(--accent) 0%, #a3101f 100%);
             border-radius: 50%;
-            border: 3px solid rgba(255,255,255,0.2);
+            border: 3px solid rgba(255,255,255,0.3);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; font-weight: bold;
+            font-size: 2rem; font-weight: bold; text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
         .tone-arm {
@@ -189,19 +185,18 @@
             background-repeat: no-repeat;
             transform-origin: 90% 20%;
             transform: rotate(-35deg);
-            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: transform 0.5s ease;
             z-index: 5; pointer-events: none;
         }
-
         .tone-arm.playing { transform: rotate(15deg); }
 
         .note-icon {
             position: absolute;
             color: var(--gold);
-            font-size: 2rem;
+            font-size: 2.5rem;
             opacity: 0;
             pointer-events: none;
-            text-shadow: 0 0 5px rgba(248, 201, 62, 0.8);
+            text-shadow: 0 0 10px rgba(248, 201, 62, 0.8);
         }
         .note-icon.animate { animation: floatNote 2s ease-out forwards; }
 
@@ -213,23 +208,24 @@
         }
 
         /* 倒數條 */
-        .timer-bar-container { width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin: 15px 0 25px 0; overflow: hidden; }
+        .timer-bar-container { width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; margin: 15px 0 25px 0; overflow: hidden; }
         .timer-fill { height: 100%; background: var(--gold); width: 100%; transition: width 1s linear; box-shadow: 0 0 15px var(--gold); }
 
         /* 選項按鈕區域 */
         .options-grid { 
             display: grid; 
             grid-template-columns: 1fr; 
-            gap: 15px; /* 間距加大 */
+            gap: 16px; 
             width: 100%;
         }
         .option-btn {
-            background: rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.12);
             border: 1px solid rgba(255,255,255,0.15);
             color: white;
-            padding: 20px 20px; /* 增加點擊區域 */
-            border-radius: 16px;
-            font-size: 1.15rem; /* 字體加大 */
+            padding: 22px 20px; /* 增加點擊區域 */
+            border-radius: 18px;
+            font-size: 1.2rem; /* 字體加大 */
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
             text-align: left;
@@ -238,51 +234,54 @@
             display: flex; align-items: center; justify-content: space-between;
             line-height: 1.4;
         }
-        .option-btn:hover:not(:disabled) { background: rgba(255,255,255,0.2); border-color: var(--primary); transform: translateX(5px); }
-        .option-btn.correct { background: rgba(46, 204, 113, 0.3); border-color: var(--success); color: #fff; font-weight: bold; box-shadow: 0 0 15px rgba(46, 204, 113, 0.4); }
-        .option-btn.wrong { background: rgba(255, 71, 87, 0.3); border-color: var(--error); color: #fff; opacity: 0.7; }
+        .option-btn:hover:not(:disabled) { background: rgba(255,255,255,0.25); border-color: var(--primary); transform: translateX(5px); }
+        .option-btn.correct { background: rgba(46, 204, 113, 0.35); border-color: var(--success); color: #fff; font-weight: bold; box-shadow: 0 0 15px rgba(46, 204, 113, 0.4); }
+        .option-btn.wrong { background: rgba(255, 71, 87, 0.35); border-color: var(--error); color: #fff; opacity: 0.7; }
 
-        /* Result Overlay */
+        /* 結果遮罩層 - 重點修正：Z-Index 設為 999 確保可點擊 */
         .result-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 20, 28, 0.98); 
-            backdrop-filter: blur(20px);
-            z-index: 20; 
+            backdrop-filter: blur(25px);
+            z-index: 999; /* 確保在最上層 */
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
-            border-radius: 24px; animation: fadeIn 0.4s ease; 
-            padding: 30px;
+            border-radius: 28px; 
+            animation: fadeIn 0.3s ease; 
+            padding: 25px;
         }
-        .res-status { font-size: 2.2rem; margin-bottom: 15px; font-weight: 900; }
-        .res-title { font-size: 1.6rem; color: var(--gold); margin-bottom: 8px; font-weight: bold; line-height: 1.3;}
-        .res-song { font-size: 1.1rem; color: var(--primary); margin-bottom: 20px; font-style: italic; background: rgba(255,255,255,0.1); padding: 8px 20px; border-radius: 20px;}
+        .res-status { font-size: 2.5rem; margin-bottom: 10px; font-weight: 900; }
+        .res-title { font-size: 1.8rem; color: var(--gold); margin-bottom: 10px; font-weight: bold; line-height: 1.3;}
+        .res-song { font-size: 1.2rem; color: var(--primary); margin-bottom: 25px; font-style: italic; background: rgba(255,255,255,0.1); padding: 8px 25px; border-radius: 25px;}
         
         .res-desc { 
-            font-size: 1.1rem; /* 說明文字加大 */
+            font-size: 1.15rem; 
             color: #ddd; line-height: 1.6; margin-bottom: 30px; 
             text-align: justify; 
-            max-height: 200px; 
+            max-height: 25vh; /* 避免過長 */
             overflow-y: auto; 
             border-top: 1px solid rgba(255,255,255,0.1); 
             padding-top: 20px; 
             width: 100%;
         }
 
-        /* Next Button Special Style */
+        /* 下一題按鈕特別樣式 */
         #next-btn {
             background: linear-gradient(90deg, var(--gold), #f39c12);
             color: #111;
             font-weight: 900;
-            font-size: 1.3rem;
-            padding: 16px 50px;
-            box-shadow: 0 10px 25px rgba(243, 156, 18, 0.3);
+            font-size: 1.4rem;
+            padding: 20px 0;
+            margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(243, 156, 18, 0.4);
         }
+        #next-btn:active { transform: scale(0.95); }
 
         /* End Screen */
-        .score-display { font-size: 5rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 40px rgba(248, 201, 62, 0.5); margin: 20px 0; }
+        .score-display { font-size: 5.5rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 40px rgba(248, 201, 62, 0.6); margin: 20px 0; }
 
-        /* Animations & Helpers */
-        .score-float { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 1.4rem; animation: floatUp 0.8s ease-out forwards; z-index: 5;}
+        /* Helpers */
+        .score-float { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 1.5rem; animation: floatUp 0.8s ease-out forwards; z-index: 50;}
         .score-float.plus { color: var(--success); text-shadow: 0 0 5px black; }
         .score-float.minus { color: var(--error); text-shadow: 0 0 5px black; }
 
@@ -290,13 +289,11 @@
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(-50%); } 100% { opacity: 0; transform: translateY(-150%); } }
 
-        /* Media Queries for Desktop */
         @media (min-width: 600px) {
             .options-grid { grid-template-columns: 1fr 1fr; }
-            h1 { font-size: 2.5rem; }
-            .logo { font-size: 6rem; }
-            .turntable-wrapper { width: 280px; height: 280px; }
-            .app-container { padding: 20px; }
+            .turntable-wrapper { width: 300px; height: 300px; }
+            .app-container { padding: 30px; }
+            h1 { font-size: 3rem; }
         }
     </style>
 </head>
@@ -347,14 +344,14 @@
             <h3 id="res-title" class="res-title">電影標題</h3>
             <div id="res-song" class="res-song">🎵 Song Name</div>
             <p id="res-desc" class="res-desc">劇情描述...</p>
-            <button class="btn" id="next-btn">下一首曲目</button>
+            <button class="btn" id="next-btn" onclick="game.nextQuestion()">下一首曲目</button>
         </div>
     </div>
 
     <div id="end-screen" class="glass-panel hidden">
         <div class="logo">🏆</div>
         <h1>遊戲結束</h1>
-        <p style="color: var(--text-sub); font-size: 1.2rem;">你的最終得分</p>
+        <p style="color: var(--text-sub); font-size: 1.3rem;">你的最終得分</p>
         <div class="score-display" id="final-score">0</div>
         <p id="feedback-msg" style="color: var(--text-main); margin-bottom: 30px; font-size: 1.3rem; line-height: 1.6;">...</p>
         <button class="btn" onclick="location.reload()">再玩一次</button>
@@ -454,11 +451,6 @@ class GameEngine {
             this.initGame();
         });
         
-        // 修正 Next 按鈕綁定
-        this.els.nextBtn.addEventListener('click', () => {
-             this.nextQuestion();
-        });
-        
         // Mobile Unlock
         document.body.addEventListener('touchstart', () => this.initAudioContext(), { once: true });
         document.body.addEventListener('click', () => this.initAudioContext(), { once: true });
@@ -534,6 +526,7 @@ class GameEngine {
     }
 
     startNoteAnimation() {
+        this.stopNoteAnimation(); // 防止重複
         this.noteTimer = setInterval(() => {
             const note = document.createElement('div');
             note.className = 'note-icon animate';
@@ -558,16 +551,20 @@ class GameEngine {
 
         const q = this.questions[this.qIndex];
         this.els.qNum.innerText = this.qIndex + 1;
-        this.els.overlay.classList.add('hidden'); // 確保覆蓋層隱藏
+        
+        // 強制隱藏 Modal 並重置樣式
+        this.els.overlay.classList.add('hidden'); 
         this.els.options.innerHTML = '';
         this.els.status.innerText = "唱片讀取中...";
         
+        // 重置倒數條
         this.els.timerBar.style.transition = 'none';
         this.els.timerBar.style.width = '100%';
 
         if(this.timer) clearInterval(this.timer);
         this.setTurntableState(false);
         
+        // 音訊重置邏輯
         this.els.audio.pause();
         this.els.audio.currentTime = 0;
         this.els.audio.src = q.audioUrl;
@@ -575,6 +572,7 @@ class GameEngine {
         
         this.els.audio.load();
 
+        // 定義播放邏輯
         const onCanPlay = () => {
             this.els.status.innerText = "🎶 猜猜這是哪部電影？";
             
@@ -597,6 +595,8 @@ class GameEngine {
             }
         };
 
+        // 綁定單次事件
+        this.els.audio.oncanplay = null;
         this.els.audio.oncanplay = onCanPlay;
         
         this.els.audio.onerror = () => {
@@ -629,6 +629,7 @@ class GameEngine {
         if (this.timer) clearInterval(this.timer);
         this.timeLeft = this.maxTime;
         
+        // 延遲一點點讓 UI 渲染完成
         setTimeout(() => {
             this.els.timerBar.style.transition = `width ${this.maxTime}s linear`;
             this.els.timerBar.style.width = '0%';
@@ -706,13 +707,24 @@ class GameEngine {
         
         setTimeout(() => {
             this.els.overlay.classList.remove('hidden');
-        }, 500); // 稍微加快顯示速度
+        }, 500);
     }
 
+    // 關鍵修正：確保此函數被 HTML onclick 調用
     nextQuestion() {
-        // 強制隱藏 Modal 避免遮擋
+        console.log("Next question triggered"); // Debug 用
+        
+        // 1. 強制隱藏 Overlay
         this.els.overlay.classList.add('hidden');
+        
+        // 2. 停止可能殘留的動畫
+        this.setTurntableState(false);
+        this.stopNoteAnimation();
+        
+        // 3. 推進題目
         this.qIndex++;
+        
+        // 4. 載入新題目
         this.loadQuestion();
     }
 
@@ -737,6 +749,7 @@ class GameEngine {
     }
 }
 
+// 實例化遊戲
 const game = new GameEngine();
 
 </script>
