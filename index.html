@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>經典電影聽音辨位 | OST Quiz Master</title>
+    <title>電影聽音辨位 | OST Quiz Master</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --primary: #00d2ff; 
-            --accent: #3a7bd5;  
-            --gold: #f8c93e;
+            --bg-dark: #050510;
+            --glass-bg: rgba(20, 20, 35, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --neon-blue: #00f2ff;
+            --neon-purple: #bc13fe;
+            --neon-gold: #ffe600;
+            --neon-green: #0aff68;
+            --neon-red: #ff0a44;
             --text-main: #ffffff;
-            --text-sub: #b2bec3;
-            --success: #00ff88;
-            --error: #ff4b4b;
+            --text-dim: #8b9bb4;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box;
-            user-select: none; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'Montserrat', 'Noto Sans TC', sans-serif;
-            background: var(--bg-gradient);
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #000000 100%);
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
@@ -34,201 +34,219 @@
             padding: 15px;
         }
 
-        /* 動態背景粒子 */
-        body::before {
-            content: '';
-            position: absolute;
-            width: 200vw;
-            height: 200vh;
-            background: radial-gradient(circle, rgba(58, 123, 213, 0.1) 0%, rgba(0,0,0,0) 50%);
-            animation: rotateBg 20s linear infinite;
+        /* 背景粒子畫布 */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: -1;
+            opacity: 0.4;
         }
-        @keyframes rotateBg { 100% { transform: rotate(360deg); } }
 
         .app-container {
             width: 100%;
-            max-width: 600px;
+            max-width: 550px;
             position: relative;
             z-index: 10;
         }
 
-        /* 玻璃擬態卡片 */
+        /* 玻璃擬態卡片 - 增強版 */
         .glass-panel {
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 25px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border-radius: 30px;
+            padding: 30px 20px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
             text-align: center;
-            transition: opacity 0.4s ease, transform 0.4s ease;
             position: relative;
             overflow: hidden;
+            transition: all 0.4s ease;
         }
 
         .hidden { display: none !important; opacity: 0; pointer-events: none; }
 
-        /* 按鈕樣式 */
+        /* 霓虹按鈕 */
         .btn {
-            background: linear-gradient(90deg, var(--accent), #24243e);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-            padding: 15px 30px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            padding: 16px 30px;
             font-size: 1.1rem;
             font-weight: 700;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
             transition: all 0.2s;
-            letter-spacing: 1px;
-            margin-top: 20px;
+            letter-spacing: 2px;
+            margin-top: 25px;
             width: 100%;
+            text-transform: uppercase;
             position: relative;
             overflow: hidden;
         }
-        .btn:hover { transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(58, 123, 213, 0.5); border-color: var(--primary);
+        .btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.2), transparent);
+            transition: 0.5s;
         }
-        .btn:active { transform: scale(0.98); }
+        .btn:hover { 
+            background: var(--neon-blue); color: #000; box-shadow: 0 0 30px rgba(0, 242, 255, 0.6); 
+        }
+        .btn:hover::before { left: 100%; }
+        .btn:active { transform: scale(0.97); }
 
         /* Start Screen */
-        .logo { font-size: 4.5rem;
-            margin-bottom: 10px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 0 15px rgba(255,255,255,0.3));
+        .logo-container { margin-bottom: 20px; position: relative; display: inline-block; }
+        .logo { font-size: 5rem; filter: drop-shadow(0 0 20px rgba(188, 19, 254, 0.5)); animation: float 4s ease-in-out infinite; }
+        .logo-circle {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 120px; height: 120px; border-radius: 50%;
+            border: 2px solid var(--neon-purple); opacity: 0.3;
+            animation: spin 10s linear infinite;
         }
-        h1 { font-size: 2rem; margin-bottom: 5px; color: var(--text-main); font-weight: 900; letter-spacing: 1px; }
-        .subtitle { color: var(--primary); font-size: 0.9rem; margin-bottom: 25px; letter-spacing: 2px; text-transform: uppercase; }
-        .instruction { font-size: 0.9rem; color: var(--text-sub); margin: 20px 0; line-height: 1.8;
-            text-align: left; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; border-left: 4px solid var(--primary);
-        }
+
+        h1 { font-size: 2.2rem; margin-bottom: 5px; color: #fff; font-weight: 900; letter-spacing: 1px; text-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .subtitle { color: var(--neon-blue); font-size: 0.9rem; margin-bottom: 30px; letter-spacing: 3px; text-transform: uppercase; font-weight: bold; }
         
+        .instruction { font-size: 0.95rem; color: var(--text-dim); margin: 20px 0; line-height: 1.8; text-align: left; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 15px; border-left: 3px solid var(--neon-purple); }
+        .instruction b { color: var(--text-main); }
+
         /* Game Screen */
-        .hud-bar { display: flex;
-            justify-content: space-between; margin-bottom: 15px; font-weight: bold; font-size: 1rem; color: var(--primary); align-items: center;
-        }
-        
+        .hud-bar { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: 700; font-size: 1rem; color: var(--text-dim); align-items: center; }
+        .score-box { color: var(--neon-gold); text-shadow: 0 0 10px rgba(255, 230, 0, 0.3); }
+
+        /* Visualizer Area */
         .visualizer-wrapper {
             position: relative;
-            width: 100%; height: 100px;
-            background: rgba(0,0,0,0.3); border-radius: 15px;
+            width: 100%; height: 140px; /* 加高 */
+            background: rgba(0,0,0,0.3); border-radius: 20px;
             margin-bottom: 20px; overflow: hidden;
             display: flex; align-items: center; justify-content: center;
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
         }
-        canvas { width: 100%; height: 100%; }
-        .loading-text { position: absolute; color: var(--text-sub); font-size: 0.8rem; letter-spacing: 2px;
-            animation: pulse 1.5s infinite; }
-
-        .timer-bar-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1);
-            border-radius: 3px; margin: 15px 0 25px 0; overflow: hidden; }
-        .timer-fill { height: 100%;
-            background: var(--gold); width: 100%; transition: width 1s linear; box-shadow: 0 0 10px var(--gold);
+        canvas#audio-visualizer { width: 100%; height: 100%; z-index: 2; }
+        .loading-text { 
+            position: absolute; color: var(--neon-blue); font-size: 0.9rem; letter-spacing: 3px; font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-blue); animation: pulse 1.5s infinite; z-index: 3;
         }
 
+        /* Timer */
+        .timer-bar-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin: 15px 0 25px 0; overflow: hidden; position: relative; }
+        .timer-fill { height: 100%; background: var(--neon-gold); width: 100%; box-shadow: 0 0 15px var(--neon-gold); border-radius: 3px; }
+
+        /* Options */
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
         .option-btn {
-            background: rgba(255,255,255,0.08);
+            background: rgba(255,255,255,0.05);
             border: 1px solid rgba(255,255,255,0.1);
-            color: white;
-            padding: 18px 15px;
-            border-radius: 12px;
+            color: #fff;
+            padding: 20px 20px;
+            border-radius: 16px;
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
             text-align: left;
             position: relative;
             overflow: hidden;
             display: flex; align-items: center; justify-content: space-between;
         }
-        .option-btn:hover:not(:disabled) { background: rgba(255,255,255,0.15); border-color: var(--primary); transform: translateX(5px); }
-        .option-btn.correct { background: rgba(0, 255, 136, 0.25); border-color: var(--success); color: var(--success); font-weight: bold; }
-        .option-btn.wrong { background: rgba(255, 51, 51, 0.25); border-color: var(--error); color: var(--error); opacity: 0.6; }
-
-        /* Score Floating Animation */
-        .score-float {
-            position: absolute;
-            right: 15px; top: 50%; transform: translateY(-50%);
-            font-weight: bold; font-size: 1.2rem; animation: floatUp 0.8s ease-out forwards;
+        .option-btn:hover:not(:disabled) { 
+            background: rgba(255,255,255,0.12); 
+            border-color: var(--neon-blue); 
+            transform: translateX(5px);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
         }
-        .score-float.plus { color: var(--success); }
-        .score-float.minus { color: var(--error); }
+        .option-btn.correct { background: rgba(10, 255, 104, 0.2); border-color: var(--neon-green); color: var(--neon-green); font-weight: bold; box-shadow: 0 0 20px rgba(10, 255, 104, 0.4); }
+        .option-btn.wrong { background: rgba(255, 10, 68, 0.2); border-color: var(--neon-red); color: var(--neon-red); opacity: 0.7; }
+
+        /* Floating Score */
+        .score-float {
+            position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+            font-weight: 900; font-size: 1.4rem; animation: floatUp 0.8s ease-out forwards; pointer-events: none;
+        }
+        .score-float.plus { color: var(--neon-green); text-shadow: 0 0 10px var(--neon-green); }
+        .score-float.minus { color: var(--neon-red); text-shadow: 0 0 10px var(--neon-red); }
 
         /* Result Overlay */
         .result-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 20, 28, 0.98); backdrop-filter: blur(15px);
-            z-index: 20; display: flex;
-            flex-direction: column;
-            justify-content: center; align-items: center;
-            border-radius: 24px;
-            animation: fadeIn 0.4s ease;
-            padding: 25px;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 16, 0.95); backdrop-filter: blur(20px);
+            z-index: 20; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; border-radius: 30px;
+            animation: fadeIn 0.4s ease; padding: 30px;
         }
-        .res-status { font-size: 1.8rem; margin-bottom: 10px; font-weight: 900; }
-        .res-title { font-size: 1.5rem; color: var(--gold); margin-bottom: 5px; font-weight: bold; }
-        .res-song { font-size: 1rem; color: var(--primary); margin-bottom: 15px; font-style: italic; background: rgba(255,255,255,0.1);
-            padding: 5px 15px; border-radius: 15px;}
+        .res-status { font-size: 2.2rem; margin-bottom: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; }
+        .res-title { font-size: 1.4rem; color: #fff; margin-bottom: 8px; font-weight: bold; }
+        .res-song { font-size: 1rem; color: var(--neon-blue); margin-bottom: 20px; font-style: italic; opacity: 0.9; }
         .res-desc { 
-            font-size: 0.9rem;
-            color: #ddd; line-height: 1.6; margin-bottom: 25px; 
+            font-size: 0.95rem; color: var(--text-dim); line-height: 1.7; margin-bottom: 30px; 
             text-align: justify; max-height: 150px; overflow-y: auto;
-            border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; width: 100%;
         }
 
         /* End Screen */
-        .score-display { font-size: 4.5rem;
-            font-weight: 900; color: var(--gold); text-shadow: 0 0 30px rgba(248, 201, 62, 0.4); margin: 20px 0;
+        .score-display { font-size: 5rem; font-weight: 900; color: var(--neon-gold); text-shadow: 0 0 40px rgba(255, 230, 0, 0.5); margin: 10px 0; }
+        .rank-badge {
+            display: inline-block; padding: 5px 15px; border-radius: 20px; 
+            background: rgba(255,255,255,0.1); color: #fff; font-size: 0.9rem; margin-bottom: 20px;
         }
 
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+        /* Animations */
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-        @keyframes floatUp { 0% { opacity: 1; transform: translateY(-50%); } 100% { opacity: 0; transform: translateY(-150%); } }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(-50%); } 100% { opacity: 0; transform: translateY(-150%) scale(1.2); } }
 
         @media (min-width: 600px) {
             .options-grid { grid-template-columns: 1fr 1fr; }
-            h1 { font-size: 2.5rem; }
-            .logo { font-size: 5rem; }
+            h1 { font-size: 2.8rem; }
+            .glass-panel { padding: 40px; }
         }
     </style>
 </head>
 <body>
 
+<canvas id="bg-canvas"></canvas>
+
 <div class="app-container">
 
     <div id="start-screen" class="glass-panel">
-        <div class="logo">🎧</div>
+        <div class="logo-container">
+            <div class="logo-circle"></div>
+            <div class="logo">🎧</div>
+        </div>
         <h1>電影猜謎大師</h1>
         <p class="subtitle">OST 聽音辨位挑戰</p>
         
         <div class="instruction">
             <p>🎵 <b>經典重現</b>：聆聽配樂，選出正確電影。</p>
-            <p>🎲 <b>隨機題庫</b>：每次遊玩隨機抽選 10 題。</p>
             <p>⏱️ <b>限時挑戰</b>：每題 30 秒，越快得分越高。</p>
-            <p>📖 <b>深度解析</b>：答題後附帶詳細劇情與彩蛋。</p>
+            <p>🔊 <b>請開聲音</b>：若無聲音，請確認靜音模式。</p>
         </div>
 
-        <button class="btn" id="start-btn">開始遊戲</button>
+        <button class="btn" id="start-btn">START GAME</button>
     </div>
 
     <div id="game-screen" class="glass-panel hidden">
         <div class="hud-bar">
-            <span>第 <span id="current-q">1</span>/10 題</span>
-            <span>得分: <span id="score">0</span></span>
+            <span>Question <span id="current-q">1</span>/10</span>
+            <span class="score-box">Score: <span id="score">0</span></span>
         </div>
 
         <div class="visualizer-wrapper">
             <canvas id="audio-visualizer"></canvas>
-            <div id="loading-msg" class="loading-text">BUFFERING...</div>
+            <div id="loading-msg" class="loading-text">LOADING AUDIO...</div>
         </div>
 
         <div class="timer-bar-container">
             <div class="timer-fill" id="timer-fill"></div>
         </div>
 
-        <div id="status-text" style="height: 20px; margin-bottom: 15px; font-weight: bold; color: var(--text-sub); font-size: 0.9rem;">準備播放...</div>
+        <div id="status-text" style="height: 20px; margin-bottom: 15px; font-weight: bold; color: var(--neon-blue); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Ready</div>
 
         <div class="options-grid" id="options-container">
             </div>
@@ -238,25 +256,28 @@
             <h3 id="res-title" class="res-title">電影標題</h3>
             <div id="res-song" class="res-song">🎵 Song Name</div>
             <p id="res-desc" class="res-desc">劇情描述...</p>
-            <button class="btn" id="next-btn" style="width: auto; padding: 12px 40px;">下一題</button>
+            <button class="btn" id="next-btn" style="width: auto; padding: 12px 50px;">NEXT QUESTION</button>
         </div>
     </div>
 
     <div id="end-screen" class="glass-panel hidden">
         <div class="logo">🏆</div>
-        <h1>遊戲結束</h1>
-        <p style="color: var(--text-sub)">你的最終得分</p>
+        <h1>GAME OVER</h1>
+        <p style="color: var(--text-dim); margin-top: 10px;">FINAL SCORE</p>
         <div class="score-display" id="final-score">0</div>
-        <p id="feedback-msg" style="color: var(--text-main); margin-bottom: 30px; font-size: 1.1rem; line-height: 1.6;">...</p>
-        <button class="btn" onclick="location.reload()">再玩一次</button>
+        <div class="rank-badge" id="rank-badge">Rookie</div>
+        <p id="feedback-msg" style="color: #fff; margin-bottom: 30px; font-size: 1.1rem; line-height: 1.6;">...</p>
+        <button class="btn" onclick="location.reload()">PLAY AGAIN</button>
     </div>
 
 </div>
 
-<audio id="bgm-player" preload="auto"></audio>
+<audio id="bgm-player" preload="auto" playsinline webkit-playsinline></audio>
 
 <script>
-// 修正後的資料：補上引號、將 dl=0 改為 dl=1
+/* * 數據修正：所有連結都使用 dl=1 以確保強制下載/串流 
+ * 並且移除所有可能導致錯誤的特殊字元
+ */
 const ALL_MOVIES = [
     { title: "鐵達尼號 (Titanic)", song: "My Heart Will Go On", year: "1997", desc: "影史愛情經典。窮畫家傑克與貴族少女蘿絲在豪華郵輪上相戀，卻遭遇世紀船難，譜出一段永恆的悲劇戀曲。", audioUrl: "https://www.dropbox.com/scl/fi/8z0udzn0olzg7cbz3fwak/Titanic-My-Heart-Will-Go-On-Celine-Dion-HD-Film-Tributes-youtube-1.mp3?rlkey=cqkzetw1x1zswg45vw00sag58&st=1hm93abe&dl=1" },
     { title: "月老 (Till We Meet Again)", song: "如果可以", year: "2021", desc: "九把刀執導。慘遭雷擊而死的阿綸來到陰間，為了積陰德轉世，與個性火爆的Pinky搭檔成為月老，牽起紅線的故事。", audioUrl: "https://www.dropbox.com/scl/fi/1reqoif6fqd5q34big8ly/WeiBird-Red-Scarf-MV-WeiBird-youtube.mp3?rlkey=dfccwhk7wd6fwwlofeyl5b5r4&st=u2kf13r3&dl=1" },
@@ -312,14 +333,11 @@ class GameEngine {
         this.timeLeft = 30;
         this.gameLength = 10;
         
-        // Audio & Visualizer Context
-        this.audioCtx = null;
-        this.analyser = null;
-        this.source = null;
-        this.isAudioSetup = false;
-        this.audioAllowed = false; // Flag to check if we can actually use WebAudio
+        // 核心：分開 Audio (播放用) 與 SFX (音效用)
+        this.sfxCtx = null;
+        this.isPlaying = false;
 
-        // DOM Elements
+        // DOM
         this.els = {
             start: document.getElementById('start-screen'),
             game: document.getElementById('game-screen'),
@@ -336,33 +354,33 @@ class GameEngine {
             resStatus: document.getElementById('res-status'),
             resTitle: document.getElementById('res-title'),
             resSong: document.getElementById('res-song'),
-            resDesc: document.getElementById('res-desc')
+            resDesc: document.getElementById('res-desc'),
+            bgCanvas: document.getElementById('bg-canvas')
         };
         
-        // SFX Context
-        this.sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
+        // Init Effects
+        this.initBackgroundParticles();
+
         // Bindings
         document.getElementById('start-btn').addEventListener('click', () => {
-            this.unlockAudioEvent(); 
+            this.initAudioContext(); 
             this.initGame();
         });
         document.getElementById('next-btn').addEventListener('click', () => this.nextQuestion());
         
-        // Additional Mobile Unlock
-        document.body.addEventListener('touchstart', () => this.unlockAudioEvent(), { once: true });
-        document.body.addEventListener('click', () => this.unlockAudioEvent(), { once: true });
+        // Mobile Unlock
+        const unlock = () => { if(this.sfxCtx && this.sfxCtx.state === 'suspended') this.sfxCtx.resume(); }
+        document.body.addEventListener('touchstart', unlock, { once: true });
+        document.body.addEventListener('click', unlock, { once: true });
     }
 
-    unlockAudioEvent() {
-        if (this.sfxCtx.state === 'suspended') this.sfxCtx.resume();
-        
-        // Initialize AudioCtx if needed
-        if (!this.audioCtx) {
-            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            this.setupVisualizer();
+    initAudioContext() {
+        if (!this.sfxCtx) {
+            this.sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
-        if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+        if (this.sfxCtx.state === 'suspended') this.sfxCtx.resume();
+        // 啟動視覺化循環
+        this.drawImmersiveVisualizer();
     }
 
     playTone(type) {
@@ -374,28 +392,22 @@ class GameEngine {
 
         if (type === 'correct') {
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, this.sfxCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(1200, this.sfxCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.1, this.sfxCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0, this.sfxCtx.currentTime + 0.3);
+            osc.frequency.setValueAtTime(800, this.sfxCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1600, this.sfxCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.15, this.sfxCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.sfxCtx.currentTime + 0.3);
         } else {
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(150, this.sfxCtx.currentTime);
-            osc.frequency.linearRampToValueAtTime(100, this.sfxCtx.currentTime + 0.3);
-            gain.gain.setValueAtTime(0.1, this.sfxCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0, this.sfxCtx.currentTime + 0.3);
+            osc.frequency.setValueAtTime(120, this.sfxCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(60, this.sfxCtx.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.2, this.sfxCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0.01, this.sfxCtx.currentTime + 0.3);
         }
         osc.start();
         osc.stop(this.sfxCtx.currentTime + 0.3);
     }
 
-    async initGame() {
-        if (!this.audioCtx) {
-            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            this.setupVisualizer();
-        }
-        if (this.audioCtx.state === 'suspended') await this.audioCtx.resume();
-        
+    initGame() {
         const shuffled = [...ALL_MOVIES].sort(() => Math.random() - 0.5);
         this.questions = shuffled.slice(0, this.gameLength);
         
@@ -407,65 +419,139 @@ class GameEngine {
         this.loadQuestion();
     }
 
-    setupVisualizer() {
-        if(this.isAudioSetup) return;
-        
-        try {
-            // NOTE: Dropbox links often fail here due to CORS.
-            // If createMediaElementSource fails, we catch it and use "fake" mode.
-            this.source = this.audioCtx.createMediaElementSource(this.els.audio);
-            this.analyser = this.audioCtx.createAnalyser();
-            this.source.connect(this.analyser);
-            this.analyser.connect(this.audioCtx.destination);
-            this.analyser.fftSize = 256;
-            this.audioAllowed = true;
-        } catch (e) { 
-            console.log("CORS restricted: Switching to Fake Visualizer Mode");
-            this.audioAllowed = false;
-        }
-        
-        this.isAudioSetup = true;
-        this.drawVisualizer();
-    }
-
-    drawVisualizer() {
+    // --------------------------------------------------------
+    // 高階模擬視覺化系統 (Immersive Fake Visualizer)
+    // 解決 CORS 導致無法讀取真實頻譜的問題，同時提供極佳視覺效果
+    // --------------------------------------------------------
+    drawImmersiveVisualizer() {
         const canvas = this.els.visualizer;
         const ctx = canvas.getContext('2d');
-        const bufferLength = 64; // Fewer bars for cleaner look
-        const dataArray = new Uint8Array(bufferLength);
-        
+        let tick = 0;
+
+        // 調整畫布解析度
+        const resize = () => {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        };
+        window.addEventListener('resize', resize);
+        resize();
+
         const draw = () => {
             requestAnimationFrame(draw);
             
-            // Clear
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const barWidth = (canvas.width / bufferLength) * 1.5;
-            let x = 0;
+            const w = canvas.width;
+            const h = canvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
 
-            if (this.audioAllowed && this.analyser) {
-                // Real Data
-                this.analyser.getByteFrequencyData(dataArray);
-            } else {
-                // Fake Data (Simulated) if audio is playing but CORS blocked
-                if (!this.els.audio.paused) {
-                    for(let i=0; i<bufferLength; i++) {
-                        dataArray[i] = Math.random() * 150 + 50; 
-                    }
-                } else {
-                    dataArray.fill(10); // Idle
-                }
+            ctx.clearRect(0, 0, w, h);
+            
+            // 如果沒在播放，只畫一條微弱的線
+            if (!this.isPlaying) {
+                ctx.beginPath();
+                ctx.moveTo(0, cy);
+                ctx.lineTo(w, cy);
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                return;
             }
 
-            for(let i = 0; i < bufferLength; i++) {
-                const value = dataArray[i];
-                const barHeight = (value / 255) * canvas.height;
-                const hue = i * 4 + 180; 
-                ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
-                ctx.fillRect(x, (canvas.height - barHeight) / 2, barWidth, barHeight);
-                x += barWidth + 2;
+            tick += 0.15; // 速度
+
+            // 鏡像頻譜參數
+            const bars = 40; 
+            const step = w / 2 / bars;
+
+            // 繪製左半邊和右半邊
+            for (let i = 0; i < bars; i++) {
+                // 模擬頻譜算法：使用多重正弦波疊加隨機噪聲，製造「音樂感」
+                let noise = Math.random() * 0.3;
+                let wave = Math.sin(tick + i * 0.5) * 0.5 + Math.cos(tick * 1.5 - i * 0.2) * 0.5;
+                let magnitude = Math.max(0, wave + noise); 
+                
+                // 中央能量較強，邊緣較弱
+                let centerBias = 1 - (i / bars); 
+                let height = magnitude * h * 0.6 * centerBias;
+                
+                // 限制最小高度
+                if (height < 2) height = 2;
+
+                // 顏色計算 (Cyan to Purple)
+                const hue = 180 + (i / bars) * 100;
+                ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
+                
+                // 陰影發光
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
+
+                // 右邊條
+                const xRight = cx + i * step + 2;
+                const yTop = cy - height / 2;
+                ctx.fillRect(xRight, yTop, step - 2, height);
+
+                // 左邊條
+                const xLeft = cx - (i + 1) * step;
+                ctx.fillRect(xLeft, yTop, step - 2, height);
             }
+            
+            // 重置 Shadow 以免影響效能
+            ctx.shadowBlur = 0;
         };
         draw();
+    }
+
+    // --------------------------------------------------------
+    // 背景粒子系統
+    // --------------------------------------------------------
+    initBackgroundParticles() {
+        const canvas = this.els.bgCanvas;
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        
+        const resize = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        };
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.alpha = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(0, 242, 255, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 50; i++) particles.push(new Particle());
+
+        const animate = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        };
+        animate();
     }
 
     loadQuestion() {
@@ -478,47 +564,53 @@ class GameEngine {
         this.els.qNum.innerText = this.qIndex + 1;
         this.els.overlay.classList.add('hidden');
         this.els.options.innerHTML = '';
-        this.els.status.innerText = "正在載入音訊...";
+        this.els.status.innerText = "BUFFERING...";
         this.els.loading.classList.remove('hidden');
         this.els.timerBar.style.transition = 'none';
         this.els.timerBar.style.width = '100%';
 
         if(this.timer) clearInterval(this.timer);
         
+        // 重置音頻狀態
+        this.isPlaying = false;
         this.els.audio.pause();
         this.els.audio.currentTime = 0;
         this.els.audio.src = q.audioUrl;
-        this.els.audio.volume = 0.6;
+        this.els.audio.volume = 0.8;
 
-        // More robust play handling
-        const playAttempt = () => {
+        // 播放處理
+        const attemptPlay = () => {
              this.els.loading.classList.add('hidden');
-             this.els.status.innerText = "🎶 猜猜這是哪部電影？";
+             this.els.status.innerText = "🎶 LISTENING...";
+             
              this.els.audio.play()
-                .then(() => this.startTimer())
+                .then(() => {
+                    this.isPlaying = true;
+                    this.startTimer();
+                })
                 .catch(e => {
-                    this.els.status.innerText = "⚠️ 請點擊畫面播放";
-                    // Add a one-time click listener to body to start
+                    this.els.status.innerText = "⚠️ TAP TO PLAY";
                     document.body.addEventListener('click', () => {
                         this.els.audio.play();
+                        this.isPlaying = true;
                         this.startTimer();
                     }, { once: true });
                 });
         };
 
+        // 監聽載入
         this.els.audio.oncanplaythrough = () => {
-            playAttempt();
+            attemptPlay();
             this.els.audio.oncanplaythrough = null;
         };
         
-        // Fallback if canplaythrough doesn't fire fast enough
+        // 備用觸發
         this.els.audio.onloadeddata = () => {
-             // Optional: can use this as backup
+             // 如果 canplaythrough 沒觸發，這裡通常會捕捉到
         };
 
-        this.els.audio.onerror = (e) => {
-            console.error("Audio Error:", e, q.audioUrl);
-            this.els.status.innerText = "⚠️ 音訊無法讀取 (請檢查網路)";
+        this.els.audio.onerror = () => {
+            this.els.status.innerText = "⚠️ ERROR LOADING SONG";
             this.els.loading.classList.add('hidden');
         };
 
@@ -542,21 +634,31 @@ class GameEngine {
     }
 
     startTimer() {
-        if (this.timer) clearInterval(this.timer); // Safety clear
+        if (this.timer) clearInterval(this.timer);
         this.timeLeft = this.maxTime;
+        
+        // 確保 Timer Bar 重置動畫
         setTimeout(() => {
             this.els.timerBar.style.transition = `width ${this.maxTime}s linear`;
             this.els.timerBar.style.width = '0%';
         }, 50);
+
         this.timer = setInterval(() => {
             this.timeLeft--;
-            if(this.timeLeft <= 0) this.handleTimeout();
+            if (this.timeLeft <= 10) {
+                 // 倒數 10 秒變紅
+                 this.els.timerBar.querySelector('#timer-fill').style.background = "#ff0a44";
+                 this.els.timerBar.querySelector('#timer-fill').style.boxShadow = "0 0 15px #ff0a44";
+            }
+            if (this.timeLeft <= 0) this.handleTimeout();
         }, 1000);
     }
 
     checkAnswer(selected, correct, btn) {
         clearInterval(this.timer);
         this.els.audio.pause();
+        this.isPlaying = false;
+        
         const buttons = document.querySelectorAll('.option-btn');
         buttons.forEach(b => b.disabled = true);
 
@@ -572,13 +674,31 @@ class GameEngine {
         } else {
             btn.classList.add('wrong');
             this.playTone('wrong');
-            this.showScoreFloat(btn, "Miss", 'minus');
+            this.showScoreFloat(btn, "MISS", 'minus');
             buttons.forEach(b => {
                 if(b.innerText.includes(correct.title)) b.classList.add('correct');
             });
             this.showResultModal(correct, false);
         }
-        this.els.score.innerText = this.score;
+        
+        // 分數動畫
+        this.animateScore(this.score);
+    }
+
+    animateScore(target) {
+        const el = this.els.score;
+        const start = parseInt(el.innerText);
+        const diff = target - start;
+        const duration = 1000;
+        let startTime = null;
+
+        const step = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            el.innerText = Math.floor(start + diff * progress);
+            if (progress < 1) window.requestAnimationFrame(step);
+        };
+        window.requestAnimationFrame(step);
     }
 
     showScoreFloat(element, text, type) {
@@ -591,6 +711,7 @@ class GameEngine {
     handleTimeout() {
         clearInterval(this.timer);
         this.els.audio.pause();
+        this.isPlaying = false;
         this.playTone('wrong');
         document.querySelectorAll('.option-btn').forEach(b => {
             b.disabled = true;
@@ -601,14 +722,14 @@ class GameEngine {
 
     showResultModal(movie, isCorrect, isTimeout = false) {
         if(isTimeout) {
-            this.els.resStatus.innerText = "Time's Up!";
-            this.els.resStatus.style.color = "#ffcc00";
+            this.els.resStatus.innerText = "TIME'S UP";
+            this.els.resStatus.style.color = "var(--neon-gold)";
         } else if(isCorrect) {
-            this.els.resStatus.innerText = "Correct! 🎉";
-            this.els.resStatus.style.color = "var(--success)";
+            this.els.resStatus.innerText = "CORRECT";
+            this.els.resStatus.style.color = "var(--neon-green)";
         } else {
-            this.els.resStatus.innerText = "Wrong... 😢";
-            this.els.resStatus.style.color = "var(--error)";
+            this.els.resStatus.innerText = "WRONG";
+            this.els.resStatus.style.color = "var(--neon-red)";
         }
 
         this.els.resTitle.innerText = `${movie.title} (${movie.year})`;
@@ -622,16 +743,34 @@ class GameEngine {
 
     nextQuestion() {
         this.qIndex++;
+        // Reset timer bar color
+        this.els.timerBar.querySelector('#timer-fill').style.background = "var(--neon-gold)";
+        this.els.timerBar.querySelector('#timer-fill').style.boxShadow = "0 0 15px var(--neon-gold)";
         this.loadQuestion();
     }
 
     endGame() {
         this.switchScreen('end');
         document.getElementById('final-score').innerText = this.score;
+        
+        const rankEl = document.getElementById('rank-badge');
         let msg = "";
-        if (this.score > 1200) msg = "你是 OST 之神！聽覺太敏銳了！🏆";
-        else if (this.score > 800) msg = "資深影迷！配樂都記得很熟喔！🎬";
-        else msg = "不錯的嘗試！多看點電影再來挑戰！🍿";
+        let rank = "";
+        let color = "";
+
+        if (this.score > 1200) {
+            rank = "LEGENDARY"; msg = "太神啦！你的聽力與電影知識無人能敵！🏆"; color = "#ff0a44";
+        } else if (this.score > 900) {
+            rank = "MASTER"; msg = "大師級影迷！這些配樂對你來說太簡單了！🎬"; color = "#bc13fe";
+        } else if (this.score > 600) {
+            rank = "EXPERT"; msg = "不錯喔！看來你常跑電影院！🍿"; color = "#00f2ff";
+        } else {
+            rank = "ROOKIE"; msg = "再接再厲！多看點電影再來挑戰吧！📺"; color = "#8b9bb4";
+        }
+
+        rankEl.innerText = rank;
+        rankEl.style.backgroundColor = color;
+        rankEl.style.boxShadow = `0 0 15px ${color}`;
         document.getElementById('feedback-msg').innerText = msg;
     }
 
@@ -639,10 +778,12 @@ class GameEngine {
         this.els.start.classList.add('hidden');
         this.els.game.classList.add('hidden');
         this.els.end.classList.add('hidden');
-        this.els[name].classList.remove('hidden');
-        this.els[name].style.animation = 'none';
-        this.els[name].offsetHeight; 
-        this.els[name].style.animation = 'fadeIn 0.5s ease';
+        
+        const target = this.els[name];
+        target.classList.remove('hidden');
+        target.style.animation = 'none';
+        target.offsetHeight; 
+        target.style.animation = 'fadeIn 0.5s ease';
     }
 }
 
