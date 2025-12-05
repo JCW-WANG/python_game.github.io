@@ -8,7 +8,7 @@
     <style>
         :root {
             --bg-dark: #050510;
-            --glass-bg: rgba(20, 20, 35, 0.6);
+            --glass-bg: rgba(20, 20, 35, 0.7);
             --glass-border: rgba(255, 255, 255, 0.1);
             --neon-blue: #00f2ff;
             --neon-purple: #bc13fe;
@@ -19,7 +19,8 @@
             --text-dim: #8b9bb4;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box;
+            user-select: none; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'Montserrat', 'Noto Sans TC', sans-serif;
@@ -50,7 +51,7 @@
             z-index: 10;
         }
 
-        /* 玻璃擬態卡片 - 增強版 */
+        /* 玻璃擬態卡片 */
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(25px);
@@ -87,12 +88,14 @@
             overflow: hidden;
         }
         .btn::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            content: '';
+            position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
             background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.2), transparent);
             transition: 0.5s;
         }
         .btn:hover { 
-            background: var(--neon-blue); color: #000; box-shadow: 0 0 30px rgba(0, 242, 255, 0.6); 
+            background: var(--neon-blue);
+            color: #000; box-shadow: 0 0 30px rgba(0, 242, 255, 0.6);
         }
         .btn:hover::before { left: 100%; }
         .btn:active { transform: scale(0.97); }
@@ -101,7 +104,8 @@
         .logo-container { margin-bottom: 20px; position: relative; display: inline-block; }
         .logo { font-size: 5rem; filter: drop-shadow(0 0 20px rgba(188, 19, 254, 0.5)); animation: float 4s ease-in-out infinite; }
         .logo-circle {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
             width: 120px; height: 120px; border-radius: 50%;
             border: 2px solid var(--neon-purple); opacity: 0.3;
             animation: spin 10s linear infinite;
@@ -117,20 +121,89 @@
         .hud-bar { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: 700; font-size: 1rem; color: var(--text-dim); align-items: center; }
         .score-box { color: var(--neon-gold); text-shadow: 0 0 10px rgba(255, 230, 0, 0.3); }
 
-        /* Visualizer Area */
-        .visualizer-wrapper {
+        /* --- 唱片機視覺效果 (Vinyl Turntable) --- */
+        .turntable-wrapper {
             position: relative;
-            width: 100%; height: 140px; /* 加高 */
-            background: rgba(0,0,0,0.3); border-radius: 20px;
-            margin-bottom: 20px; overflow: hidden;
+            width: 100%; 
+            height: 260px; /* 增加高度以容納唱片 */
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            margin-bottom: 20px; 
+            overflow: hidden;
             display: flex; align-items: center; justify-content: center;
             border: 1px solid rgba(255,255,255,0.05);
             box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+            perspective: 1000px;
         }
-        canvas#audio-visualizer { width: 100%; height: 100%; z-index: 2; }
+
+        /* 黑膠唱片本體 */
+        .vinyl-disc {
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1), transparent 20%),
+                repeating-radial-gradient(#111, #111 2px, #222 3px, #222 4px);
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 1s ease; /* 啟動停止的緩衝 */
+        }
+        
+        /* 唱片旋轉動畫 class */
+        .vinyl-disc.spinning {
+            animation: spin 4s linear infinite;
+        }
+
+        /* 唱片中心貼紙 */
+        .vinyl-label {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-purple), #5500aa);
+            border: 2px solid rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            color: #fff;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+            z-index: 2;
+        }
+
+        /* 唱臂 (Tonearm) */
+        .tonearm {
+            position: absolute;
+            top: 20px; right: 20px;
+            width: 100px; height: 180px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 180'%3E%3Cpath d='M80,20 C90,20 95,25 95,35 L95,80 C95,90 90,100 60,140 L40,165' fill='none' stroke='%23888' stroke-width='6'/%3E%3Ccircle cx='80' cy='35' r='15' fill='%23444' stroke='%23666' stroke-width='2'/%3E%3Crect x='30' y='160' width='20' height='30' fill='%23222' transform='rotate(30 40 175)'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-size: contain;
+            transform-origin: 80px 35px; /* 旋轉軸心 */
+            transform: rotate(-30deg); /* 初始狀態：移開 */
+            transition: transform 0.8s cubic-bezier(0.4, 2.5, 0.6, 0.8); /* 彈性動畫 */
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* 唱臂播放狀態 */
+        .tonearm.playing {
+            transform: rotate(15deg); /* 移入唱片 */
+        }
+
+        /* 讀取中文字 */
         .loading-text { 
-            position: absolute; color: var(--neon-blue); font-size: 0.9rem; letter-spacing: 3px; font-weight: bold;
-            text-shadow: 0 0 10px var(--neon-blue); animation: pulse 1.5s infinite; z-index: 3;
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            color: var(--neon-blue); font-size: 0.9rem; letter-spacing: 3px; font-weight: bold;
+            text-shadow: 0 0 10px var(--neon-blue); z-index: 3;
+        }
+        
+        .music-note {
+            position: absolute;
+            font-size: 2rem;
+            color: var(--neon-gold);
+            opacity: 0;
+            animation: floatNote 2s ease-out infinite;
+            pointer-events: none;
         }
 
         /* Timer */
@@ -154,7 +227,7 @@
             display: flex; align-items: center; justify-content: space-between;
         }
         .option-btn:hover:not(:disabled) { 
-            background: rgba(255,255,255,0.12); 
+            background: rgba(255,255,255,0.12);
             border-color: var(--neon-blue); 
             transform: translateX(5px);
             box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
@@ -196,15 +269,18 @@
 
         /* Animations */
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
-        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes pulse { 0% { opacity: 0.4; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.4; transform: scale(0.95); } }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(-50%); } 100% { opacity: 0; transform: translateY(-150%) scale(1.2); } }
+        @keyframes floatNote { 0% { transform: translate(0, 0) rotate(0deg); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(20px, -50px) rotate(20deg); opacity: 0; } }
 
         @media (min-width: 600px) {
             .options-grid { grid-template-columns: 1fr 1fr; }
             h1 { font-size: 2.8rem; }
             .glass-panel { padding: 40px; }
+            .turntable-wrapper { height: 300px; }
+            .vinyl-disc { width: 240px; height: 240px; }
         }
     </style>
 </head>
@@ -224,7 +300,7 @@
         
         <div class="instruction">
             <p>🎵 <b>經典重現</b>：聆聽配樂，選出正確電影。</p>
-            <p>⏱️ <b>限時挑戰</b>：每題 30 秒，越快得分越高。</p>
+            <p>⏱️ <b>限時挑戰</b>：每題 60 秒，享受完整的音樂。</p>
             <p>🔊 <b>請開聲音</b>：若無聲音，請確認靜音模式。</p>
         </div>
 
@@ -237,8 +313,12 @@
             <span class="score-box">Score: <span id="score">0</span></span>
         </div>
 
-        <div class="visualizer-wrapper">
-            <canvas id="audio-visualizer"></canvas>
+        <div class="turntable-wrapper" id="turntable">
+            <div class="tonearm" id="tonearm"></div>
+            <div class="vinyl-disc" id="vinyl-disc">
+                <div class="vinyl-label" id="vinyl-label">?</div>
+            </div>
+            <div id="note-container"></div>
             <div id="loading-msg" class="loading-text">LOADING AUDIO...</div>
         </div>
 
@@ -275,9 +355,6 @@
 <audio id="bgm-player" preload="auto" playsinline webkit-playsinline></audio>
 
 <script>
-/* * 數據修正：所有連結都使用 dl=1 以確保強制下載/串流 
- * 並且移除所有可能導致錯誤的特殊字元
- */
 const ALL_MOVIES = [
     { title: "鐵達尼號 (Titanic)", song: "My Heart Will Go On", year: "1997", desc: "影史愛情經典。窮畫家傑克與貴族少女蘿絲在豪華郵輪上相戀，卻遭遇世紀船難，譜出一段永恆的悲劇戀曲。", audioUrl: "https://www.dropbox.com/scl/fi/8z0udzn0olzg7cbz3fwak/Titanic-My-Heart-Will-Go-On-Celine-Dion-HD-Film-Tributes-youtube-1.mp3?rlkey=cqkzetw1x1zswg45vw00sag58&st=1hm93abe&dl=1" },
     { title: "月老 (Till We Meet Again)", song: "如果可以", year: "2021", desc: "九把刀執導。慘遭雷擊而死的阿綸來到陰間，為了積陰德轉世，與個性火爆的Pinky搭檔成為月老，牽起紅線的故事。", audioUrl: "https://www.dropbox.com/scl/fi/1reqoif6fqd5q34big8ly/WeiBird-Red-Scarf-MV-WeiBird-youtube.mp3?rlkey=dfccwhk7wd6fwwlofeyl5b5r4&st=u2kf13r3&dl=1" },
@@ -320,7 +397,6 @@ const ALL_MOVIES = [
     { title: "月光白日夢", song: "Moonage Daydream", year: "2022", desc: "大衛·鮑伊的實驗性紀錄片。透過未公開的影像與音樂，探索這位搖滾變色龍的藝術精神與內心世界。", audioUrl: "https://www.dropbox.com/scl/fi/gbvqqtlm6rl80q13z8yot/David-Bowie-Starman-Official-Video-David-Bowie-youtube.mp3?rlkey=07mx54rspodot9gs12bi71g63&st=kbhb0mzk&dl=1" },
     { title: "巴斯光年", song: "Starman (Remix)", year: "2022", desc: "玩具總動員外傳。講述啟發巴斯光年玩具的那位傳奇太空遊俠，在星際間對抗札克天王的起源故事。", audioUrl: "https://www.dropbox.com/scl/fi/gbvqqtlm6rl80q13z8yot/David-Bowie-Starman-Official-Video-David-Bowie-youtube.mp3?rlkey=07mx54rspodot9gs12bi71g63&st=kbhb0mzk&dl=1" }
 ];
-
 ALL_MOVIES.forEach((m, i) => m.id = i);
 
 class GameEngine {
@@ -329,21 +405,18 @@ class GameEngine {
         this.qIndex = 0;
         this.questions = [];
         this.timer = null;
-        this.maxTime = 30;
-        this.timeLeft = 30;
+        this.maxTime = 60; // 延長時間至 60 秒
+        this.timeLeft = 60;
         this.gameLength = 10;
         
-        // 核心：分開 Audio (播放用) 與 SFX (音效用)
         this.sfxCtx = null;
         this.isPlaying = false;
-
-        // DOM
+        
         this.els = {
             start: document.getElementById('start-screen'),
             game: document.getElementById('game-screen'),
             end: document.getElementById('end-screen'),
             audio: document.getElementById('bgm-player'),
-            visualizer: document.getElementById('audio-visualizer'),
             loading: document.getElementById('loading-msg'),
             timerBar: document.getElementById('timer-fill'),
             options: document.getElementById('options-container'),
@@ -355,13 +428,17 @@ class GameEngine {
             resTitle: document.getElementById('res-title'),
             resSong: document.getElementById('res-song'),
             resDesc: document.getElementById('res-desc'),
-            bgCanvas: document.getElementById('bg-canvas')
+            bgCanvas: document.getElementById('bg-canvas'),
+            // Vinyl Elements
+            vinylDisc: document.getElementById('vinyl-disc'),
+            tonearm: document.getElementById('tonearm'),
+            noteContainer: document.getElementById('note-container'),
+            vinylLabel: document.getElementById('vinyl-label')
         };
         
-        // Init Effects
         this.initBackgroundParticles();
+        this.startVinylPulse(); // 啟動唱片脈動效果
 
-        // Bindings
         document.getElementById('start-btn').addEventListener('click', () => {
             this.initAudioContext(); 
             this.initGame();
@@ -379,8 +456,6 @@ class GameEngine {
             this.sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
         }
         if (this.sfxCtx.state === 'suspended') this.sfxCtx.resume();
-        // 啟動視覺化循環
-        this.drawImmersiveVisualizer();
     }
 
     playTone(type) {
@@ -419,91 +494,39 @@ class GameEngine {
         this.loadQuestion();
     }
 
-    // --------------------------------------------------------
-    // 高階模擬視覺化系統 (Immersive Fake Visualizer)
-    // 解決 CORS 導致無法讀取真實頻譜的問題，同時提供極佳視覺效果
-    // --------------------------------------------------------
-    drawImmersiveVisualizer() {
-        const canvas = this.els.visualizer;
-        const ctx = canvas.getContext('2d');
-        let tick = 0;
-
-        // 調整畫布解析度
-        const resize = () => {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-        };
-        window.addEventListener('resize', resize);
-        resize();
-
-        const draw = () => {
-            requestAnimationFrame(draw);
-            
-            const w = canvas.width;
-            const h = canvas.height;
-            const cx = w / 2;
-            const cy = h / 2;
-
-            ctx.clearRect(0, 0, w, h);
-            
-            // 如果沒在播放，只畫一條微弱的線
-            if (!this.isPlaying) {
-                ctx.beginPath();
-                ctx.moveTo(0, cy);
-                ctx.lineTo(w, cy);
-                ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
-                ctx.lineWidth = 1;
-                ctx.stroke();
-                return;
+    // 模擬唱片脈動效果 (替代原本的 Visualizer)
+    startVinylPulse() {
+        let scale = 1;
+        let direction = 1;
+        
+        const animate = () => {
+            if (this.isPlaying) {
+                // 根據簡單的正弦波模擬節拍
+                const now = Date.now() / 1000;
+                const beat = Math.sin(now * 10) * 0.05; // 速度與幅度
+                this.els.vinylLabel.style.transform = `scale(${1 + beat})`;
+                
+                // 隨機產生音符
+                if (Math.random() < 0.02) this.spawnNote();
+            } else {
+                this.els.vinylLabel.style.transform = 'scale(1)';
             }
-
-            tick += 0.15; // 速度
-
-            // 鏡像頻譜參數
-            const bars = 40; 
-            const step = w / 2 / bars;
-
-            // 繪製左半邊和右半邊
-            for (let i = 0; i < bars; i++) {
-                // 模擬頻譜算法：使用多重正弦波疊加隨機噪聲，製造「音樂感」
-                let noise = Math.random() * 0.3;
-                let wave = Math.sin(tick + i * 0.5) * 0.5 + Math.cos(tick * 1.5 - i * 0.2) * 0.5;
-                let magnitude = Math.max(0, wave + noise); 
-                
-                // 中央能量較強，邊緣較弱
-                let centerBias = 1 - (i / bars); 
-                let height = magnitude * h * 0.6 * centerBias;
-                
-                // 限制最小高度
-                if (height < 2) height = 2;
-
-                // 顏色計算 (Cyan to Purple)
-                const hue = 180 + (i / bars) * 100;
-                ctx.fillStyle = `hsl(${hue}, 100%, 60%)`;
-                
-                // 陰影發光
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = `hsl(${hue}, 100%, 50%)`;
-
-                // 右邊條
-                const xRight = cx + i * step + 2;
-                const yTop = cy - height / 2;
-                ctx.fillRect(xRight, yTop, step - 2, height);
-
-                // 左邊條
-                const xLeft = cx - (i + 1) * step;
-                ctx.fillRect(xLeft, yTop, step - 2, height);
-            }
-            
-            // 重置 Shadow 以免影響效能
-            ctx.shadowBlur = 0;
+            requestAnimationFrame(animate);
         };
-        draw();
+        animate();
+    }
+    
+    spawnNote() {
+        const note = document.createElement('div');
+        note.innerText = ['♪', '♫', '♬'][Math.floor(Math.random() * 3)];
+        note.className = 'music-note';
+        note.style.left = (50 + (Math.random() - 0.5) * 40) + '%';
+        note.style.top = '50%';
+        this.els.noteContainer.appendChild(note);
+        setTimeout(() => note.remove(), 2000);
     }
 
-    // --------------------------------------------------------
     // 背景粒子系統
-    // --------------------------------------------------------
     initBackgroundParticles() {
         const canvas = this.els.bgCanvas;
         const ctx = canvas.getContext('2d');
@@ -542,7 +565,6 @@ class GameEngine {
         }
 
         for (let i = 0; i < 50; i++) particles.push(new Particle());
-
         const animate = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => {
@@ -552,6 +574,16 @@ class GameEngine {
             requestAnimationFrame(animate);
         };
         animate();
+    }
+
+    setTurntableState(play) {
+        if(play) {
+            this.els.vinylDisc.classList.add('spinning');
+            this.els.tonearm.classList.add('playing');
+        } else {
+            this.els.vinylDisc.classList.remove('spinning');
+            this.els.tonearm.classList.remove('playing');
+        }
     }
 
     loadQuestion() {
@@ -568,50 +600,59 @@ class GameEngine {
         this.els.loading.classList.remove('hidden');
         this.els.timerBar.style.transition = 'none';
         this.els.timerBar.style.width = '100%';
+        this.els.vinylLabel.innerText = "?";
 
         if(this.timer) clearInterval(this.timer);
         
-        // 重置音頻狀態
+        // 停止上一首
         this.isPlaying = false;
+        this.setTurntableState(false);
         this.els.audio.pause();
         this.els.audio.currentTime = 0;
+        
+        // 設定新來源
         this.els.audio.src = q.audioUrl;
         this.els.audio.volume = 0.8;
+        this.els.audio.load(); // 重要：強制瀏覽器重新載入資源
 
-        // 播放處理
-        const attemptPlay = () => {
-             this.els.loading.classList.add('hidden');
-             this.els.status.innerText = "🎶 LISTENING...";
-             
-             this.els.audio.play()
-                .then(() => {
+        // 播放處理邏輯
+        const startPlay = () => {
+            const playPromise = this.els.audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
                     this.isPlaying = true;
+                    this.setTurntableState(true);
+                    this.els.loading.classList.add('hidden');
+                    this.els.status.innerText = "🎶 LISTENING...";
                     this.startTimer();
                 })
-                .catch(e => {
+                .catch(error => {
+                    console.error("Playback failed", error);
                     this.els.status.innerText = "⚠️ TAP TO PLAY";
+                    this.els.loading.classList.add('hidden');
+                    // 等待用戶點擊
                     document.body.addEventListener('click', () => {
                         this.els.audio.play();
                         this.isPlaying = true;
+                        this.setTurntableState(true);
+                        this.els.status.innerText = "🎶 LISTENING...";
                         this.startTimer();
                     }, { once: true });
                 });
+            }
         };
 
-        // 監聽載入
-        this.els.audio.oncanplaythrough = () => {
-            attemptPlay();
-            this.els.audio.oncanplaythrough = null;
+        // 使用 oncanplay 而非 oncanplaythrough 以加快反應
+        this.els.audio.oncanplay = () => {
+             startPlay();
+             this.els.audio.oncanplay = null; // 清除監聽
         };
         
-        // 備用觸發
-        this.els.audio.onloadeddata = () => {
-             // 如果 canplaythrough 沒觸發，這裡通常會捕捉到
-        };
-
         this.els.audio.onerror = () => {
             this.els.status.innerText = "⚠️ ERROR LOADING SONG";
             this.els.loading.classList.add('hidden');
+            // Auto skip if error? Or let user wait.
         };
 
         this.generateOptions(q);
@@ -637,7 +678,6 @@ class GameEngine {
         if (this.timer) clearInterval(this.timer);
         this.timeLeft = this.maxTime;
         
-        // 確保 Timer Bar 重置動畫
         setTimeout(() => {
             this.els.timerBar.style.transition = `width ${this.maxTime}s linear`;
             this.els.timerBar.style.width = '0%';
@@ -646,7 +686,6 @@ class GameEngine {
         this.timer = setInterval(() => {
             this.timeLeft--;
             if (this.timeLeft <= 10) {
-                 // 倒數 10 秒變紅
                  this.els.timerBar.querySelector('#timer-fill').style.background = "#ff0a44";
                  this.els.timerBar.querySelector('#timer-fill').style.boxShadow = "0 0 15px #ff0a44";
             }
@@ -656,8 +695,9 @@ class GameEngine {
 
     checkAnswer(selected, correct, btn) {
         clearInterval(this.timer);
-        this.els.audio.pause();
         this.isPlaying = false;
+        this.setTurntableState(false);
+        this.els.audio.pause(); // 答對才停止
         
         const buttons = document.querySelectorAll('.option-btn');
         buttons.forEach(b => b.disabled = true);
@@ -681,7 +721,6 @@ class GameEngine {
             this.showResultModal(correct, false);
         }
         
-        // 分數動畫
         this.animateScore(this.score);
     }
 
@@ -691,7 +730,6 @@ class GameEngine {
         const diff = target - start;
         const duration = 1000;
         let startTime = null;
-
         const step = (timestamp) => {
             if (!startTime) startTime = timestamp;
             const progress = Math.min((timestamp - startTime) / duration, 1);
@@ -712,6 +750,8 @@ class GameEngine {
         clearInterval(this.timer);
         this.els.audio.pause();
         this.isPlaying = false;
+        this.setTurntableState(false);
+        
         this.playTone('wrong');
         document.querySelectorAll('.option-btn').forEach(b => {
             b.disabled = true;
@@ -735,6 +775,7 @@ class GameEngine {
         this.els.resTitle.innerText = `${movie.title} (${movie.year})`;
         this.els.resSong.innerText = `🎵 ${movie.song}`;
         this.els.resDesc.innerText = movie.desc;
+        this.els.vinylLabel.innerText = "🎵"; // Show note on reveal
         
         setTimeout(() => {
             this.els.overlay.classList.remove('hidden');
@@ -743,7 +784,6 @@ class GameEngine {
 
     nextQuestion() {
         this.qIndex++;
-        // Reset timer bar color
         this.els.timerBar.querySelector('#timer-fill').style.background = "var(--neon-gold)";
         this.els.timerBar.querySelector('#timer-fill').style.boxShadow = "0 0 15px var(--neon-gold)";
         this.loadQuestion();
@@ -757,15 +797,18 @@ class GameEngine {
         let msg = "";
         let rank = "";
         let color = "";
-
         if (this.score > 1200) {
-            rank = "LEGENDARY"; msg = "太神啦！你的聽力與電影知識無人能敵！🏆"; color = "#ff0a44";
+            rank = "LEGENDARY";
+            msg = "太神啦！你的聽力與電影知識無人能敵！🏆"; color = "#ff0a44";
         } else if (this.score > 900) {
-            rank = "MASTER"; msg = "大師級影迷！這些配樂對你來說太簡單了！🎬"; color = "#bc13fe";
+            rank = "MASTER";
+            msg = "大師級影迷！這些配樂對你來說太簡單了！🎬"; color = "#bc13fe";
         } else if (this.score > 600) {
-            rank = "EXPERT"; msg = "不錯喔！看來你常跑電影院！🍿"; color = "#00f2ff";
+            rank = "EXPERT";
+            msg = "不錯喔！看來你常跑電影院！🍿"; color = "#00f2ff";
         } else {
-            rank = "ROOKIE"; msg = "再接再厲！多看點電影再來挑戰吧！📺"; color = "#8b9bb4";
+            rank = "ROOKIE";
+            msg = "再接再厲！多看點電影再來挑戰吧！📺"; color = "#8b9bb4";
         }
 
         rankEl.innerText = rank;
