@@ -8,7 +8,7 @@
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #1e1e1e, #3a3a3a, #121212);
-            --card-bg: rgba(25, 25, 25, 0.9); /* 加深背景，提升文字閱讀性 */
+            --card-bg: rgba(20, 20, 20, 0.95); /* 更深一點的背景，提升對比 */
             --glass-border: rgba(255, 255, 255, 0.15);
             --primary: #00d2ff; 
             --accent: #ff4757;  
@@ -28,11 +28,12 @@
             min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
-            overflow: hidden;
+            align-items: flex-start; /* 改為 flex-start 避免內容過長時頭部被切掉 */
             padding: 15px;
-            /* 基礎字體再加大，優化手機體驗 */
-            font-size: 18px; 
+            /* 修正：允許滑動，避免小螢幕按不到按鈕 */
+            overflow-y: auto; 
+            overflow-x: hidden;
+            font-size: 16px; /* 手機版基礎字體微調 */
         }
 
         /* 背景動態 */
@@ -44,14 +45,18 @@
             background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, rgba(0,0,0,0) 60%);
             animation: rotateBg 60s linear infinite;
             z-index: -1;
+            top: -50vh;
+            left: -50vw;
         }
         @keyframes rotateBg { 100% { transform: rotate(360deg); } }
 
         .app-container {
             width: 100%;
-            max-width: 600px;
+            max-width: 500px; /* 稍微縮窄讓閱讀更集中 */
             position: relative;
             z-index: 10;
+            margin-top: 2vh; /* 頂部留一點空間 */
+            margin-bottom: 50px; /* 底部留空間給捲動 */
         }
 
         /* 玻璃擬態卡片 */
@@ -60,8 +65,8 @@
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
             border: 1px solid var(--glass-border);
-            border-radius: 28px;
-            padding: 30px 20px;
+            border-radius: 24px;
+            padding: 25px 20px;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
             text-align: center;
             transition: opacity 0.3s ease;
@@ -79,43 +84,55 @@
             background: linear-gradient(90deg, var(--primary), #24243e);
             color: white;
             border: 1px solid rgba(255,255,255,0.2);
-            padding: 18px 0; /* 高度加大 */
-            font-size: 1.3rem;
+            padding: 15px 0; /* 高度適中化 */
+            font-size: 1.2rem;
             font-weight: 700;
             border-radius: 50px;
             cursor: pointer;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
             transition: transform 0.1s, box-shadow 0.1s;
             letter-spacing: 1.5px;
-            margin-top: 25px;
+            margin-top: 20px;
             width: 100%;
             touch-action: manipulation;
         }
         .btn:active { transform: scale(0.96); box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
 
         /* Start Screen */
-        .logo { font-size: 5.5rem; margin-bottom: 10px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(255,255,255,0.2)); }
+        .logo { 
+            font-size: 4.5rem; /* 手機版縮小 */
+            margin-bottom: 5px; 
+            animation: float 3s ease-in-out infinite; 
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
+        }
         
         h1 { 
-            font-size: clamp(2.2rem, 6vw, 3rem); /* 字體加大 */
-            margin-bottom: 10px; 
+            font-size: clamp(1.8rem, 5vw, 2.5rem); /* 自適應大小 */
+            margin-bottom: 5px; 
             color: var(--text-main); 
-            font-weight: 900; 
+            font-weight: 900;
             line-height: 1.2;
         }
         
-        .subtitle { color: var(--primary); font-size: 1.2rem; margin-bottom: 30px; letter-spacing: 2px; text-transform: uppercase; font-weight: bold;}
+        .subtitle { 
+            color: var(--primary);
+            font-size: 1rem; 
+            margin-bottom: 20px; 
+            letter-spacing: 2px; 
+            text-transform: uppercase; 
+            font-weight: bold;
+        }
         
         .instruction { 
-            font-size: 1.1rem; 
+            font-size: 0.95rem;
             color: var(--text-sub); 
-            margin: 20px 0; 
-            line-height: 1.8; 
+            margin: 10px 0; 
+            line-height: 1.6; 
             text-align: left; 
             background: rgba(255,255,255,0.08); 
-            padding: 25px; 
+            padding: 20px; 
             border-radius: 15px; 
-            border-left: 6px solid var(--primary); 
+            border-left: 5px solid var(--primary);
             width: 100%;
         }
         
@@ -124,22 +141,22 @@
             width: 100%;
             display: flex; 
             justify-content: space-between; 
-            margin-bottom: 20px; 
+            margin-bottom: 15px; 
             font-weight: bold; 
-            font-size: 1.2rem; 
+            font-size: 1.1rem; 
             color: var(--primary); 
-            align-items: center; 
+            align-items: center;
         }
         
-        /* === 唱片機 === */
+        /* === 唱片機 (大幅優化尺寸) === */
         .turntable-wrapper {
             position: relative;
-            width: 250px;
-            height: 250px;
-            margin: 0 auto 25px auto;
+            width: 160px; /* 手機預設變小 */
+            height: 160px;
+            margin: 0 auto 20px auto;
             background: rgba(0,0,0,0.3);
             border-radius: 50%;
-            border: 6px solid rgba(255,255,255,0.15);
+            border: 5px solid rgba(255,255,255,0.15);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -150,12 +167,7 @@
         .vinyl-record {
             width: 96%;
             height: 96%;
-            background: repeating-radial-gradient(
-                #111 0, 
-                #111 2px, 
-                #222 3px, 
-                #111 4px
-            );
+            background: repeating-radial-gradient(#111 0, #111 2px, #222 3px, #111 4px);
             border-radius: 50%;
             position: relative;
             box-shadow: 0 0 20px rgba(0,0,0,0.7);
@@ -171,15 +183,15 @@
             width: 38%; height: 38%;
             background: radial-gradient(circle, var(--accent) 0%, #a3101f 100%);
             border-radius: 50%;
-            border: 3px solid rgba(255,255,255,0.3);
+            border: 2px solid rgba(255,255,255,0.3);
             display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; font-weight: bold; text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            font-size: 1.2rem; font-weight: bold; text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
 
         .tone-arm {
             position: absolute;
-            top: -15px; right: -15px;
-            width: 90px; height: 130px;
+            top: -10px; right: -10px;
+            width: 60px; height: 90px;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 150'%3E%3Cpath d='M80,10 C80,10 90,10 90,20 L85,100 L40,120' stroke='%23ccc' stroke-width='6' fill='none'/%3E%3Ccircle cx='90' cy='20' r='12' fill='%23555'/%3E%3Crect x='30' y='115' width='20' height='15' fill='%23333'/%3E%3C/svg%3E");
             background-size: contain;
             background-repeat: no-repeat;
@@ -193,7 +205,7 @@
         .note-icon {
             position: absolute;
             color: var(--gold);
-            font-size: 2.5rem;
+            font-size: 2rem;
             opacity: 0;
             pointer-events: none;
             text-shadow: 0 0 10px rgba(248, 201, 62, 0.8);
@@ -208,23 +220,36 @@
         }
 
         /* 倒數條 */
-        .timer-bar-container { width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; margin: 15px 0 25px 0; overflow: hidden; }
-        .timer-fill { height: 100%; background: var(--gold); width: 100%; transition: width 1s linear; box-shadow: 0 0 15px var(--gold); }
+        .timer-bar-container { 
+            width: 100%;
+            height: 8px; 
+            background: rgba(255,255,255,0.1); 
+            border-radius: 4px; 
+            margin: 10px 0 20px 0; 
+            overflow: hidden;
+        }
+        .timer-fill { 
+            height: 100%; 
+            background: var(--gold); 
+            width: 100%; 
+            transition: width 1s linear;
+            box-shadow: 0 0 15px var(--gold); 
+        }
 
         /* 選項按鈕區域 */
         .options-grid { 
-            display: grid; 
-            grid-template-columns: 1fr; 
-            gap: 16px; 
+            display: flex;
+            flex-direction: column;
+            gap: 12px; /* 縮小間距 */
             width: 100%;
         }
         .option-btn {
             background: rgba(255,255,255,0.12);
             border: 1px solid rgba(255,255,255,0.15);
             color: white;
-            padding: 22px 20px; /* 增加點擊區域 */
-            border-radius: 18px;
-            font-size: 1.2rem; /* 字體加大 */
+            padding: 14px 16px; /* 縮小按鈕 Padding，更緊湊 */
+            border-radius: 14px;
+            font-size: 1rem; /* 字體適中 */
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
@@ -232,53 +257,56 @@
             position: relative;
             overflow: hidden;
             display: flex; align-items: center; justify-content: space-between;
-            line-height: 1.4;
+            line-height: 1.3;
         }
         .option-btn:hover:not(:disabled) { background: rgba(255,255,255,0.25); border-color: var(--primary); transform: translateX(5px); }
         .option-btn.correct { background: rgba(46, 204, 113, 0.35); border-color: var(--success); color: #fff; font-weight: bold; box-shadow: 0 0 15px rgba(46, 204, 113, 0.4); }
         .option-btn.wrong { background: rgba(255, 71, 87, 0.35); border-color: var(--error); color: #fff; opacity: 0.7; }
 
-        /* 結果遮罩層 - 重點修正：Z-Index 設為 999 確保可點擊 */
+        /* 結果遮罩層 */
         .result-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 20, 28, 0.98); 
             backdrop-filter: blur(25px);
-            z-index: 999; /* 確保在最上層 */
+            z-index: 1000; /* 最高層級 */
             display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            border-radius: 28px; 
+            justify-content: center;
+            align-items: center;
+            border-radius: 24px; 
             animation: fadeIn 0.3s ease; 
-            padding: 25px;
+            padding: 20px;
         }
-        .res-status { font-size: 2.5rem; margin-bottom: 10px; font-weight: 900; }
-        .res-title { font-size: 1.8rem; color: var(--gold); margin-bottom: 10px; font-weight: bold; line-height: 1.3;}
-        .res-song { font-size: 1.2rem; color: var(--primary); margin-bottom: 25px; font-style: italic; background: rgba(255,255,255,0.1); padding: 8px 25px; border-radius: 25px;}
+        .res-status { font-size: 2rem; margin-bottom: 5px; font-weight: 900; }
+        .res-title { font-size: 1.5rem; color: var(--gold); margin-bottom: 8px; font-weight: bold; line-height: 1.3;}
+        .res-song { font-size: 1rem; color: var(--primary); margin-bottom: 20px; font-style: italic; background: rgba(255,255,255,0.1); padding: 5px 20px; border-radius: 20px;}
         
         .res-desc { 
-            font-size: 1.15rem; 
-            color: #ddd; line-height: 1.6; margin-bottom: 30px; 
+            font-size: 1rem;
+            color: #ddd; line-height: 1.5; margin-bottom: 20px; 
             text-align: justify; 
-            max-height: 25vh; /* 避免過長 */
+            flex-grow: 1; /* 讓中間內容自適應 */
+            max-height: 150px; /* 限制高度 */
             overflow-y: auto; 
-            border-top: 1px solid rgba(255,255,255,0.1); 
-            padding-top: 20px; 
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 15px; 
             width: 100%;
         }
 
-        /* 下一題按鈕特別樣式 */
+        /* 下一題按鈕 */
         #next-btn {
             background: linear-gradient(90deg, var(--gold), #f39c12);
             color: #111;
             font-weight: 900;
-            font-size: 1.4rem;
-            padding: 20px 0;
-            margin-top: 10px;
+            font-size: 1.2rem;
+            padding: 16px 0;
+            margin-top: auto; /* 推到底部 */
             box-shadow: 0 10px 30px rgba(243, 156, 18, 0.4);
         }
         #next-btn:active { transform: scale(0.95); }
 
         /* End Screen */
-        .score-display { font-size: 5.5rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 40px rgba(248, 201, 62, 0.6); margin: 20px 0; }
+        .score-display { font-size: 4.5rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 40px rgba(248, 201, 62, 0.6); margin: 15px 0; }
 
         /* Helpers */
         .score-float { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); font-weight: bold; font-size: 1.5rem; animation: floatUp 0.8s ease-out forwards; z-index: 50;}
@@ -289,11 +317,14 @@
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         @keyframes floatUp { 0% { opacity: 1; transform: translateY(-50%); } 100% { opacity: 0; transform: translateY(-150%); } }
 
+        /* 大螢幕/平板優化 */
         @media (min-width: 600px) {
-            .options-grid { grid-template-columns: 1fr 1fr; }
-            .turntable-wrapper { width: 300px; height: 300px; }
-            .app-container { padding: 30px; }
+            .options-grid { grid-template-columns: 1fr 1fr; display: grid; }
+            .turntable-wrapper { width: 250px; height: 250px; }
+            .tone-arm { width: 90px; height: 130px; }
+            .app-container { padding: 30px; margin-top: 5vh; max-width: 650px; }
             h1 { font-size: 3rem; }
+            .option-btn { padding: 22px 20px; font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -308,7 +339,7 @@
         
         <div class="instruction">
             <p>🎵 <b>沉浸聆聽</b>：點擊開始，唱片將旋轉播放經典配樂。</p>
-            <p>🎲 <b>隨機題庫</b>：從 40 題中隨機抽選 10 題，選項多變。</p>
+            <p>🎲 <b>隨機題庫</b>：從 40 題中隨機抽選 10 題。</p>
             <p>⏱️ <b>限時挑戰</b>：每題 60 秒，越快得分越高。</p>
             <p>📖 <b>深度解析</b>：答題後附帶詳細劇情與彩蛋。</p>
         </div>
@@ -330,7 +361,7 @@
             <div id="note-container"></div>
         </div>
 
-        <div id="status-text" style="height: 24px; margin-bottom: 10px; font-weight: bold; color: var(--text-sub); font-size: 1.1rem;">準備播放...</div>
+        <div id="status-text" style="height: 24px; margin-bottom: 5px; font-weight: bold; color: var(--text-sub); font-size: 1rem;">準備播放...</div>
 
         <div class="timer-bar-container">
             <div class="timer-fill" id="timer-fill"></div>
@@ -351,9 +382,9 @@
     <div id="end-screen" class="glass-panel hidden">
         <div class="logo">🏆</div>
         <h1>遊戲結束</h1>
-        <p style="color: var(--text-sub); font-size: 1.3rem;">你的最終得分</p>
+        <p style="color: var(--text-sub); font-size: 1.2rem;">你的最終得分</p>
         <div class="score-display" id="final-score">0</div>
-        <p id="feedback-msg" style="color: var(--text-main); margin-bottom: 30px; font-size: 1.3rem; line-height: 1.6;">...</p>
+        <p id="feedback-msg" style="color: var(--text-main); margin-bottom: 20px; font-size: 1.1rem; line-height: 1.6;">...</p>
         <button class="btn" onclick="location.reload()">再玩一次</button>
     </div>
 
@@ -416,7 +447,6 @@ class GameEngine {
         this.maxTime = 60; 
         this.timeLeft = 60;
         this.gameLength = 10;
-        
         this.sfxCtx = null;
 
         // DOM Elements
@@ -450,7 +480,6 @@ class GameEngine {
             this.initAudioContext();
             this.initGame();
         });
-        
         // Mobile Unlock
         document.body.addEventListener('touchstart', () => this.initAudioContext(), { once: true });
         document.body.addEventListener('click', () => this.initAudioContext(), { once: true });
@@ -471,7 +500,6 @@ class GameEngine {
         const gain = this.sfxCtx.createGain();
         osc.connect(gain);
         gain.connect(this.sfxCtx.destination);
-
         if (type === 'correct') {
             osc.type = 'sine';
             osc.frequency.setValueAtTime(600, this.sfxCtx.currentTime);
@@ -501,7 +529,6 @@ class GameEngine {
     async initGame() {
         // 使用 Fisher-Yates 演算法進行完全隨機洗牌
         const shuffled = this.shuffleArray([...ALL_MOVIES]);
-        
         // 取前 10 題
         this.questions = shuffled.slice(0, this.gameLength);
         
@@ -526,7 +553,8 @@ class GameEngine {
     }
 
     startNoteAnimation() {
-        this.stopNoteAnimation(); // 防止重複
+        this.stopNoteAnimation();
+        // 防止重複
         this.noteTimer = setInterval(() => {
             const note = document.createElement('div');
             note.className = 'note-icon animate';
@@ -551,19 +579,16 @@ class GameEngine {
 
         const q = this.questions[this.qIndex];
         this.els.qNum.innerText = this.qIndex + 1;
-        
         // 強制隱藏 Modal 並重置樣式
         this.els.overlay.classList.add('hidden'); 
         this.els.options.innerHTML = '';
         this.els.status.innerText = "唱片讀取中...";
-        
         // 重置倒數條
         this.els.timerBar.style.transition = 'none';
         this.els.timerBar.style.width = '100%';
 
         if(this.timer) clearInterval(this.timer);
         this.setTurntableState(false);
-        
         // 音訊重置邏輯
         this.els.audio.pause();
         this.els.audio.currentTime = 0;
@@ -571,11 +596,9 @@ class GameEngine {
         this.els.audio.volume = 0.6;
         
         this.els.audio.load();
-
         // 定義播放邏輯
         const onCanPlay = () => {
             this.els.status.innerText = "🎶 猜猜這是哪部電影？";
-            
             const playPromise = this.els.audio.play();
             if (playPromise !== undefined) {
                 playPromise.then(() => {
@@ -612,10 +635,8 @@ class GameEngine {
             .filter(m => m.id !== correct.id)
             .sort(() => Math.random() - 0.5)
             .slice(0, 3);
-        
         // 混合正確答案與錯誤選項
         let all = [...wrong, correct].sort(() => Math.random() - 0.5);
-
         all.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
@@ -628,13 +649,11 @@ class GameEngine {
     startTimer() {
         if (this.timer) clearInterval(this.timer);
         this.timeLeft = this.maxTime;
-        
         // 延遲一點點讓 UI 渲染完成
         setTimeout(() => {
             this.els.timerBar.style.transition = `width ${this.maxTime}s linear`;
             this.els.timerBar.style.width = '0%';
         }, 50);
-
         this.timer = setInterval(() => {
             this.timeLeft--;
             if(this.timeLeft <= 0) this.handleTimeout();
@@ -644,8 +663,7 @@ class GameEngine {
     checkAnswer(selected, correct, btn) {
         clearInterval(this.timer);
         this.setTurntableState(false); 
-        this.els.audio.pause(); 
-
+        this.els.audio.pause();
         const buttons = document.querySelectorAll('.option-btn');
         buttons.forEach(b => b.disabled = true);
 
@@ -712,18 +730,16 @@ class GameEngine {
 
     // 關鍵修正：確保此函數被 HTML onclick 調用
     nextQuestion() {
-        console.log("Next question triggered"); // Debug 用
+        console.log("Next question triggered");
+        // Debug 用
         
         // 1. 強制隱藏 Overlay
         this.els.overlay.classList.add('hidden');
-        
         // 2. 停止可能殘留的動畫
         this.setTurntableState(false);
         this.stopNoteAnimation();
-        
         // 3. 推進題目
         this.qIndex++;
-        
         // 4. 載入新題目
         this.loadQuestion();
     }
