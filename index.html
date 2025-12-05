@@ -19,7 +19,8 @@
             --error: #ff4b4b;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        * { margin: 0; padding: 0; box-sizing: border-box;
+            user-select: none; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'Montserrat', 'Noto Sans TC', sans-serif;
@@ -87,30 +88,43 @@
             position: relative;
             overflow: hidden;
         }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(58, 123, 213, 0.5); border-color: var(--primary); }
+        .btn:hover { transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(58, 123, 213, 0.5); border-color: var(--primary);
+        }
         .btn:active { transform: scale(0.98); }
 
         /* Start Screen */
-        .logo { font-size: 4.5rem; margin-bottom: 10px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 0 15px rgba(255,255,255,0.3)); }
+        .logo { font-size: 4.5rem;
+            margin-bottom: 10px; animation: float 3s ease-in-out infinite; filter: drop-shadow(0 0 15px rgba(255,255,255,0.3));
+        }
         h1 { font-size: 2rem; margin-bottom: 5px; color: var(--text-main); font-weight: 900; letter-spacing: 1px; }
         .subtitle { color: var(--primary); font-size: 0.9rem; margin-bottom: 25px; letter-spacing: 2px; text-transform: uppercase; }
-        .instruction { font-size: 0.9rem; color: var(--text-sub); margin: 20px 0; line-height: 1.8; text-align: left; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; border-left: 4px solid var(--primary); }
+        .instruction { font-size: 0.9rem; color: var(--text-sub); margin: 20px 0; line-height: 1.8;
+            text-align: left; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; border-left: 4px solid var(--primary);
+        }
         
         /* Game Screen */
-        .hud-bar { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold; font-size: 1rem; color: var(--primary); align-items: center; }
+        .hud-bar { display: flex;
+            justify-content: space-between; margin-bottom: 15px; font-weight: bold; font-size: 1rem; color: var(--primary); align-items: center;
+        }
         
         .visualizer-wrapper {
-            position: relative; width: 100%; height: 100px;
+            position: relative;
+            width: 100%; height: 100px;
             background: rgba(0,0,0,0.3); border-radius: 15px;
             margin-bottom: 20px; overflow: hidden;
             display: flex; align-items: center; justify-content: center;
             border: 1px solid rgba(255,255,255,0.1);
         }
         canvas { width: 100%; height: 100%; }
-        .loading-text { position: absolute; color: var(--text-sub); font-size: 0.8rem; letter-spacing: 2px; animation: pulse 1.5s infinite; }
+        .loading-text { position: absolute; color: var(--text-sub); font-size: 0.8rem; letter-spacing: 2px;
+            animation: pulse 1.5s infinite; }
 
-        .timer-bar-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; margin: 15px 0 25px 0; overflow: hidden; }
-        .timer-fill { height: 100%; background: var(--gold); width: 100%; transition: width 1s linear; box-shadow: 0 0 10px var(--gold); }
+        .timer-bar-container { width: 100%; height: 6px; background: rgba(255,255,255,0.1);
+            border-radius: 3px; margin: 15px 0 25px 0; overflow: hidden; }
+        .timer-fill { height: 100%;
+            background: var(--gold); width: 100%; transition: width 1s linear; box-shadow: 0 0 10px var(--gold);
+        }
 
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
         .option-btn {
@@ -133,7 +147,8 @@
 
         /* Score Floating Animation */
         .score-float {
-            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            position: absolute;
+            right: 15px; top: 50%; transform: translateY(-50%);
             font-weight: bold; font-size: 1.2rem; animation: floatUp 0.8s ease-out forwards;
         }
         .score-float.plus { color: var(--success); }
@@ -141,9 +156,11 @@
 
         /* Result Overlay */
         .result-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 20, 28, 0.98); backdrop-filter: blur(15px);
-            z-index: 20; display: flex; flex-direction: column;
+            z-index: 20; display: flex;
+            flex-direction: column;
             justify-content: center; align-items: center;
             border-radius: 24px;
             animation: fadeIn 0.4s ease;
@@ -151,15 +168,19 @@
         }
         .res-status { font-size: 1.8rem; margin-bottom: 10px; font-weight: 900; }
         .res-title { font-size: 1.5rem; color: var(--gold); margin-bottom: 5px; font-weight: bold; }
-        .res-song { font-size: 1rem; color: var(--primary); margin-bottom: 15px; font-style: italic; background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 15px;}
+        .res-song { font-size: 1rem; color: var(--primary); margin-bottom: 15px; font-style: italic; background: rgba(255,255,255,0.1);
+            padding: 5px 15px; border-radius: 15px;}
         .res-desc { 
-            font-size: 0.9rem; color: #ddd; line-height: 1.6; margin-bottom: 25px; 
+            font-size: 0.9rem;
+            color: #ddd; line-height: 1.6; margin-bottom: 25px; 
             text-align: justify; max-height: 150px; overflow-y: auto;
             border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;
         }
 
         /* End Screen */
-        .score-display { font-size: 4.5rem; font-weight: 900; color: var(--gold); text-shadow: 0 0 30px rgba(248, 201, 62, 0.4); margin: 20px 0; }
+        .score-display { font-size: 4.5rem;
+            font-weight: 900; color: var(--gold); text-shadow: 0 0 30px rgba(248, 201, 62, 0.4); margin: 20px 0;
+        }
 
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
         @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
@@ -235,55 +256,48 @@
 <audio id="bgm-player" crossOrigin="anonymous" preload="auto"></audio>
 
 <script>
-
-/**
- * ⚠️ [重要] 請將此處的 DEFAULT_AUDIO 替換為您的 MP3 檔案連結
- * 為了演示效果，這裡使用了一個通用的測試連結。
- * 您必須手動更新 ALL_MOVIES 陣列中的 audioUrl。
- */
-const DEFAULT_AUDIO = "https://cdn.pixabay.com/download/audio/2022/03/24/audio_349692d77d.mp3"; 
-
+// 修正後的電影資料陣列，包含正確的引號和 dl=1 的參數
 const ALL_MOVIES = [
-    { title: "鐵達尼號 (Titanic)", song: "My Heart Will Go On", year: "1997", desc: "影史愛情經典。窮畫家傑克與貴族少女蘿絲在豪華郵輪上相戀，卻遭遇世紀船難，譜出一段永恆的悲劇戀曲。", audioUrl:https://www.dropbox.com/scl/fi/8z0udzn0olzg7cbz3fwak/Titanic-My-Heart-Will-Go-On-Celine-Dion-HD-Film-Tributes-youtube-1.mp3?rlkey=cqkzetw1x1zswg45vw00sag58&st=1hm93abe&dl=0 },
-    { title: "月老 (Till We Meet Again)", song: "如果可以", year: "2021", desc: "九把刀執導。慘遭雷擊而死的阿綸來到陰間，為了積陰德轉世，與個性火爆的Pinky搭檔成為月老，牽起紅線的故事。", audioUrl: https://www.dropbox.com/scl/fi/1reqoif6fqd5q34big8ly/WeiBird-Red-Scarf-MV-WeiBird-youtube.mp3?rlkey=dfccwhk7wd6fwwlofeyl5b5r4&st=u2kf13r3&dl=0 },
-    { title: "當男人戀愛時", song: "愛情你比我想的閣較偉大", year: "2021", desc: "改編自韓國電影。討債流氓阿成愛上替父親背債的浩婷，展開一段台味十足、笑中帶淚的虐心戀情。", audioUrl:https://www.dropbox.com/scl/fi/evbv7p0tnffcych03wt44/EggPlantEgg-Official-Music-Video-EggPlantEgg-youtube.mp3?rlkey=yxvn66sl1ioiltg1dv55gorec&st=8lrj7s32&dl=0 },
-    { title: "刻在你心底的名字", song: "刻在我心底的名字", year: "2020", desc: "剛解嚴的台灣，兩位高中男孩阿漢與Birdy在壓抑的社會氛圍下，探索彼此間模糊曖昧、刻骨銘心的初戀。", audioUrl: https://www.dropbox.com/scl/fi/vewxgln5pk93izdyf90is/Crowd-Lu-Your-Name-Engraved-Herein-Official-Music-Video-TEAM-EAR-MUSIC-youtube.mp3?rlkey=8cm40iwbwf6e18gop3w1h16m7&st=ctwbe13d&dl=0},
-    { title: "玩命關頭7 (Furious 7)", song: "See You Again", year: "2015", desc: "系列作情感最濃厚的一集。唐老大團隊面對強敵戴克蕭的復仇，同時這也是保羅·沃克最後的銀幕告別作。", audioUrl:https://www.dropbox.com/scl/fi/e20mukf4evwpt9ut9wdok/Wiz-Khalifa-See-You-Again-ft.-Charlie-Puth-Official-Video-Furious-7-Soundtrack-Wiz-Khalifa-Music-youtube.mp3?rlkey=o9viulylopifc5xhohmt5eg65&st=uhlbwolc&dl=0  },
-    { title: "年少日記", song: "配樂 (年少日記)", year: "2023", desc: "香港劇情片。一名中學老師發現學生的遺書，進而回憶起自己童年遭受家庭暴力與嚴苛教育的創傷。", audioUrl:https://www.dropbox.com/scl/fi/12wuk282qvf9f51xckp6n/Official-Music-Video-iiiiRiSLiU-lauheungking-iii-iRiSLiU-youtube.mp3?rlkey=o1tyqgqj83kg2zggl0xxk1h9e&st=uzo401a3&dl=0  },
-    { title: "囍宴 (The Wedding Banquet)", song: "經典配樂", year: "1993", desc: "李安「父親三部曲」之一。為了應付父母逼婚，旅美同志偉同決定與中國女畫家假結婚，引發一連串文化與家庭衝突。", audioUrl:https://www.dropbox.com/scl/fi/pq9o81lgs5tnyf531jfuu/Julie-Sue-Holding-Hands-Official-MV-Timeless-Music-youtube.mp3?rlkey=ex81p7ck993bzer1ya34eo2j7&st=plnobpyv&dl=0 },
-    { title: "怪物 (Monster)", song: "坂本龍一 配樂", year: "2023", desc: "是枝裕和執導，坂本龍一遺作配樂。透過母親、老師、孩子三種視角，逐步揭開校園霸凌疑雲背後的殘酷真相。", audioUrl:https://www.dropbox.com/scl/fi/r2slzgs8j30fytuhl2uxv/I-Don-t-Like-Mondays.-Shadow-Music-Video-Short-Ver.-10-I-Don-t-Like-Mondays.-youtube.mp3?rlkey=9i23tfnhxapx7wn5xivgjta5k&st=80o1p1z7&dl=0  },
-    { title: "巴黎德州 (Paris, Texas)", song: "Paris, Texas (Guitar)", year: "1984", desc: "溫德斯經典公路電影。失憶男子在德州荒漠中漫遊，試圖尋找失散的妻兒與自我，Ry Cooder的吉他配樂蒼涼動人。", audioUrl:https://www.dropbox.com/scl/fi/hthtvx5fifnhzquu87tu4/Ry-Cooder-Paris-Texas-Rene.-youtube.mp3?rlkey=35ghuj6pomw8fn4zi30jagx0w&st=zzk3h7zg&dl=0  },
-    { title: "單身動物園 (The Lobster)", song: "String Quartet in F Major", year: "2015", desc: "反烏托邦黑色喜劇。在未來社會，單身是有罪的，如果在45天內找不到伴侶，就會被變成一種動物流放。", audioUrl: https://www.dropbox.com/scl/fi/m831fblxcwhqjr7f115ub/Nick-Cave-The-Bad-Seeds-ft.-Kylie-Minogue-Where-The-Wild-Roses-Grow-Official-HD-Video-Nick-Cave-and-the-Bad-Seeds-youtube.mp3?rlkey=yj7vxxz81fzkxwur8fxuxpcpw&st=ds8fcz9d&dl=0 },
-    { title: "明天，我要和昨天的你約會", song: "Happy End", year: "2016", desc: "京都背景的奇幻愛情。男女主角身處相反的時間軸，每五年相遇一次，他的第一次相遇卻是她的最後一次。", audioUrl:https://www.dropbox.com/scl/fi/hqln1mpc8oy001172el0v/back-number-Happy-End-Kanji_Romaji_Terjemahan-Indonesia-Enjoy-Japan-Music-youtube.mp3?rlkey=a3qcmpol0mkr0nuhpl6kamq6g&st=ucmszs86&dl=0  },
-    { title: "以你的名字呼喚我", song: "Mystery of Love", year: "2017", desc: "義大利夏日。17歲少年埃利奧與父親的研究生助理奧利佛，展開一段短暫、熾熱且改變彼此一生的愛戀。", audioUrl:https://www.dropbox.com/scl/fi/u7kvk3a1m4axnga85ni5x/Sufjan-Stevens-Mystery-of-Love-From-Call-Me-By-Your-Name-Soundtrack-SonySoundtracksVEVO-youtube.mp3?rlkey=um5kttkwta0p6gt9bnoveqvsv&st=vz22kdd7&dl=0 },
-    { title: "濁水漂流", song: "濁水漂流 (配樂)", year: "2021", desc: "改編自真實事件。描述一群在深水埗天橋底下的露宿者，其家當被政府強行清掃後，堅持提告爭取尊嚴的故事。", audioUrl: https://www.dropbox.com/scl/fi/55fru23z8qhhj9vgb7i5b/MV-Drifting-Movie-Theme-Song-Official-MV-mm2-Studios-Hong-Kong-youtube.mp3?rlkey=541z16zypuhgmf9alhiaelumf&st=couo1tte&dl=0 },
-    { title: "有病才會喜歡你 (Sick of Myself)", song: "配樂", year: "2022", desc: "諷刺黑色喜劇。女主角為了博取男友與大眾的關注，不惜服用禁藥讓自己皮膚潰爛，陷入自毀的深淵。", audioUrl: https://www.dropbox.com/scl/fi/ultcvaeoizoadgo420x3p/Accusefive-youtube.mp3?rlkey=iq2ek3p0yxy849jdsvkj2omat&st=c651ko8f&dl=0},
-    { title: "靈魂急轉彎 (Soul)", song: "It's All Right", year: "2020", desc: "皮克斯傑作。一位不得志的爵士鋼琴家意外身亡，在「投胎先修班」試圖尋找生命的火花與活著的意義。", audioUrl: https://www.dropbox.com/scl/fi/r3amzel8elszjvtevchty/Jon-Batiste-Celeste-It-s-All-Right-From-Soul_Duet-Version_Official-Lyric-Video-DisneyMusicVEVO-youtube.mp3?rlkey=hleu8ohwjjjl6pj3krfyax9xi&st=hgy1f4ku&dl=0 },
-    { title: "戀夏500日 (500 Days of Summer)", song: "There Is A Light...", year: "2009", desc: "非典型的愛情電影。講述相信真愛的湯姆遇見不相信愛情的夏天，兩人在500天內從熱戀到分手的酸甜苦辣。", audioUrl: https://www.dropbox.com/scl/fi/yv2j3znsgd7sbcuc23qb6/Daryl-Hall-John-Oates-You-Make-My-Dreams-Official-HD-Video-hallandoatesVEVO-youtube.mp3?rlkey=q23p34gdg1b1q9i0vngwnwt0t&st=s5yuuiw4&dl=0 },
-    { title: "一個巨星的誕生 (A Star Is Born)", song: "Shallow", year: "2018", desc: "布萊德利庫柏與女神卡卡主演。酗酒的過氣鄉村歌手發掘了擁有天籟歌喉的素人，兩人在愛與名利中掙扎。", audioUrl: https://www.dropbox.com/scl/fi/8twcva1xevy3egx746w9u/Lady-Gaga-Bradley-Cooper-Shallow-from-A-Star-Is-Born-Official-Music-Video-LadyGagaVEVO-youtube.mp3?rlkey=pq80w65fhy3cpz7l0otleyctk&st=0m99d009&dl=0 },
-    { title: "捍衛戰士：獨行俠", song: "Hold My Hand", year: "2022", desc: "時隔36年的續集。頂尖飛官「獨行俠」重回海軍訓練學校教導新一代飛行員，面對過去的遺憾並執行不可能的任務。", audioUrl: https://www.dropbox.com/scl/fi/tsaxjea2d8me7q6uswaj3/OneRepublic-I-Ain-t-Worried-From-Top-Gun-Maverick-Official-Music-Video-OneRepublicVEVO-youtube.mp3?rlkey=j6t86nrazdu4msw6cv7b89r5k&st=f7qdapug&dl=0 },
-    { title: "頭文字D (Initial D)", song: "一路向北 / Drifting", year: "2005", desc: "周杰倫主演。講述豆腐店兒子藤原拓海駕駛AE86，在秋名山展現驚人甩尾技術，擊敗各路賽車好手的故事。", audioUrl: https://www.dropbox.com/scl/fi/f58o9idionl1zfz622two/Jay-Chou-All-the-Way-North-Official-Music-Video-Jay-Chou-youtube.mp3?rlkey=t7y45n3430n9tasu4q8qdsxac&st=zphu9k0i&dl=0 },
-    { title: "K歌情人 (Music and Lyrics)", song: "Way Back Into Love", year: "2007", desc: "過氣的80年代流行偶像與一位有文采的植物照顧員，兩人被迫合作寫歌，在音符中譜出浪漫戀曲。", audioUrl: https://www.dropbox.com/scl/fi/ztbtcj479u0cknaq24wac/Hugh-Grant-Haley-Bennett-Way-Back-Into-Love-Lyrics-SuperbLyrics-youtube.mp3?rlkey=5q0puu3v1jnsf03i1p6ka9zf8&st=71gvzxj9&dl=0},
-    { title: "真愛每一天 (About Time)", song: "How Long Will I Love You", year: "2013", desc: "溫暖療癒系電影。男主角擁有穿越時空回到過去的能力，他試圖用這份能力讓每一天過得完美，並贏得愛情。", audioUrl: https://www.dropbox.com/scl/fi/65aqebxiqy1hprgu0wzma/Ellie-Goulding-How-Long-Will-I-Love-You-Official-Video-EllieGouldingVEVO-youtube.mp3?rlkey=8yrzcsq9g8tqjp4ehklbny4di&st=4a47mq60&dl=0 },
-    { title: "聽見下雨的聲音", song: "聽見下雨的聲音", year: "2013", desc: "方文山執導。以漢服文化與雨天為背景，講述聽障女主角與樂團主唱之間唯美而詩意的愛情故事。", audioUrl: https://www.dropbox.com/scl/fi/yde5n9uswrsfp8zpcw6an/Queen-Wei-Rhythm-Of-The-Rain-PinYin-Lyrics-PinYin-Lyric-youtube.mp3?rlkey=c4dj86xk3eqqup42iy2s4n0c6&st=wae1ixe4&dl=0 },
-    { title: "格雷的五十道陰影", song: "Love Me Like You Do", year: "2015", desc: "改編自暢銷小說。純真女大學生採訪年輕億萬富豪，卻一步步陷入他特殊的性愛癖好與控制慾的關係中。", audioUrl:https://www.dropbox.com/scl/fi/u2rm9ld8gwjcdbgq5pant/Ellie-Goulding-Love-Me-Like-You-Do-Official-Video-EllieGouldingVEVO-youtube.mp3?rlkey=qz50867ubg4bl4r0bxhdl7q7p&st=3zyj0uot&dl=0 },
-    { title: "樂來樂愛你 (La La Land)", song: "City of Stars", year: "2016", desc: "獻給追夢人的情書。在洛杉磯，一位落魄爵士鋼琴家與懷才不遇的女演員相愛，卻在夢想與現實間面臨抉擇。", audioUrl: https://www.dropbox.com/scl/fi/i0hjn7xu0n1acewh70dzj/City-of-Stars-Duet-ft.-Ryan-Gosling-Emma-Stone-La-La-Land-Original-Motion-Picture-Soundtrack-Interscope-Records-youtube.mp3?rlkey=en2vfypwf6sumappaxsa8gykl&st=65w9m30f&dl=0 },
-    { title: "暮光之城：破曉", song: "A Thousand Years", year: "2011", desc: "吸血鬼羅曼史最終章。貝拉與愛德華終於步入禮堂，但新生命的誕生卻引發了佛杜里家族的殺機。", audioUrl: https://www.dropbox.com/scl/fi/18cnedhtt8368zihoe310/Bruno-Mars-It-Will-Rain-Official-Music-Video-Bruno-Mars-youtube.mp3?rlkey=rqd424phw2m2efg0oy50hdibe&st=dkjnyrud&dl=0 },
-    { title: "可可夜總會 (Coco)", song: "Remember Me", year: "2017", desc: "墨西哥亡靈節背景。熱愛音樂的小男孩米高誤闖陰陽界，在尋找祖先的過程中，揭開家族隱藏多年的秘密。", audioUrl: https://www.dropbox.com/scl/fi/p8bqjz7a19x1cfipr3spo/Remember-Me-Lullaby-From-Coco_Sing-Along-DisneyMusicVEVO-youtube.mp3?rlkey=pp6sfmh57rfw7cwz973zl2ymc&st=37njfqan&dl=0 },
-    { title: "死侍2 (Deadpool 2)", song: "Ashes", year: "2018", desc: "嘴砲超級英雄回歸。死侍為了保護一名變種人小孩，組成了「X特攻隊」，展開一場血腥又爆笑的救援行動。", audioUrl: https://www.dropbox.com/scl/fi/5sv0kcoab3w3hp3tyzb2o/C-line-Dion-Ashes-from-Deadpool-2-Motion-Picture-Soundtrack-CelineDionVEVO-youtube.mp3?rlkey=soot1mzobslzmri5fpdno6uv9&st=qtpggooo&dl=0 },
-    { title: "等一個人咖啡", song: "缺口", year: "2014", desc: "九把刀小說改編。講述「等一個人咖啡」店裡，大學新鮮人思螢與看似荒誕的阿拓，以及老闆娘之間等待愛情的故事。", audioUrl: https://www.dropbox.com/scl/fi/hrqqku8yfju7i26pia81z/Harlem-Yu-MV-youtube.mp3?rlkey=lixkn33wuhmlm0yjjov4y9qon&st=l335gd6k&dl=0 },
-    { title: "美女與野獸", song: "Beauty and the Beast", year: "2017", desc: "迪士尼經典真人版。為了救父親，貝兒自願留在被詛咒的城堡與野獸共處，最終用真愛打破了魔咒。", audioUrl:https://www.dropbox.com/scl/fi/j6hh4wkci4omlgefmqqjz/Ariana-Grande-John-Legend-Beauty-and-the-Beast-From-Beauty-and-the-Beast-Official-Video-DisneyMusicVEVO-youtube.mp3?rlkey=fmyq2sam3jqv1e9508eyr90xd&st=hujqt1d1&dl=0 },
-    { title: "小時代", song: "時間煮雨", year: "2013", desc: "講述四位女大學生在繁華的上海，經歷愛情、友情與職場的考驗，展現奢華生活下的青春迷惘。", audioUrl: https://www.dropbox.com/scl/fi/0opm5ivf532ludj40y2b0/MV-Panda-Music-youtube.mp3?rlkey=sd7xrxgkewaz6xusivom26xlu&st=bw9sknzd&dl=0 },
-    { title: "海洋之心 (Moana)", song: "How Far I'll Go", year: "2016", desc: "玻里尼西亞島嶼的酋長女兒莫娜，為了拯救族人，揚帆出海尋找半神人毛伊，歸還海洋之心的冒險旅程。", audioUrl:https://www.dropbox.com/scl/fi/6w2fi2m6rcjtco2qcj48q/Alessia-Cara-How-Far-I-ll-Go-Official-Video-DisneyMusicVEVO-youtube.mp3?rlkey=yfujcmkg3e05wyhm3mr24xtgm&st=ps6ydqrv&dl=0 },
-    { title: "波希米亞狂想曲", song: "Bohemian Rhapsody", year: "2018", desc: "皇后合唱團傳記電影。紀錄主唱佛萊迪·墨裘瑞從無名小卒成為搖滾傳奇的過程，以及震撼世界的Live Aid演出。", audioUrl: https://www.dropbox.com/scl/fi/zz37uc1n0rmis46kcii8m/Queen-Bohemian-Rhapsody-Official-Video-Remastered-Queen-Official-youtube.mp3?rlkey=8cc79ofrq1zaadyz7t8uisd9h&st=19zjgdxi&dl=0 },
-    { title: "歌劇魅影", song: "The Phantom of the Opera", year: "2004", desc: "百老匯最長壽音樂劇改編。巴黎歌劇院地下躲藏著一位毀容的音樂天才，他瘋狂地愛上了年輕女高音克莉絲汀。", audioUrl: https://www.dropbox.com/scl/fi/6wnix4xip3z0s4ldao8ac/Andrew-Lloyd-Webber-Sarah-Brightman-Steve-Harley-The-Phantom-Of-The-Opera-ALWVEVO-youtube.mp3?rlkey=n3kzozkc8msit4d9cc7u4vy5y&st=qxonano4&dl=0 },
-    { title: "大娛樂家", song: "This Is Me", year: "2017", desc: "傳奇馬戲團始祖P.T.巴納姆的發跡故事。他集結了各種奇人異士，將備受歧視的怪胎變成了舞台上最閃耀的明星。", audioUrl: https://www.dropbox.com/scl/fi/cjcccfd4licktq2bl6wlq/Zac-Efron-Zendaya-Rewrite-The-Stars-Lyrics-_-Lyrics-Video-NewMelody-youtube.mp3?rlkey=2olpf8mi028dmnrlmg5cb2ps6&st=ygtxg32p&dl=0 },
-    { title: "火箭人 (Rocketman)", song: "Rocket Man", year: "2019", desc: "艾爾頓·強的音樂傳記。以奇幻歌舞形式，呈現他從害羞的鋼琴神童變身為全球流行巨星的瘋狂歲月。", audioUrl:https://www.dropbox.com/scl/fi/epve2iaal8xb9bcgzkewz/Elton-John-Your-Song-Top-Of-The-Pops-1971-EltonJohnVEVO-youtube.mp3?rlkey=w5eectc7ndy98jgizj1y5vn57&st=mq98o34h&dl=0  },
-    { title: "神力女超人", song: "Is She With You?", year: "2017", desc: "亞馬遜公主黛安娜救了一名飛行員，得知外面的世界正經歷第一次世界大戰，毅然決然離開家鄉投入戰場。", audioUrl: https://www.dropbox.com/scl/fi/e1y8do4im4glbp8y5ic4k/Wonder-Woman-Official-Soundtrack-To-Be-Human-Sia-feat.-Labrinth-WaterTower-WaterTower-Music-youtube.mp3?rlkey=32d54q6ia6hcl6ivh4zkbt4br&st=1vlkf8s4&dl=0 },
-    { title: "F1 (一級方程式)", song: "Formula 1 Theme", year: "2025", desc: "布萊德·彼特主演。講述一位退役的一級方程式賽車手重返賽道，指導新秀並再次挑戰極速的故事。", audioUrl: https://www.dropbox.com/scl/fi/vc0yk2k3ekyqjjv964gxs/Ed-Sheeran-Drive-From-F1-The-Movie-Official-Music-Video-Ed-Sheeran-youtube.mp3?rlkey=gmncdv3gscmiki58rbbieypv9&st=4xhylspd&dl=0 },
-    { title: "絕地救援 (The Martian)", song: "Starman", year: "2015", desc: "太空人馬克在火星任務中遭遇風暴被認定死亡而遺留。他必須在資源匱乏的火星上運用科學知識種馬鈴薯求生。", audioUrl: https://www.dropbox.com/scl/fi/gbvqqtlm6rl80q13z8yot/David-Bowie-Starman-Official-Video-David-Bowie-youtube.mp3?rlkey=07mx54rspodot9gs12bi71g63&st=kbhb0mzk&dl=0 },
-    { title: "月光白日夢", song: "Moonage Daydream", year: "2022", desc: "大衛·鮑伊的實驗性紀錄片。透過未公開的影像與音樂，探索這位搖滾變色龍的藝術精神與內心世界。", audioUrl: https://www.dropbox.com/scl/fi/gbvqqtlm6rl80q13z8yot/David-Bowie-Starman-Official-Video-David-Bowie-youtube.mp3?rlkey=07mx54rspodot9gs12bi71g63&st=kbhb0mzk&dl=0 },
-    { title: "巴斯光年", song: "Starman (Remix)", year: "2022", desc: "玩具總動員外傳。講述啟發巴斯光年玩具的那位傳奇太空遊俠，在星際間對抗札克天王的起源故事。", audioUrl:https://www.dropbox.com/scl/fi/gbvqqtlm6rl80q13z8yot/David-Bowie-Starman-Official-Video-David-Bowie-youtube.mp3?rlkey=07mx54rspodot9gs12bi71g63&st=kbhb0mzk&dl=0 }
+    { title: "鐵達尼號 (Titanic)", song: "My Heart Will Go On", year: "1997", desc: "影史愛情經典。窮畫家傑克與貴族少女蘿絲在豪華郵輪上相戀，卻遭遇世紀船難，譜出一段永恆的悲劇戀曲。", audioUrl: "https://www.dropbox.com/scl/fi/8z0udzn0olzg7cbz3fwak/Titanic-My-Heart-Will-Go-On-Celine-Dion-HD-Film-Tributes-youtube-1.mp3?rlkey=cqkzetw1x1zswg45vw00sag58&st=1hm93abe&dl=1" },
+    { title: "月老 (Till We Meet Again)", song: "如果可以", year: "2021", desc: "九把刀執導。慘遭雷擊而死的阿綸來到陰間，為了積陰德轉世，與個性火爆的Pinky搭檔成為月老，牽起紅線的故事。", audioUrl: "https://www.dropbox.com/scl/fi/1reqoif6fqd5q34big8ly/WeiBird-Red-Scarf-MV-WeiBird-youtube.mp3?rlkey=dfccwhk7wd6fwwlofeyl5b5r4&st=u2kf13r3&dl=1" },
+    { title: "當男人戀愛時", song: "愛情你比我想的閣較偉大", year: "2021", desc: "改編自韓國電影。討債流氓阿成愛上替父親背債的浩婷，展開一段台味十足、笑中帶淚的虐心戀情。", audioUrl: "https://www.dropbox.com/scl/fi/evbv7p0tnffcych03wt44/EggPlantEgg-Official-Music-Video-EggPlantEgg-youtube.mp3?rlkey=yxvn66sl1ioiltg1dv55gorec&st=8lrj7s32&dl=1" },
+    { title: "刻在你心底的名字", song: "刻在我心底的名字", year: "2020", desc: "剛解嚴的台灣，兩位高中男孩阿漢與Birdy在壓抑的社會氛圍下，探索彼此間模糊曖昧、刻骨銘心的初戀。", audioUrl: "https://www.dropbox.com/scl/fi/vewxgln5pk93izdyf90is/Crowd-Lu-Your-Name-Engraved-Herein-Official-Music-Video-TEAM-EAR-MUSIC-youtube.mp3?rlkey=8cm40iwbwf6e18gop3w1h16m7&st=ctwbe13d&dl=1"},
+    { title: "玩命關頭7 (Furious 7)", song: "See You Again", year: "2015", desc: "系列作情感最濃厚的一集。唐老大團隊面對強敵戴克蕭的復仇，同時這也是保羅·沃克最後的銀幕告別作。", audioUrl: "https://www.dropbox.com/scl/fi/e20mukf4evwpt9ut9wdok/Wiz-Khalifa-See-You-Again-ft.-Charlie-Puth-Official-Video-Furious-7-Soundtrack-Wiz-Khalifa-Music-youtube.mp3?rlkey=o9viulylopifc5xhohmt5eg65&st=uhlbwolc&dl=1"  },
+    { title: "年少日記", song: "配樂 (年少日記)", year: "2023", desc: "香港劇情片。一名中學老師發現學生的遺書，進而回憶起自己童年遭受家庭暴力與嚴苛教育的創傷。", audioUrl: "https://www.dropbox.com/scl/fi/12wuk282qvf9f51xckp6n/Official-Music-Video-iiiiRiSLiU-lauheungking-iii-iRiSLiU-youtube.mp3?rlkey=o1tyqgqj83kg2zggl0xxk1h9e&st=uzo401a3&dl=1"  },
+    { title: "囍宴 (The Wedding Banquet)", song: "經典配樂", year: "1993", desc: "李安「父親三部曲」之一。為了應付父母逼婚，旅美同志偉同決定與中國女畫家假結婚，引發一連串文化與家庭衝突。", audioUrl: "https://www.dropbox.com/scl/fi/pq9o81lgs5tnyf531jfuu/Julie-Sue-Holding-Hands-Official-MV-Timeless-Music-youtube.mp3?rlkey=ex81p7ck993bzer1ya34eo2j7&st=plnobpyv&dl=1" },
+    { title: "怪物 (Monster)", song: "坂本龍一 配樂", year: "2023", desc: "是枝裕和執導，坂本龍一遺作配樂。透過母親、老師、孩子三種視角，逐步揭開校園霸凌疑雲背後的殘酷真相。", audioUrl: "https://www.dropbox.com/scl/fi/r2slzgs8j30fytuhl2uxv/I-Don-t-Like-Mondays.-Shadow-Music-Video-Short-Ver.-10-I-Don-t-Like-Mondays.-youtube.mp3?rlkey=9i23tfnhxapx7wn5xivgjta5k&st=80o1p1z7&dl=1"  },
+    { title: "巴黎德州 (Paris, Texas)", song: "Paris, Texas (Guitar)", year: "1984", desc: "溫德斯經典公路電影。失憶男子在德州荒漠中漫遊，試圖尋找失散的妻兒與自我，Ry Cooder的吉他配樂蒼涼動人。", audioUrl: "https://www.dropbox.com/scl/fi/hthtvx5fifnhzquu87tu4/Ry-Cooder-Paris-Texas-Rene.-youtube.mp3?rlkey=35ghuj6pomw8fn4zi30jagx0w&st=zzk3h7zg&dl=1" },
+    { title: "單身動物園 (The Lobster)", song: "String Quartet in F Major", year: "2015", desc: "反烏托邦黑色喜劇。在未來社會，單身是有罪的，如果在45天內找不到伴侶，就會被變成一種動物流放。", audioUrl: "https://www.dropbox.com/scl/fi/m831fblxcwhqjr7f115ub/Nick-Cave-The-Bad-Seeds-ft.-Kylie-Minogue-Where-The-Wild-Roses-Grow-Official-HD-Video-Nick-Cave-and-the-Bad-Seeds-youtube.mp3?rlkey=yj7vxxz81fzkxwur8fxuxpcpw&st=ds8fcz9d&dl=1" },
+    { title: "明天，我要和昨天的你約會", song: "Happy End", year: "2016", desc: "京都背景的奇幻愛情。男女主角身處相反的時間軸，每五年相遇一次，他的第一次相遇卻是她的最後一次。", audioUrl: "https://www.dropbox.com/scl/fi/hqln1mpc8oy001172el0v/back-number-Happy-End-Kanji_Romaji_Terjemahan-Indonesia-Enjoy-Japan-Music-youtube.mp3?rlkey=a3qcmpol0mkr0nuhpl6kamq6g&st=ucmszs86&dl=1"  },
+    { title: "以你的名字呼喚我", song: "Mystery of Love", year: "2017", desc: "義大利夏日。17歲少年埃利奧與父親的研究生助理奧利佛，展開一段短暫、熾熱且改變彼此一生的愛戀。", audioUrl: "https://www.dropbox.com/scl/fi/u7kvk3a1m4axnga85ni5x/Sufjan-Stevens-Mystery-of-Love-From-Call-Me-By-Your-Name-Soundtrack-SonySoundtracksVEVO-youtube.mp3?rlkey=um5kttkwta0p6gt9bnoveqvsv&st=vz22kdd7&dl=1" },
+    { title: "濁水漂流", song: "濁水漂流 (配樂)", year: "2021", desc: "改編自真實事件。描述一群在深水埗天橋底下的露宿者，其家當被政府強行清掃後，堅持提告爭取尊嚴的故事。", audioUrl: "https://www.dropbox.com/scl/fi/55fru23z8qhhj9vgb7i5b/MV-Drifting-Movie-Theme-Song-Official-MV-mm2-Studios-Hong-Kong-youtube.mp3?rlkey=541z16zypuhgmf9alhiaelumf&st=couo1tte&dl=1" },
+    { title: "有病才會喜歡你 (Sick of Myself)", song: "配樂", year: "2022", desc: "諷刺黑色喜劇。女主角為了博取男友與大眾的關注，不惜服用禁藥讓自己皮膚潰爛，陷入自毀的深淵。", audioUrl: "https://www.dropbox.com/scl/fi/ultcvaeoizoadgo420x3p/Accusefive-youtube.mp3?rlkey=iq2ek3p0yxy849jdsvkj2omat&st=c651ko8f&dl=1"},
+    { title: "靈魂急轉彎 (Soul)", song: "It's All Right", year: "2020", desc: "皮克斯傑作。一位不得志的爵士鋼琴家意外身亡，在「投胎先修班」試圖尋找生命的火花與活著的意義。", audioUrl: "https://www.dropbox.com/scl/fi/r3amzel8elszjvtevchty/Jon-Batiste-Celeste-It-s-All-Right-From-Soul_Duet-Version_Official-Lyric-Video-DisneyMusicVEVO-youtube.mp3?rlkey=hleu8ohwjjjl6pj3krfyax9xi&st=hgy1f4ku&dl=1" },
+    { title: "戀夏500日 (500 Days of Summer)", song: "There Is A Light...", year: "2009", desc: "非典型的愛情電影。講述相信真愛的湯姆遇見不相信愛情的夏天，兩人在500天內從熱戀到分手的酸甜苦辣。", audioUrl: "https://www.dropbox.com/scl/fi/yv2j3znsgd7sbcuc23qb6/Daryl-Hall-John-Oates-You-Make-My-Dreams-Official-HD-Video-hallandoatesVEVO-youtube.mp3?rlkey=q23p34gdg1b1q9i0vngwnwt0t&st=s5yuuiw4&dl=1" },
+    { title: "一個巨星的誕生 (A Star Is Born)", song: "Shallow", year: "2018", desc: "布萊德利庫柏與女神卡卡主演。酗酒的過氣鄉村歌手發掘了擁有天籟歌喉的素人，兩人在愛與名利中掙扎。", audioUrl: "https://www.dropbox.com/scl/fi/8twcva1xevy3egx746w9u/Lady-Gaga-Bradley-Cooper-Shallow-from-A-Star-Is-Born-Official-Music-Video-LadyGagaVEVO-youtube.mp3?rlkey=pq80w65fhy3cpz7l0otleyctk&st=0m99d009&dl=1" },
+    { title: "捍衛戰士：獨行俠", song: "Hold My Hand", year: "2022", desc: "時隔36年的續集。頂尖飛官「獨行俠」重回海軍訓練學校教導新一代飛行員，面對過去的遺憾並執行不可能的任務。", audioUrl: "https://www.dropbox.com/scl/fi/tsaxjea2d8me7q6uswaj3/OneRepublic-I-Ain-t-Worried-From-Top-Gun-Maverick-Official-Music-Video-OneRepublicVEVO-youtube.mp3?rlkey=j6t86nrazdu4msw6cv7b89r5k&st=f7qdapug&dl=1" },
+    { title: "頭文字D (Initial D)", song: "一路向北 / Drifting", year: "2005", desc: "周杰倫主演。講述豆腐店兒子藤原拓海駕駛AE86，在秋名山展現驚人甩尾技術，擊敗各路賽車好手的故事。", audioUrl: "https://www.dropbox.com/scl/fi/f58o9idionl1zfz622two/Jay-Chou-All-the-Way-North-Official-Music-Video-Jay-Chou-youtube.mp3?rlkey=t7y45n3430n9tasu4q8qdsxac&st=zphu9k0i&dl=1" },
+    { title: "K歌情人 (Music and Lyrics)", song: "Way Back Into Love", year: "2007", desc: "過氣的80年代流行偶像與一位有文采的植物照顧員，兩人被迫合作寫歌，在音符中譜出浪漫戀曲。", audioUrl: "https://www.dropbox.com/scl/fi/ztbtcj479u0cknaq24wac/Hugh-Grant-Haley-Bennett-Way-Back-Into-Love-Lyrics-SuperbLyrics-youtube.mp3?rlkey=5q0puu3v1jnsf03i1p6ka9zf8&st=71gvzxj9&dl=1"},
+    { title: "真愛每一天 (About Time)", song: "How Long Will I Love You", year: "2013", desc: "溫暖療癒系電影。男主角擁有穿越時空回到過去的能力，他試圖用這份能力讓每一天過得完美，並贏得愛情。", audioUrl: "https://www.dropbox.com/scl/fi/65aqebxiqy1hprgu0wzma/Ellie-Goulding-How-Long-Will-I-Love-You-Official-Video-EllieGouldingVEVO-youtube.mp3?rlkey=8yrzcsq9g8tqjp4ehklbny4di&st=4a47mq60&dl=1" },
+    { title: "聽見下雨的聲音", song: "聽見下雨的聲音", year: "2013", desc: "方文山執導。以漢服文化與雨天為背景，講述聽障女主角與樂團主唱之間唯美而詩意的愛情故事。", audioUrl: "https://www.dropbox.com/scl/fi/yde5n9uswrsfp8zpcw6an/Queen-Wei-Rhythm-Of-The-Rain-PinYin-Lyrics-PinYin-Lyric-youtube.mp3?rlkey=c4dj86xk3eqqup42iy2s4n0c6&st=wae1ixe4&dl=1" },
+    { title: "格雷的五十道陰影", song: "Love Me Like You Do", year: "2015", desc: "改編自暢銷小說。純真女大學生採訪年輕億萬富豪，卻一步步陷入他特殊的性愛癖好與控制慾的關係中。", audioUrl: "https://www.dropbox.com/scl/fi/u2rm9ld8gwjcdbgq5pant/Ellie-Goulding-Love-Me-Like-You-Do-Official-Video-EllieGouldingVEVO-youtube.mp3?rlkey=qz50867ubg4bl4r0bxhdl7q7p&st=3zyj0uot&dl=1" },
+    { title: "樂來樂愛你 (La La Land)", song: "City of Stars", year: "2016", desc: "獻給追夢人的情書。在洛杉磯，一位落魄爵士鋼琴家與懷才不遇的女演員相愛，卻在夢想與現實間面臨抉擇。", audioUrl: "https://www.dropbox.com/scl/fi/i0hjn7xu0n1acewh70dzj/City-of-Stars-Duet-ft.-Ryan-Gosling-Emma-Stone-La-La-Land-Original-Motion-Picture-Soundtrack-Interscope-Records-youtube.mp3?rlkey=en2vfypwf6sumappaxsa8gykl&st=65w9m30f&dl=1" },
+    { title: "暮光之城：破曉", song: "A Thousand Years", year: "2011", desc: "吸血鬼羅曼史最終章。貝拉與愛德華終於步入禮堂，但新生命的誕生卻引發了佛杜里家族的殺機。", audioUrl: "https://www.dropbox.com/scl/fi/18cnedhtt8368zihoe310/Bruno-Mars-It-Will-Rain-Official-Music-Video-Bruno-Mars-youtube.mp3?rlkey=rqd424phw2m2efg0oy50hdibe&st=dkjnyrud&dl=1" },
+    { title: "可可夜總會 (Coco)", song: "Remember Me", year: "2017", desc: "墨西哥亡靈節背景。熱愛音樂的小男孩米高誤闖陰陽界，在尋找祖先的過程中，揭開家族隱藏多年的秘密。", audioUrl: "https://www.dropbox.com/scl/fi/p8bqjz7a19x1cfipr3spo/Remember-Me-Lullaby-From-Coco_Sing-Along-DisneyMusicVEVO-youtube.mp3?rlkey=pp6sfmh57rfw7cwz973zl2ymc&st=37njfqan&dl=1" },
+    { title: "死侍2 (Deadpool 2)", song: "Ashes", year: "2018", desc: "嘴砲超級英雄回歸。死侍為了保護一名變種人小孩，組成了「X特攻隊」，展開一場血腥又爆笑的救援行動。", audioUrl: "https://www.dropbox.com/scl/fi/5sv0kcoab3w3hp3tyzb2o/C-line-Dion-Ashes-from-Deadpool-2-Motion-Picture-Soundtrack-CelineDionVEVO-youtube.mp3?rlkey=soot1mzobslzmri5fpdno6uv9&st=qtpggooo&dl=1" },
+    { title: "等一個人咖啡", song: "缺口", year: "2014", desc: "九把刀小說改編。講述「等一個人咖啡」店裡，大學新鮮人思螢與看似荒誕的阿拓，以及老闆娘之間等待愛情的故事。", audioUrl: "https://www.dropbox.com/scl/fi/hrqqku8yfju7i26pia81z/Harlem-Yu-MV-youtube.mp3?rlkey=lixkn33wuhmlm0yjjov4y9qon&st=l335gd6k&dl=1" },
+    { title: "美女與野獸", song: "Beauty and the Beast", year: "2017", desc: "迪士尼經典真人版。為了救父親，貝兒自願留在被詛咒的城堡與野獸共處，最終用真愛打破了魔咒。", audioUrl: "https://www.dropbox.com/scl/fi/j6hh4wkci4omlgefmqqjz/Ariana-Grande-John-Legend-Beauty-and-the-Beast-From-Beauty-and-the-Beast-Official-Video-DisneyMusicVEVO-youtube.mp3?rlkey=fmyq2sam3jqv1e9508eyr90xd&st=hujqt1d1&dl=1" },
+    { title: "小時代", song: "時間煮雨", year: "2013", desc: "講述四位女大學生在繁華的上海，經歷愛情、友情與職場的考驗，展現奢華生活下的青春迷惘。", audioUrl: "https://www.dropbox.com/scl/fi/0opm5ivf532ludj40y2b0/MV-Panda-Music-youtube.mp3?rlkey=sd7xrxgkewaz6xusivom26xlu&st=bw9sknzd&dl=1" },
+    { title: "海洋之心 (Moana)", song: "How Far I'll Go", year: "2016", desc: "玻里尼西亞島嶼的酋長女兒莫娜，為了拯救族人，揚帆出海尋找半神人毛伊，歸還海洋之心的冒險旅程。", audioUrl: "https://www.dropbox.com/scl/fi/6w2fi2m6rcjtco2qcj48q/Alessia-Cara-How-Far-I-ll-Go-Official-Video-DisneyMusicVEVO-youtube.mp3?rlkey=yfujcmkg3e05wyhm3mr24xtgm&st=ps6ydqrv&dl=1" },
+    { title: "波希米亞狂想曲", song: "Bohemian Rhapsody", year: "2018", desc: "皇后合唱團傳記電影。紀錄主唱佛萊迪·墨裘瑞從無名小卒成為搖滾傳奇的過程，以及震撼世界的Live Aid演出。", audioUrl: "https://www.dropbox.com/scl/fi/zz37uc1n0rmis46kcii8m/Queen-Bohemian-Rhapsody-Official-Video-Remastered-Queen-Official-youtube.mp3?rlkey=8cc79ofrq1zaadyz7t8uisd9h&st=19zjgdxi&dl=1" },
+    { title: "歌劇魅影", song: "The Phantom of the Opera", year: "2004", desc: "百老匯最長壽音樂劇改編。巴黎歌劇院地下躲藏著一位毀容的音樂天才，他瘋狂地愛上了年輕女高音克莉絲汀。", audioUrl: "https://www.dropbox.com/scl/fi/6wnix4xip3z0s4ldao8ac/Andrew-Lloyd-Webber-Sarah-Brightman-Steve-Harley-The-Phantom-Of-The-Opera-ALWVEVO-youtube.mp3?rlkey=n3kzozkc8msit4d9cc7u4vy5y&st=qxonano4&dl=1" },
+    { title: "大娛樂家", song: "This Is Me", year: "2017", desc: "傳奇馬戲團始祖P.T.巴納姆的發跡故事。他集結了各種奇人異士，將備受歧視的怪胎變成了舞台上最閃耀的明星。", audioUrl: "https://www.dropbox.com/scl/fi/cjcccfd4licktq2bl6wlq/Zac-Efron-Zendaya-Rewrite-The-Stars-Lyrics-_-Lyrics-Video-NewMelody-youtube.mp3?rlkey=2olpf8mi028dmnrlmg5cb2ps6&st=ygtxg32p&dl=1" },
+    { title: "火箭人 (Rocketman)", song: "Rocket Man", year: "2019", desc: "艾爾頓·強的音樂傳記。以奇幻歌舞形式，呈現他從害羞的鋼琴神童變身為全球流行巨星的瘋狂歲月。", audioUrl: "https://www.dropbox.com/scl/fi/epve2iaal8xb9bcgzkewz/Elton-John-Your-Song-Top-Of-The-Pops-1971-EltonJohnVEVO-youtube.mp3?rlkey=w5eectc7ndy98jgizj1y5vn57&st=mq98o34h&dl=1"  },
+    { title: "神力女超人", song: "Is She With You?", year: "2017", desc: "亞馬遜公主黛安娜救了一名飛行員，得知外面的世界正經歷第一次世界大戰，毅然決然離開家鄉投入戰場。", audioUrl: "https://www.dropbox.com/scl/fi/e1y8do4im4glbp8y5ic4k/Wonder-Woman-Official-Soundtrack-To-Be-Human-Sia-feat.-Labrinth-WaterTower-WaterTower-Music-youtube.mp3?rlkey=32d54q6ia6hcl6ivh4zkbt4br&st=1vlkf8s4&dl=1" },
+    { title: "F1 (一級方程式)", song: "Formula 1 Theme", year: "2025", desc: "布萊德·彼特主演。講述一位退役的一級方程式賽車手重返賽道，指導新秀並再次挑戰極速的故事。", audioUrl: "https://www.dropbox.com/scl/fi/vc0yk2k3ekyqjjv964gxs/Ed-Sheeran-Drive-From-F1-The-Movie-Official-Music-Video-Ed-Sheeran-youtube.mp3?rlkey=gmncdv3gscmiki58rbbieypv9&st=4xhylspd&dl=1" },
+    { title: "絕地救援 (The Martian)", song: "Starman", year: "2015", desc: "太空人馬克在火星任務中遭遇風暴被認定死亡而遺留。他必須在資源匱乏的火星上運用科學知識種馬鈴薯求生。", audioUrl: "https://www.dropbox.com/scl/fi/gbvqqtlm6rl80q13z8yot/David-Bowie-Starman-Official-Video-David-Bowie-youtube.mp3?rlkey=07mx54rspodot9gs12bi71g63&st=kbhb0mzk&dl=1" },
+    { title: "月光白日夢", song: "Moonage Daydream", year: "2022", desc: "大衛·鮑伊的實驗性紀錄片。透過未公開的影像與音樂，探索這位搖滾變色龍的藝術精神與內心世界。", audioUrl: "https://www.dropbox.com/scl/fi/gbvqqtlm6rl80q13z8yot/David-Bowie-Starman-Official-Video-David-Bowie-youtube.mp3?rlkey=07mx54rspodot9gs12bi71g63&st=kbhb0mzk&dl=1" },
+    { title: "巴斯光年", song: "Starman (Remix)", year: "2022", desc: "玩具總動員外傳。講述啟發巴斯光年玩具的那位傳奇太空遊俠，在星際間對抗札克天王的起源故事。", audioUrl: "https://www.dropbox.com/scl/fi/gbvqqtlm6rl80q13z8yot/David-Bowie-Starman-Official-Video-David-Bowie-youtube.mp3?rlkey=07mx54rspodot9gs12bi71g63&st=kbhb0mzk&dl=1" }
 ];
 
 // 為電影加上 ID
@@ -325,31 +339,39 @@ class GameEngine {
             resSong: document.getElementById('res-song'),
             resDesc: document.getElementById('res-desc')
         };
-
+        
         // SFX Context
         this.sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
-
+        
         // Bindings
-        document.getElementById('start-btn').addEventListener('click', () => this.initGame());
+        document.getElementById('start-btn').addEventListener('click', () => {
+            this.unlockAudioEvent(); // Unlock SFX on click
+            this.initGame();
+        });
         document.getElementById('next-btn').addEventListener('click', () => this.nextQuestion());
         
-        // Mobile Unlock Event
-        this.unlockAudioEvent = this.unlockAudioEvent.bind(this);
-        document.body.addEventListener('touchstart', this.unlockAudioEvent, { once: true });
-        document.body.addEventListener('click', this.unlockAudioEvent, { once: true });
+        // Additional Mobile Unlock
+        document.body.addEventListener('touchstart', () => this.unlockAudioEvent(), { once: true });
+        document.body.addEventListener('click', () => this.unlockAudioEvent(), { once: true });
     }
 
-    // iOS/Android Audio Unlocker (Integrated from old code logic)
+    // iOS/Android Audio Unlocker
     unlockAudioEvent() {
         if (this.audioUnlocked) return;
         
         // Resume Audio Contexts
         if (this.sfxCtx.state === 'suspended') this.sfxCtx.resume();
         
+        // Initialize AudioCtx if needed
+        if (!this.audioCtx) {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            this.setupVisualizer();
+        }
+        if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
+
         // Play silent buffer to unlock media playback
         this.els.audio.play().then(() => {
             this.els.audio.pause();
-            this.els.audio.currentTime = 0;
             this.audioUnlocked = true;
         }).catch(() => {});
     }
@@ -385,7 +407,7 @@ class GameEngine {
             this.setupVisualizer();
         }
         if (this.audioCtx.state === 'suspended') await this.audioCtx.resume();
-
+        
         // Shuffle & Pick 10
         const shuffled = [...ALL_MOVIES].sort(() => Math.random() - 0.5);
         this.questions = shuffled.slice(0, this.gameLength);
@@ -408,15 +430,18 @@ class GameEngine {
             this.analyser.fftSize = 256;
             this.isAudioSetup = true;
             this.drawVisualizer();
-        } catch (e) { console.log("Visualizer fallback mode"); }
+        } catch (e) { 
+            console.log("Visualizer connect error (CORS or DOM issue):", e);
+        }
     }
 
     drawVisualizer() {
+        if (!this.analyser) return;
         const canvas = this.els.visualizer;
         const ctx = canvas.getContext('2d');
         const bufferLength = this.analyser.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
-
+        
         const draw = () => {
             requestAnimationFrame(draw);
             this.analyser.getByteFrequencyData(dataArray);
@@ -451,21 +476,29 @@ class GameEngine {
         this.els.timerBar.style.width = '100%';
 
         if(this.timer) clearInterval(this.timer);
+        this.els.audio.pause();
         this.els.audio.src = q.audioUrl;
         this.els.audio.volume = 0.6;
 
-        this.els.audio.oncanplay = () => {
+        this.els.audio.oncanplaythrough = () => {
             this.els.loading.classList.add('hidden');
             this.els.status.innerText = "🎶 猜猜這是哪部電影？";
-            this.els.audio.play().catch(() => {
-                this.els.status.innerText = "⚠️ 請點擊畫面播放";
-            });
+            
+            const playPromise = this.els.audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    this.els.status.innerText = "⚠️ 請點擊畫面播放";
+                    console.error("Auto-play prevented:", error);
+                });
+            }
+            
             this.startTimer();
-            this.els.audio.oncanplay = null;
+            this.els.audio.oncanplaythrough = null;
         };
 
         this.els.audio.onerror = () => {
-            this.els.status.innerText = "⚠️ 音訊連結錯誤 (需設定)";
+            console.error("Audio Load Error", q.audioUrl);
+            this.els.status.innerText = "⚠️ 音訊連結錯誤";
             this.els.loading.classList.add('hidden');
         };
 
@@ -494,7 +527,6 @@ class GameEngine {
             this.els.timerBar.style.transition = `width ${this.maxTime}s linear`;
             this.els.timerBar.style.width = '0%';
         }, 50);
-
         this.timer = setInterval(() => {
             this.timeLeft--;
             if(this.timeLeft <= 0) this.handleTimeout();
@@ -508,7 +540,6 @@ class GameEngine {
         buttons.forEach(b => b.disabled = true);
 
         const isCorrect = selected.id === correct.id;
-        
         if(isCorrect) {
             btn.classList.add('correct');
             this.playTone('correct');
@@ -529,7 +560,6 @@ class GameEngine {
         this.els.score.innerText = this.score;
     }
 
-    // Function integrated from Old Code concept
     showScoreFloat(element, text, type) {
         const floatEl = document.createElement('span');
         floatEl.className = `score-float ${type}`;
