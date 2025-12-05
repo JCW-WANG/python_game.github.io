@@ -253,10 +253,10 @@
 
 </div>
 
-<audio id="bgm-player" crossOrigin="anonymous" preload="auto"></audio>
+<audio id="bgm-player" preload="auto"></audio>
 
 <script>
-// 修正後的電影資料陣列，包含正確的引號和 dl=1 的參數
+// 修正後的資料：補上引號、將 dl=0 改為 dl=1
 const ALL_MOVIES = [
     { title: "鐵達尼號 (Titanic)", song: "My Heart Will Go On", year: "1997", desc: "影史愛情經典。窮畫家傑克與貴族少女蘿絲在豪華郵輪上相戀，卻遭遇世紀船難，譜出一段永恆的悲劇戀曲。", audioUrl: "https://www.dropbox.com/scl/fi/8z0udzn0olzg7cbz3fwak/Titanic-My-Heart-Will-Go-On-Celine-Dion-HD-Film-Tributes-youtube-1.mp3?rlkey=cqkzetw1x1zswg45vw00sag58&st=1hm93abe&dl=1" },
     { title: "月老 (Till We Meet Again)", song: "如果可以", year: "2021", desc: "九把刀執導。慘遭雷擊而死的阿綸來到陰間，為了積陰德轉世，與個性火爆的Pinky搭檔成為月老，牽起紅線的故事。", audioUrl: "https://www.dropbox.com/scl/fi/1reqoif6fqd5q34big8ly/WeiBird-Red-Scarf-MV-WeiBird-youtube.mp3?rlkey=dfccwhk7wd6fwwlofeyl5b5r4&st=u2kf13r3&dl=1" },
@@ -300,7 +300,6 @@ const ALL_MOVIES = [
     { title: "巴斯光年", song: "Starman (Remix)", year: "2022", desc: "玩具總動員外傳。講述啟發巴斯光年玩具的那位傳奇太空遊俠，在星際間對抗札克天王的起源故事。", audioUrl: "https://www.dropbox.com/scl/fi/gbvqqtlm6rl80q13z8yot/David-Bowie-Starman-Official-Video-David-Bowie-youtube.mp3?rlkey=07mx54rspodot9gs12bi71g63&st=kbhb0mzk&dl=1" }
 ];
 
-// 為電影加上 ID
 ALL_MOVIES.forEach((m, i) => m.id = i);
 
 class GameEngine {
@@ -312,13 +311,13 @@ class GameEngine {
         this.maxTime = 30;
         this.timeLeft = 30;
         this.gameLength = 10;
-        this.audioUnlocked = false;
         
         // Audio & Visualizer Context
         this.audioCtx = null;
         this.analyser = null;
         this.source = null;
         this.isAudioSetup = false;
+        this.audioAllowed = false; // Flag to check if we can actually use WebAudio
 
         // DOM Elements
         this.els = {
@@ -345,7 +344,7 @@ class GameEngine {
         
         // Bindings
         document.getElementById('start-btn').addEventListener('click', () => {
-            this.unlockAudioEvent(); // Unlock SFX on click
+            this.unlockAudioEvent(); 
             this.initGame();
         });
         document.getElementById('next-btn').addEventListener('click', () => this.nextQuestion());
@@ -355,11 +354,7 @@ class GameEngine {
         document.body.addEventListener('click', () => this.unlockAudioEvent(), { once: true });
     }
 
-    // iOS/Android Audio Unlocker
     unlockAudioEvent() {
-        if (this.audioUnlocked) return;
-        
-        // Resume Audio Contexts
         if (this.sfxCtx.state === 'suspended') this.sfxCtx.resume();
         
         // Initialize AudioCtx if needed
@@ -368,12 +363,6 @@ class GameEngine {
             this.setupVisualizer();
         }
         if (this.audioCtx.state === 'suspended') this.audioCtx.resume();
-
-        // Play silent buffer to unlock media playback
-        this.els.audio.play().then(() => {
-            this.els.audio.pause();
-            this.audioUnlocked = true;
-        }).catch(() => {});
     }
 
     playTone(type) {
@@ -401,14 +390,12 @@ class GameEngine {
     }
 
     async initGame() {
-        // Ensure Audio Context
         if (!this.audioCtx) {
             this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
             this.setupVisualizer();
         }
         if (this.audioCtx.state === 'suspended') await this.audioCtx.resume();
         
-        // Shuffle & Pick 10
         const shuffled = [...ALL_MOVIES].sort(() => Math.random() - 0.5);
         this.questions = shuffled.slice(0, this.gameLength);
         
@@ -422,39 +409,60 @@ class GameEngine {
 
     setupVisualizer() {
         if(this.isAudioSetup) return;
+        
         try {
-            this.analyser = this.audioCtx.createAnalyser();
+            // NOTE: Dropbox links often fail here due to CORS.
+            // If createMediaElementSource fails, we catch it and use "fake" mode.
             this.source = this.audioCtx.createMediaElementSource(this.els.audio);
+            this.analyser = this.audioCtx.createAnalyser();
             this.source.connect(this.analyser);
             this.analyser.connect(this.audioCtx.destination);
             this.analyser.fftSize = 256;
-            this.isAudioSetup = true;
-            this.drawVisualizer();
+            this.audioAllowed = true;
         } catch (e) { 
-            console.log("Visualizer connect error (CORS or DOM issue):", e);
+            console.log("CORS restricted: Switching to Fake Visualizer Mode");
+            this.audioAllowed = false;
         }
+        
+        this.isAudioSetup = true;
+        this.drawVisualizer();
     }
 
     drawVisualizer() {
-        if (!this.analyser) return;
         const canvas = this.els.visualizer;
         const ctx = canvas.getContext('2d');
-        const bufferLength = this.analyser.frequencyBinCount;
+        const bufferLength = 64; // Fewer bars for cleaner look
         const dataArray = new Uint8Array(bufferLength);
         
         const draw = () => {
             requestAnimationFrame(draw);
-            this.analyser.getByteFrequencyData(dataArray);
+            
+            // Clear
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            const barWidth = (canvas.width / bufferLength) * 2.5;
+            const barWidth = (canvas.width / bufferLength) * 1.5;
             let x = 0;
+
+            if (this.audioAllowed && this.analyser) {
+                // Real Data
+                this.analyser.getByteFrequencyData(dataArray);
+            } else {
+                // Fake Data (Simulated) if audio is playing but CORS blocked
+                if (!this.els.audio.paused) {
+                    for(let i=0; i<bufferLength; i++) {
+                        dataArray[i] = Math.random() * 150 + 50; 
+                    }
+                } else {
+                    dataArray.fill(10); // Idle
+                }
+            }
+
             for(let i = 0; i < bufferLength; i++) {
-                const barHeight = dataArray[i] / 255 * canvas.height;
-                const hue = i * 2 + 180; // Cyan/Blue Theme
+                const value = dataArray[i];
+                const barHeight = (value / 255) * canvas.height;
+                const hue = i * 4 + 180; 
                 ctx.fillStyle = `hsl(${hue}, 100%, 50%)`;
                 ctx.fillRect(x, (canvas.height - barHeight) / 2, barWidth, barHeight);
-                x += barWidth + 1;
+                x += barWidth + 2;
             }
         };
         draw();
@@ -476,29 +484,41 @@ class GameEngine {
         this.els.timerBar.style.width = '100%';
 
         if(this.timer) clearInterval(this.timer);
+        
         this.els.audio.pause();
+        this.els.audio.currentTime = 0;
         this.els.audio.src = q.audioUrl;
         this.els.audio.volume = 0.6;
 
-        this.els.audio.oncanplaythrough = () => {
-            this.els.loading.classList.add('hidden');
-            this.els.status.innerText = "🎶 猜猜這是哪部電影？";
-            
-            const playPromise = this.els.audio.play();
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
+        // More robust play handling
+        const playAttempt = () => {
+             this.els.loading.classList.add('hidden');
+             this.els.status.innerText = "🎶 猜猜這是哪部電影？";
+             this.els.audio.play()
+                .then(() => this.startTimer())
+                .catch(e => {
                     this.els.status.innerText = "⚠️ 請點擊畫面播放";
-                    console.error("Auto-play prevented:", error);
+                    // Add a one-time click listener to body to start
+                    document.body.addEventListener('click', () => {
+                        this.els.audio.play();
+                        this.startTimer();
+                    }, { once: true });
                 });
-            }
-            
-            this.startTimer();
-            this.els.audio.oncanplaythrough = null;
         };
 
-        this.els.audio.onerror = () => {
-            console.error("Audio Load Error", q.audioUrl);
-            this.els.status.innerText = "⚠️ 音訊連結錯誤";
+        this.els.audio.oncanplaythrough = () => {
+            playAttempt();
+            this.els.audio.oncanplaythrough = null;
+        };
+        
+        // Fallback if canplaythrough doesn't fire fast enough
+        this.els.audio.onloadeddata = () => {
+             // Optional: can use this as backup
+        };
+
+        this.els.audio.onerror = (e) => {
+            console.error("Audio Error:", e, q.audioUrl);
+            this.els.status.innerText = "⚠️ 音訊無法讀取 (請檢查網路)";
             this.els.loading.classList.add('hidden');
         };
 
@@ -522,6 +542,7 @@ class GameEngine {
     }
 
     startTimer() {
+        if (this.timer) clearInterval(this.timer); // Safety clear
         this.timeLeft = this.maxTime;
         setTimeout(() => {
             this.els.timerBar.style.transition = `width ${this.maxTime}s linear`;
